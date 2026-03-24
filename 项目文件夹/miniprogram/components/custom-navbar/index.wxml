@@ -1,0 +1,13 @@
+<view
+  class="navbar"
+  style="padding-top: {{statusBarHeight}}px; height: {{statusBarHeight + navBarHeight}}px;"
+>
+  <view class="navbar-inner" style="height: {{navBarHeight}}px;">
+    <view class="left" bindtap="handleBack">‹</view>
+    <view class="title">{{title}}</view>
+    <view class="right">
+      <view class="dot"></view>
+      <view class="dot"></view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "AI 健康助手",
+  "navigationBarBackgroundColor": "#EDEDED",
+  "usingComponents": {
+    "van-icon": "@vant/weapp/icon/index"
+  }
+}

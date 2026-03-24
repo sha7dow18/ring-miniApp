@@ -1,0 +1,18 @@
+<view class="tab-bar-container">
+  <block wx:for="{{tabList}}" wx:key="index">
+    <view class="tab-bar-item {{selected === index ? 'selected' : ''}} {{index === 2 ? 'item-ai' : ''}}" 
+          bindtap="switchTab" 
+          data-path="{{item.pagePath}}" 
+          data-index="{{index}}">
+      
+      <view class="icon-box">
+        <image class="tab-icon" 
+               src="{{selected === index ? item.selectedIconPath : item.iconPath}}" 
+               mode="aspectFit">
+        </image>
+      </view>
+      
+      <text class="tab-text">{{item.text}}</text>
+    </view>
+  </block>
+</view>

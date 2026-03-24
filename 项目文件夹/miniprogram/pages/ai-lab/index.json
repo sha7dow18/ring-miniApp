@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "AI 体质辨识",
+  "navigationBarBackgroundColor": "#F0F8FF",
+  "navigationBarTextStyle": "black",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "radar-chart": "../../components/radar-chart/index",
+    "van-icon": "@vant/weapp/icon/index"
+  }
+}
+

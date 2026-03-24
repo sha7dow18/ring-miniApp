@@ -1,0 +1,537 @@
+page {
+  background: #f6f3ed;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 72rpx 24rpx 260rpx;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #f6f3ed 0%, #ddc593 70%, #8c9973 100%);
+}
+
+/* 顶部 */
+.nav-bar {
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+}
+
+.nav-placeholder {
+  width: 120rpx;
+}
+
+.nav-title {
+  flex: 1;
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* 顶部问候区 */
+.hero {
+  position: relative;
+  min-height: 220rpx;
+  margin-bottom: 18rpx;
+}
+
+.hero-text {
+  width: 66%;
+}
+
+.hero-greeting,
+.hero-user {
+  font-size: 72rpx;
+  line-height: 0.95;
+  font-weight: 900;
+  color: #111111;
+  letter-spacing: 1rpx;
+}
+
+.ring-area {
+  position: absolute;
+  right: 0;
+  top: 6rpx;
+  width: 188rpx;
+  height: 168rpx;
+}
+
+.ring-soft-bg {
+  position: absolute;
+  right: 8rpx;
+  top: 20rpx;
+  width: 132rpx;
+  height: 110rpx;
+  border-radius: 56rpx;
+  background: radial-gradient(circle, rgba(244, 236, 219, 0.85) 0%, rgba(244, 236, 219, 0.18) 68%, rgba(244, 236, 219, 0) 100%);
+}
+
+.ring-light {
+  position: absolute;
+  left: 18rpx;
+  top: 20rpx;
+  width: 26rpx;
+  height: 26rpx;
+  border-radius: 50%;
+  background: #17c36d;
+  z-index: 3;
+}
+
+.ring-image {
+  position: absolute;
+  right: 0;
+  top: 10rpx;
+  width: 158rpx;
+  height: 138rpx;
+  z-index: 2;
+}
+
+/* 月份 */
+.month-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30rpx;
+  margin-bottom: 18rpx;
+}
+
+.month-text {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #222222;
+}
+
+.month-arrow {
+  font-size: 34rpx;
+  color: #90846b;
+}
+
+/* 日期 */
+.date-scroll {
+  margin-bottom: 22rpx;
+  white-space: nowrap;
+}
+
+.date-list {
+  display: flex;
+  gap: 14rpx;
+}
+
+.date-item {
+  width: 92rpx;
+  height: 108rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.76);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-item-active {
+  background: #5a7f79;
+}
+
+.date-day {
+  font-size: 42rpx;
+  line-height: 1;
+  font-weight: 800;
+  color: #222222;
+}
+
+.date-week {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #6b6b6b;
+}
+
+.date-item-active .date-day,
+.date-item-active .date-week {
+  color: #ffffff;
+}
+
+/* 通用卡片 */
+.main-card,
+.sub-card,
+.metric-item {
+  background: rgba(247, 240, 226, 0.96);
+  border-radius: 36rpx;
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.24);
+}
+
+/* 血压卡 */
+.bp-card {
+  padding: 24rpx 24rpx 18rpx;
+  margin-bottom: 22rpx;
+}
+
+.bp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14rpx;
+}
+
+.bp-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #111111;
+}
+
+.bp-period {
+  min-width: 108rpx;
+  height: 44rpx;
+  padding: 0 16rpx;
+  border-radius: 24rpx;
+  background: #eee1c6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: #7b715f;
+}
+
+.chart-area {
+  position: relative;
+  height: 262rpx;
+  border-radius: 26rpx;
+  background: rgba(255, 255, 255, 0.34);
+  overflow: hidden;
+  padding: 24rpx 66rpx 44rpx 24rpx;
+  box-sizing: border-box;
+}
+
+.grid-line {
+  position: absolute;
+  left: 24rpx;
+  right: 66rpx;
+  height: 1rpx;
+  background: rgba(120, 120, 120, 0.15);
+}
+
+.grid-line-1 { top: 62rpx; }
+.grid-line-2 { top: 118rpx; }
+.grid-line-3 { top: 174rpx; }
+
+.y-axis {
+  position: absolute;
+  top: 20rpx;
+  right: 12rpx;
+  bottom: 44rpx;
+  width: 48rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 20rpx;
+  color: #aa9a84;
+  text-align: right;
+}
+
+.line {
+  position: absolute;
+  left: 22rpx;
+  right: 72rpx;
+  height: 0;
+}
+
+.high-line {
+  top: 88rpx;
+  height: 120rpx;
+}
+
+.high-line::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 4rpx solid #a51e44;
+  clip-path: polygon(0% 60%, 20% 48%, 40% 58%, 65% 50%, 82% 68%, 100% 44%);
+}
+
+.low-line {
+  top: 120rpx;
+  height: 100rpx;
+}
+
+.low-line::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 4rpx solid #365f58;
+  clip-path: polygon(0% 52%, 20% 38%, 40% 42%, 65% 36%, 82% 46%, 100% 54%);
+}
+
+.x-axis {
+  position: absolute;
+  left: 24rpx;
+  right: 66rpx;
+  bottom: 12rpx;
+  display: flex;
+  justify-content: space-between;
+  font-size: 20rpx;
+  color: #b8aa95;
+}
+
+.legend-row {
+  margin-top: 14rpx;
+  display: flex;
+  justify-content: center;
+  gap: 44rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 22rpx;
+  color: #5d5d5d;
+}
+
+.legend-line {
+  width: 58rpx;
+  height: 6rpx;
+  border-radius: 99rpx;
+}
+
+.legend-line.high {
+  background: #a51e44;
+}
+
+.legend-line.low {
+  background: #365f58;
+}
+
+/* 运动 / 睡眠 */
+.double-card-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 18rpx;
+}
+
+.sub-card {
+  flex: 1;
+  min-height: 198rpx;
+  padding: 22rpx 22rpx 18rpx;
+  position: relative;
+}
+
+.sub-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #111111;
+  margin-bottom: 14rpx;
+}
+
+.sport-deco {
+  position: absolute;
+  right: 18rpx;
+  top: 16rpx;
+  width: 78rpx;
+  height: 78rpx;
+  opacity: 0.95;
+}
+
+.sport-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+  margin-top: 8rpx;
+}
+
+.big-number {
+  font-size: 58rpx;
+  line-height: 1;
+  font-weight: 900;
+  color: #111111;
+}
+
+.sub-number {
+  font-size: 22rpx;
+  color: #c9c9c9;
+}
+
+.small-strong {
+  font-size: 42rpx;
+  font-weight: 800;
+  color: #111111;
+}
+
+.sleep-visual {
+  position: relative;
+  width: 170rpx;
+  height: 106rpx;
+  margin: 4rpx auto 10rpx;
+}
+
+.sleep-deco {
+  width: 170rpx;
+  height: 106rpx;
+}
+
+.sleep-center {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sleep-score {
+  font-size: 24rpx;
+  line-height: 1;
+  font-weight: 800;
+  color: #2a2a2a;
+}
+
+.sleep-level {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  color: #2a2a2a;
+}
+
+.sleep-duration {
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* 其他数据 */
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8rpx 2rpx 12rpx;
+}
+
+.section-title {
+  font-size: 42rpx;
+  font-weight: 900;
+  color: #111111;
+}
+
+.section-more {
+  width: 84rpx;
+  height: 30rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #726d64;
+  font-size: 24rpx;
+}
+
+.metric-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.metric-item {
+  min-height: 114rpx;
+  padding: 0 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.metric-left {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.metric-icon {
+  width: 110rpx;
+  height: 66rpx;
+  border-radius: 40rpx;
+  background: linear-gradient(135deg, #77938b 0%, #aab7ac 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-icon-image {
+  width: 34rpx;
+  height: 34rpx;
+}
+
+.metric-info {
+  min-width: 188rpx;
+}
+
+.metric-name {
+  font-size: 26rpx;
+  color: #4c4c4c;
+}
+
+.metric-value {
+  margin-top: 6rpx;
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.metric-number {
+  font-size: 50rpx;
+  color: #222222;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.metric-unit {
+  font-size: 22rpx;
+  color: #4d4d4d;
+  font-weight: 500;
+}
+
+.metric-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18rpx;
+}
+
+.metric-trend-box {
+  width: 132rpx;
+  height: 62rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-trend-image {
+  display: block;
+  opacity: 0.9;
+}
+
+.metric-trend-wide {
+  width: 122rpx;
+  height: 50rpx;
+}
+
+.metric-trend-pulse {
+  width: 92rpx;
+  height: 42rpx;
+}
+
+.metric-arrow {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  flex-shrink: 0;
+}
+
+.page-bottom-space {
+  height: 300rpx;
+}

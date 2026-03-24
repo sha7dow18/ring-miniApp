@@ -1,0 +1,372 @@
+page {
+  background: #f6f3ed;
+}
+
+.mall-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 72rpx 24rpx 260rpx;
+  background: #e8dcc6;
+}
+
+.mall-nav {
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+}
+
+.mall-nav-placeholder {
+  width: 120rpx;
+}
+
+.mall-nav-title {
+  flex: 1;
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #111111;
+}
+
+.mall-header {
+  margin-bottom: 22rpx;
+}
+
+.mall-title {
+  font-size: 54rpx;
+  line-height: 1.06;
+  font-weight: 900;
+  color: #111111;
+}
+
+.mall-title-large {
+  font-size: 90rpx;
+  margin-top: 6rpx;
+}
+
+.mall-subtitle {
+  margin-top: 10rpx;
+  font-size: 28rpx;
+  color: #5f5a55;
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 26rpx;
+}
+
+.search-bar {
+  flex: 1;
+  height: 92rpx;
+  border-radius: 28rpx;
+  background: linear-gradient(135deg, #93a59d 0%, #adb8ac 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 22rpx;
+  box-sizing: border-box;
+}
+
+.search-icon {
+  width: 34rpx;
+  height: 34rpx;
+  border: 5rpx solid #ffffff;
+  border-radius: 50%;
+  position: relative;
+  margin-right: 18rpx;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.search-icon::after {
+  content: "";
+  position: absolute;
+  right: -12rpx;
+  bottom: -8rpx;
+  width: 16rpx;
+  height: 5rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+  transform: rotate(45deg);
+}
+
+.search-input {
+  flex: 1;
+  height: 92rpx;
+  font-size: 28rpx;
+  color: #ffffff;
+}
+
+.search-placeholder {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.service-shortcut {
+  width: 116rpx;
+  height: 92rpx;
+  border-radius: 28rpx;
+  background: linear-gradient(135deg, #6d8c82 0%, #56766d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-shortcut-icon {
+  width: 42rpx;
+  height: 42rpx;
+  border: 6rpx solid #ffffff;
+  border-radius: 50%;
+  position: relative;
+}
+
+.service-shortcut-icon::before,
+.service-shortcut-icon::after {
+  content: "";
+  position: absolute;
+  top: 10rpx;
+  width: 6rpx;
+  height: 20rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+}
+
+.service-shortcut-icon::before {
+  left: -14rpx;
+}
+
+.service-shortcut-icon::after {
+  right: -14rpx;
+}
+
+.banner-list {
+  margin-bottom: 26rpx;
+}
+
+.banner-card {
+  position: relative;
+  height: 318rpx;
+}
+
+.banner-side {
+  position: absolute;
+  top: 40rpx;
+  width: 220rpx;
+  height: 240rpx;
+  border-radius: 120rpx;
+  background: rgba(232, 231, 214, 0.68);
+}
+
+.banner-side-left {
+  left: 0;
+}
+
+.banner-side-right {
+  right: 0;
+}
+
+.banner-main {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 560rpx;
+  height: 318rpx;
+  border-radius: 120rpx;
+  overflow: hidden;
+  background: #d7cfbf;
+  z-index: 2;
+}
+
+.banner-deco-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.category-scroll {
+  white-space: nowrap;
+  margin-bottom: 24rpx;
+}
+
+.category-list {
+  display: flex;
+  gap: 14rpx;
+}
+
+.category-item {
+  min-width: 96rpx;
+  padding: 16rpx 26rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.72);
+  color: #5f5a53;
+  font-size: 26rpx;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.category-item-active {
+  background: #6f8f88;
+  color: #ffffff;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+}
+
+.section-title {
+  font-size: 38rpx;
+  font-weight: 900;
+  color: #111111;
+}
+
+.section-more {
+  font-size: 24rpx;
+  color: #786f62;
+  font-weight: 700;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18rpx;
+}
+
+.product-card {
+  overflow: hidden;
+  border-radius: 34rpx;
+  background: rgba(247, 240, 226, 0.96);
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.24);
+}
+
+.product-cover {
+  position: relative;
+  height: 220rpx;
+  background: linear-gradient(180deg, #e9dfcb 0%, #d8c7a5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+.product-badge {
+  position: absolute;
+  left: 18rpx;
+  top: 18rpx;
+  min-width: 72rpx;
+  height: 36rpx;
+  padding: 0 14rpx;
+  border-radius: 18rpx;
+  background: rgba(55, 94, 84, 0.92);
+  color: #ffffff;
+  font-size: 20rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.product-image {
+  width: 250rpx;
+  height: 250rpx;
+}
+
+.product-ring {
+  width: 134rpx;
+  height: 134rpx;
+}
+
+.product-info {
+  padding: 20rpx 18rpx 20rpx;
+}
+
+.product-name {
+  font-size: 28rpx;
+  line-height: 1.4;
+  font-weight: 800;
+  color: #171717;
+  min-height: 78rpx;
+}
+
+.product-desc {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: #6d675d;
+  min-height: 66rpx;
+}
+
+.product-bottom {
+  margin-top: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.product-price-wrap {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-symbol {
+  font-size: 22rpx;
+  color: #1b1b1b;
+  font-weight: 700;
+  margin-right: 2rpx;
+}
+
+.product-price {
+  font-size: 40rpx;
+  line-height: 1;
+  color: #111111;
+  font-weight: 900;
+}
+
+.product-unit {
+  margin-left: 6rpx;
+  font-size: 20rpx;
+  color: #6c675f;
+}
+
+.buy-btn {
+  min-width: 116rpx;
+  height: 46rpx;
+  padding: 0 18rpx;
+  border-radius: 24rpx;
+  background: #375e54;
+  color: #ffffff;
+  font-size: 22rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-wrap {
+  margin-top: 40rpx;
+  padding: 60rpx 24rpx;
+  border-radius: 34rpx;
+  background: rgba(247, 240, 226, 0.96);
+  text-align: center;
+}
+
+.empty-title {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #171717;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 24rpx;
+  color: #7c7467;
+}

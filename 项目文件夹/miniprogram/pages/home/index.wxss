@@ -1,0 +1,182 @@
+/* 自定义顶部导航栏 */
+.custom-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background-color: #F8F5EE;
+  display: flex;
+  align-items: center;
+  padding-left: 30rpx;
+  box-sizing: border-box;
+}
+.nav-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 页面底层配置 (这里是修复核心！) */
+.page-container {
+  min-height: 100vh;
+  padding: 30rpx;
+  /* 核心修复：把底部安全垫直接加在真实的底层容器上，140rpx 可以让内容多露出来一点，防止被遮挡 */
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom)); 
+  background-color: #F8F5EE; 
+  box-sizing: border-box;
+}
+
+/* =========================================
+   卡片基础样式 (必须有这段，否则全白屏)
+   ========================================= */
+.card-container {
+  background-color: #ffffff; 
+  border-radius: 30rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 8rpx 20rpx rgba(0,0,0,0.04); 
+  box-sizing: border-box;
+}
+.card-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10rpx; 
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.data-display {
+  margin-top: 15rpx;
+}
+.value {
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #333;
+}
+.unit {
+  font-size: 24rpx;
+  color: #888;
+  margin-left: 8rpx;
+}
+
+/* 第一层：Header */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40rpx;
+}
+.greeting-box {
+  flex: 1; 
+  margin-right: 20rpx;
+}
+.title {
+  font-size: 60rpx;
+  font-weight: bold;
+  color: #333;
+}
+.ai-insight {
+  margin-top: 15rpx;
+  display: flex;
+  align-items: flex-start; 
+  background: rgba(255,255,255,0.7);
+  padding: 20rpx;
+  border-radius: 20rpx;
+  box-sizing: border-box;
+}
+.insight-text {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.5;
+  margin-right: 15rpx;
+  flex: 1; 
+}
+.device-box {
+  width: 100rpx;
+  height: 100rpx;
+  flex-shrink: 0; 
+  background-color: #eee; 
+  border-radius: 50%;
+}
+.ring-img {
+  width: 100%;
+  height: 100%;
+}
+
+/* 第二层：日历 */
+.date-scroll {
+  width: 100%;
+  margin-bottom: 30rpx;
+}
+.date-row {
+  display: flex;
+  white-space: nowrap;
+}
+.date-text {
+  display: inline-block;
+  padding: 12rpx 28rpx;
+  margin-right: 20rpx;
+  border-radius: 40rpx;
+  background-color: #fff;
+  font-size: 28rpx;
+  color: #666;
+  box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.02);
+}
+.date-text.active {
+  background-color: #2F4F4F; 
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 注意：之前的 .container 已经被删除，合并到了 .page-container 中 */
+
+/* 第三层：血压 Canvas 容器 */
+.bp-card {
+  width: 100%;
+}
+.canvas-container {
+  width: 100%;
+  height: 400rpx; 
+  position: relative;
+  background-color: #fcfcfc; 
+  border-radius: 16rpx;
+}
+.f2-canvas {
+  width: 100%;
+  height: 100%;
+  display: block; 
+}
+
+/* 第四层：运动与睡眠双拼 */
+.quick-glance-row {
+  display: flex;
+  justify-content: space-between;
+}
+.half-card {
+  width: 48%;
+}
+
+/* 第五层：其他数据宫格 */
+.section-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+.other-data-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.mini-card {
+  width: 48%; 
+  margin-bottom: 25rpx;
+  padding: 25rpx;
+}

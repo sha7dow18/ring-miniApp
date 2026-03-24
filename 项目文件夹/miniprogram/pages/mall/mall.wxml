@@ -1,0 +1,115 @@
+<view class="mall-page">
+  <view class="mall-nav">
+    <view class="mall-nav-placeholder"></view>
+    <view class="mall-nav-title">Aita商城</view>
+    <view class="mall-nav-placeholder"></view>
+  </view>
+
+  <view class="mall-header">
+    <view class="mall-title">获取您的专属</view>
+    <view class="mall-title mall-title-large">健康补剂</view>
+    <view class="mall-subtitle">守护您的健康！</view>
+  </view>
+
+  <view class="search-row">
+    <view class="search-bar">
+      <view class="search-icon"></view>
+      <input
+        class="search-input"
+        placeholder="搜索"
+        placeholder-class="search-placeholder"
+        value="{{searchValue}}"
+        bindinput="onInput"
+      />
+    </view>
+    <view class="service-shortcut">
+      <view class="service-shortcut-icon"></view>
+    </view>
+  </view>
+
+  <view class="banner-list">
+    <view class="banner-card" wx:for="{{bannerList}}" wx:key="id">
+      <view class="banner-side banner-side-left"></view>
+      <view class="banner-side banner-side-right"></view>
+
+      <view class="banner-main">
+        <image
+          class="banner-deco-image"
+          src="../../assets/images/mall-banner-deco.png"
+          mode="aspectFill"
+        />
+      </view>
+    </view>
+  </view>
+
+  <scroll-view class="category-scroll" scroll-x="true" show-scrollbar="false">
+    <view class="category-list">
+      <view
+        wx:for="{{categories}}"
+        wx:key="*this"
+        class="category-item {{currentCategory === item ? 'category-item-active' : ''}}"
+        data-name="{{item}}"
+        bindtap="onTapCategory"
+      >
+        {{item}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="section-header">
+    <view class="section-title">精选商品</view>
+    <view class="section-more" bindtap="onToggleMore">
+      {{showAllProducts ? '收起' : '更多'}}
+    </view>
+  </view>
+
+  <view wx:if="{{productList.length > 0}}" class="product-grid">
+    <view class="product-card" wx:for="{{productList}}" wx:key="id">
+      <view class="product-cover">
+        <view class="product-badge">{{item.badge}}</view>
+
+        <block wx:if="{{item.image}}">
+          <image
+            class="product-image"
+            src="{{item.image}}"
+            mode="aspectFit"
+          />
+        </block>
+
+        <block wx:else>
+          <image
+            class="product-ring"
+            src="../../assets/images/ring-home.png"
+            mode="aspectFit"
+          />
+        </block>
+      </view>
+
+      <view class="product-info">
+        <view class="product-name">{{item.name}}</view>
+        <view class="product-desc">{{item.desc}}</view>
+
+        <view class="product-bottom">
+          <view class="product-price-wrap">
+            <text class="price-symbol">¥</text>
+            <text class="product-price">{{item.price}}</text>
+            <text class="product-unit">{{item.unit}}</text>
+          </view>
+          <view
+            class="buy-btn"
+            data-link="{{item.taobaoLink}}"
+            data-name="{{item.name}}"
+            bindtap="onBuyProduct"
+          >
+            立即购买
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty-wrap">
+    <view class="empty-title">未找到相关商品</view>
+    <view class="empty-desc">请换个关键词或分类试试</view>
+  </view>
+</view>

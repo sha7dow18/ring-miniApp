@@ -1,0 +1,42 @@
+<view class="chat-page">
+  <scroll-view class="chat-list" scroll-y="true" scroll-into-view="{{scrollToId}}" scroll-with-animation>
+    <block wx:for="{{messageList}}" wx:key="id">
+      <view class="msg-row {{item.role === 'user' ? 'msg-right' : 'msg-left'}}" id="msg-{{item.id}}">
+        <view class="avatar ai-avatar" wx:if="{{item.role === 'ai'}}">AI</view>
+        
+        <view class="bubble {{item.type === 'image' ? 'img-bubble' : ''}}">
+          <text wx:if="{{item.type === 'text'}}">{{item.content}}</text>
+          <image wx:if="{{item.type === 'image'}}" src="{{item.content}}" mode="widthFix" class="chat-img"></image>
+        </view>
+
+        <view class="avatar user-avatar" wx:if="{{item.role === 'user'}}">我</view>
+      </view>
+    </block>
+    <view class="bottom-padding"></view>
+  </scroll-view>
+
+  <view class="action-bar">
+    <van-icon name="{{isKeyboard ? 'audio' : 'edit'}}" size="28px" color="#333" class="icon-btn" bindtap="toggleInputMode" />
+    
+    <input wx:if="{{isKeyboard}}" 
+           class="text-input" 
+           value="{{inputText}}" 
+           bindinput="onInput" 
+           confirm-type="send" 
+           bindconfirm="sendText" 
+           placeholder="描述您的症状..." />
+           
+    <view wx:else 
+          class="voice-btn" 
+          bindtouchstart="handleTouchStart" 
+          bindtouchend="handleTouchEnd"
+          hover-class="voice-btn-active">
+      <text>按住 说话</text>
+    </view>
+    
+    <view class="action-right">
+      <view wx:if="{{isKeyboard && inputText.length > 0}}" class="send-btn" bindtap="sendText">发送</view>
+      <van-icon wx:else name="add-o" size="28px" color="#333" class="icon-btn" bindtap="chooseImage" />
+    </view>
+  </view>
+</view>

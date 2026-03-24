@@ -1,0 +1,73 @@
+<view class="custom-nav" style="height: {{navHeight}}px; padding-top: {{statusBarHeight}}px;">
+  <text class="nav-title">Aita健康</text>
+</view>
+
+<view class="page-container" style="background-color: {{healthData.themeColor}}10; padding-top: {{navHeight + 10}}px;" wx:if="{{healthData}}">
+  
+  <view class="header-section">
+    <view class="greeting-box">
+      <text class="title">早上好，</text>
+      <view class="ai-insight" bindtap="playTTS">
+        <text class="insight-text">{{healthData.summary || '今日数据解析中...'}}</text>
+        <van-icon name="volume-o" size="40rpx" color="#333" class="tts-icon" />
+      </view>
+    </view>
+    <view class="device-box">
+      <image class="ring-img" src="/assets/images/ring-mock.png" mode="aspectFit" />
+    </view>
+  </view>
+
+  <scroll-view class="date-scroll" scroll-x="true">
+    <view class="date-row">
+      <text class="date-text">24 周一</text>
+      <text class="date-text active">25 周二</text>
+      <text class="date-text">26 周三</text>
+      <text class="date-text">27 周四</text>
+    </view>
+  </scroll-view>
+
+  <view class="card-container bp-card">
+    <view class="card-header">
+      <text class="card-title">血压</text>
+      <view class="tag-btn">月度 <van-icon name="arrow-down" /></view>
+    </view>
+    <view class="canvas-container">
+    </view>
+  </view>
+
+  <view class="quick-glance-row">
+    <view class="card-container half-card">
+      <text class="card-title"><van-icon name="fire-o" color="#ff9900"/> 运动</text>
+      <view class="data-display">
+        <text class="value">4562</text><text class="unit">/6000步</text>
+      </view>
+    </view>
+    <view class="card-container half-card">
+      <text class="card-title"><van-icon name="closed-eye" color="#4b83ce"/> 睡眠</text>
+      <view class="data-display">
+        <text class="value">7</text><text class="unit">时</text>
+        <text class="value">58</text><text class="unit">分</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title">其他数据</view>
+  <view class="other-data-grid">
+    <view class="card-container mini-card">
+      <view class="card-title"><van-icon name="hot-o" color="#fa5151"/> 体温</view>
+      <view class="data-display"><text class="value">36.8</text><text class="unit">℃</text></view>
+    </view>
+    <view class="card-container mini-card">
+      <view class="card-title"><van-icon name="like-o" color="#ee0a24"/> 心率</view>
+      <view class="data-display"><text class="value">{{healthData.metrics.heartRate.value}}</text><text class="unit">次/分</text></view>
+    </view>
+    <view class="card-container mini-card">
+      <view class="card-title"><van-icon name="gem-o" color="#1989fa"/> 血氧</view>
+      <view class="data-display"><text class="value">{{healthData.metrics.bloodOxygen.value}}</text><text class="unit">%</text></view>
+    </view>
+    <view class="card-container mini-card">
+      <view class="card-title"><van-icon name="smile-o" color="#07c160"/> 压力</view>
+      <view class="data-display"><text class="value">{{healthData.metrics.stress.value}}</text><text class="unit">{{healthData.metrics.stress.unit}}</text></view>
+    </view>
+  </view>
+</view>

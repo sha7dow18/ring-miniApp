@@ -1,0 +1,57 @@
+page {
+  background-color: #F6F6F8;
+}
+
+.info-container {
+  padding: 40rpx 0;
+}
+
+/* 头像区 */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50rpx;
+}
+.avatar-img {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+}
+.edit-hint {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 覆盖 Vant 组件的外边距 */
+.cell-group-custom {
+  margin-bottom: 40rpx !important;
+}
+
+.section-title {
+  font-size: 26rpx;
+  color: #999;
+  margin: 0 30rpx 20rpx;
+  padding-left: 30rpx;
+}
+
+/* 退出按钮 */
+.logout-btn {
+  width: 85%;
+  margin: 60rpx auto 0;
+  height: 90rpx;
+  line-height: 90rpx;
+  text-align: center;
+  background-color: #fff;
+  color: #ff4d4f; 
+  border-radius: 45rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.03);
+}
+.logout-btn:active {
+  background-color: #f0f0f0;
+}

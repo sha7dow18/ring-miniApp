@@ -1,0 +1,87 @@
+<view class="constitution-page">
+  <view class="nav-bar">
+    <view class="nav-left">&lt;</view>
+    <view class="nav-title">Aita健康</view>
+    <view class="nav-right">
+      <view class="nav-capsule">
+        <view class="nav-dot-group">
+          <view class="nav-dot"></view>
+          <view class="nav-dot"></view>
+          <view class="nav-dot"></view>
+        </view>
+        <view class="nav-divider"></view>
+        <view class="nav-circle"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main-card">
+    <view class="test-entry">
+      <view class="test-title">AI体质辨识测试</view>
+      <view class="test-subtitle">快来测一测您的体质类型，获取专业建议</view>
+      <view class="test-btn" bindtap="onStartTest">
+        <text>点击进入测试</text>
+        <text class="test-btn-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="section-title result-section-title">上次检测结果为：</view>
+
+    <view class="result-visual">
+      <view class="result-text-block">
+        <view class="result-type">{{resultTitle}}</view>
+        <view class="result-percent">{{resultPercent}}</view>
+      </view>
+
+      <image
+        class="result-arc"
+        src="../../assets/images/constitution-arc.png"
+        mode="aspectFit"
+      />
+
+      <view class="tag-pill tag-pill-light">360°</view>
+
+      <image
+        class="result-body"
+        src="../../assets/images/constitution-body.png"
+        mode="aspectFit"
+      />
+
+      <view class="radar-wrap">
+        <view class="radar-chart">
+          <view class="radar-line radar-line-h"></view>
+          <view class="radar-line radar-line-v"></view>
+          <view class="radar-line radar-line-d1"></view>
+          <view class="radar-line radar-line-d2"></view>
+
+          <view class="radar-shape"></view>
+
+          <text class="radar-label radar-label-top">阳虚体质</text>
+          <text class="radar-label radar-label-left">痰湿体质</text>
+          <text class="radar-label radar-label-right">湿热体质</text>
+          <text class="radar-label radar-label-bottom">气虚体质</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-title tongue-section-title">舌面采集分析：</view>
+
+    <view class="tongue-analysis">
+      <view class="tongue-item tongue-item-top">
+        <image class="tongue-image" src="{{tongueList[0].image}}" mode="aspectFit" />
+      </view>
+
+      <view class="tongue-item tongue-item-left">
+        <image class="tongue-image" src="{{tongueList[1].image}}" mode="aspectFit" />
+      </view>
+
+      <view class="tongue-item tongue-item-right">
+        <image class="tongue-image" src="{{tongueList[2].image}}" mode="aspectFit" />
+      </view>
+
+      <view class="tongue-item tongue-item-bottom">
+        <image class="tongue-image" src="{{tongueList[3].image}}" mode="aspectFit" />
+      </view>
+    </view>
+  </view>
+</view>

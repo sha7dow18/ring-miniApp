@@ -1,0 +1,48 @@
+<view class="dashboard-bg">
+  <view class="body-outline-bg"></view>
+
+  <view class="content-wrapper">
+    <view class="intro-card">
+      <view class="card-title">AI体质辨识测试</view>
+      <view class="card-desc">快来测一测您的体质类型，获取专业建议</view>
+      <view class="start-btn" bindtap="goToChatTest">
+        点击进入测试 <van-icon name="arrow" size="14px" />
+      </view>
+    </view>
+
+    <view class="result-section">
+      <view class="section-title">上次检测结果为：</view>
+      <view class="highlight-row">
+        <view class="main-result">
+          <text class="constitution">气虚体质</text>
+          <text class="percentage">100%</text>
+        </view>
+        <view class="badge-360">360°</view>
+      </view>
+
+      <view class="radar-placeholder">
+        <view wx:if="{{isAnalyzing}}" class="loading-state">
+          <van-icon name="clock-o" size="24px" color="#999" />
+          <text>大模型正在生成体质图谱...</text>
+        </view>
+        
+        <radar-chart 
+          wx:else 
+          chartData="{{radarData}}" 
+          style="width: 100%; height: 100%;">
+        </radar-chart>
+      </view>
+    </view>
+
+    <view class="tongue-section">
+      <view class="section-title">舌面采集分析：</view>
+      <view class="petals-container">
+        <view class="petal petal-top"><text>淡红舌</text></view>
+        <view class="petal petal-left"><text>薄苔</text></view>
+        <view class="petal petal-right"><text>白苔</text></view>
+        <view class="petal petal-bottom"><text>胖大舌</text></view>
+        <view class="petal-center"></view>
+      </view>
+    </view>
+  </view>
+</view>

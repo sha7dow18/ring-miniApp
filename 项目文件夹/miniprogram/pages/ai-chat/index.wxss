@@ -1,0 +1,26 @@
+page { height: 100%; background-color: #EDEDED; }
+.chat-page { display: flex; flex-direction: column; height: 100vh; }
+.chat-list { flex: 1; padding: 30rpx 20rpx; box-sizing: border-box; overflow: hidden; }
+.msg-row { display: flex; margin-bottom: 40rpx; align-items: flex-start; }
+.msg-left { flex-direction: row; }
+.msg-right { flex-direction: row; justify-content: flex-end; }
+
+.avatar { width: 80rpx; height: 80rpx; border-radius: 12rpx; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 28rpx; flex-shrink: 0; }
+.ai-avatar { background-color: #4b83ce; color: #fff; margin-right: 20rpx; }
+.user-avatar { background-color: #c96434; color: #fff; margin-left: 20rpx; }
+
+.bubble { max-width: 65%; padding: 20rpx 30rpx; border-radius: 16rpx; font-size: 32rpx; line-height: 1.5; word-wrap: break-word; box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.02); }
+.img-bubble { padding: 0; background-color: transparent !important; overflow: hidden; } /* 图片气泡去除内边距 */
+.chat-img { width: 200rpx; border-radius: 16rpx; display: block; }
+.msg-left .bubble { background-color: #ffffff; color: #333; }
+.msg-right .bubble { background-color: #95ec69; color: #333; }
+.bottom-padding { height: 60rpx; }
+
+/* 操作栏样式 */
+.action-bar { min-height: 110rpx; background-color: #F7F7F7; border-top: 1px solid #E5E5E5; display: flex; align-items: center; padding: 15rpx 20rpx; padding-bottom: calc(15rpx + env(safe-area-inset-bottom)); flex-shrink: 0; }
+.icon-btn { margin: 0 15rpx; display: flex; align-items: center; }
+.voice-btn { flex: 1; height: 80rpx; background-color: #FFFFFF; border-radius: 12rpx; display: flex; justify-content: center; align-items: center; font-size: 32rpx; font-weight: bold; color: #333; margin: 0 10rpx; }
+.voice-btn-active { background-color: #C8C8C8; }
+.text-input { flex: 1; height: 80rpx; background-color: #FFFFFF; border-radius: 12rpx; padding: 0 20rpx; font-size: 30rpx; margin: 0 10rpx; }
+.action-right { width: 100rpx; display: flex; justify-content: center; align-items: center; }
+.send-btn { background-color: #07c160; color: #fff; font-size: 28rpx; padding: 12rpx 24rpx; border-radius: 8rpx; }

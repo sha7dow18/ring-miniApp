@@ -1,0 +1,17 @@
+<view class="service-page">
+  <view class="service-nav">
+    <view class="service-nav-placeholder"></view>
+    <view class="service-nav-title">Aita服务</view>
+    <view class="service-nav-placeholder"></view>
+  </view>
+
+  <view class="service-hero">
+    <view class="service-title">服务</view>
+    <view class="service-subtitle">服务页已独立接入 tab 路由</view>
+  </view>
+
+  <view class="service-card">
+    <view class="service-card-title">当前状态</view>
+    <view class="service-card-desc">这里已经是独立的“服务”页面，后面你可以继续让我按 demo 往下复刻。</view>
+  </view>
+</view>

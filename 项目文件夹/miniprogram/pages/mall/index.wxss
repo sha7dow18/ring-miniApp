@@ -1,0 +1,132 @@
+/* 页面底层配置，采用清爽的淡灰背景 */
+page {
+  background-color: #F6F6F8; 
+}
+
+.mall-container {
+  padding: 30rpx;
+  /* 必须保留！防止底部商品被自定义 TabBar 遮挡 */
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+/* 1. 轮播横窗 */
+.banner-swiper {
+  width: 100%;
+  height: 300rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+  margin-bottom: 40rpx;
+}
+.banner-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+}
+.banner-text { font-size: 40rpx; font-weight: bold; margin-bottom: 10rpx;}
+.banner-sub { font-size: 24rpx; opacity: 0.8; }
+
+/* 2. 工具栏 */
+.toolbar-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+.search-box {
+  flex: 1;
+  height: 70rpx;
+  background-color: #fff;
+  border-radius: 35rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  margin-right: 30rpx;
+}
+.search-placeholder { font-size: 26rpx; color: #999; margin-left: 10rpx; }
+.sort-box {
+  display: flex;
+  align-items: center;
+  gap: 30rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+.sort-item.active { font-weight: bold; color: #333; }
+
+/* 3. 横向滚动胶囊 */
+.category-scroll {
+  width: 100%;
+  height: 70rpx;
+  margin-bottom: 30rpx;
+}
+.category-list {
+  display: flex;
+  white-space: nowrap;
+  padding-bottom: 10rpx; /* 给阴影留空间 */
+}
+.capsule-item {
+  display: inline-block;
+  padding: 10rpx 36rpx;
+  background-color: #fff;
+  border-radius: 999rpx; /* 胶囊形状 */
+  font-size: 28rpx;
+  color: #666;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+}
+/* 选中的胶囊变成黑色底色 */
+.capsule-item.active {
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 4. 双列卡片流 */
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.product-card {
+  width: 48%; /* 留出 4% 作为中间间距 */
+  background-color: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+}
+.p-img-box {
+  width: 100%;
+  height: 260rpx; /* 正方形偏一点长方形的比例 */
+}
+.p-info {
+  padding: 20rpx;
+}
+.p-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 15rpx;
+}
+.p-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.p-price { font-size: 36rpx; font-weight: 900; color: #333; }
+.symbol { font-size: 24rpx; margin-right: 4rpx; font-weight: normal; }
+.cart-btn {
+  width: 50rpx; height: 50rpx;
+  border: 1px solid #eee;
+  border-radius: 50%;
+  display: flex; justify-content: center; align-items: center;
+}

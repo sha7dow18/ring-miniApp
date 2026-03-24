@@ -1,0 +1,36 @@
+<view class="info-container">
+  <view class="avatar-section" bindtap="changeAvatar">
+    <image class="avatar-img" src="{{userInfo.avatar || '/assets/tabbar/profile.png'}}" mode="aspectFill"></image>
+    <view class="edit-hint">点击更换头像</view>
+  </view>
+
+  <view class="section-title">基础信息</view>
+  <van-cell-group inset custom-class="cell-group-custom">
+    <van-cell title="昵称" value="{{userInfo.name}}" is-link bind:click="editInfo" data-field="name" data-title="修改昵称" />
+    <van-cell title="性别" value="{{userInfo.gender}}" is-link bind:click="editGender" />
+    <van-cell title="出生年月" value="{{userInfo.birthday}}" is-link bind:click="editBirthday" />
+  </van-cell-group>
+
+  <view class="section-title">健康档案</view>
+  <van-cell-group inset custom-class="cell-group-custom">
+    <van-cell title="过敏史" value="{{userInfo.allergies}}" is-link bind:click="editInfo" data-field="allergies" data-title="填写过敏史" />
+    <van-cell title="既往病史" value="{{userInfo.medicalHistory}}" is-link bind:click="editInfo" data-field="medicalHistory" data-title="填写既往病史" />
+  </van-cell-group>
+
+  <view class="section-title">服务与设备</view>
+  <van-cell-group inset custom-class="cell-group-custom">
+    <van-cell title="收货地址管理" is-link bind:click="manageAddress" />
+    <van-cell title="我的指环" value="{{deviceStatus}}" label="MAC: AA:BB:CC:DD:EE:FF" is-link bind:click="manageDevice" />
+  </van-cell-group>
+
+  <view class="section-title">账号安全</view>
+  <van-cell-group inset custom-class="cell-group-custom">
+    <van-cell title="手机号" value="{{userInfo.phone}}" is-link bind:click="bindPhone" />
+    <van-cell title="密码设置" is-link bind:click="setupPassword" />
+    <van-cell title="账号注销" is-link bind:click="cancelAccount" title-style="color: #999;" />
+  </van-cell-group>
+
+  <view class="logout-btn" bindtap="handleLogout">退出登录</view>
+  
+  <view style="height: 60rpx;"></view>
+</view>

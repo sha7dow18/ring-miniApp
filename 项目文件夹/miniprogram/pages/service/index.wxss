@@ -1,0 +1,119 @@
+page {
+  background-color: #F6F6F8;
+}
+
+.service-container {
+  padding: 30rpx;
+  /* 必须保留：底部防 TabBar 遮挡安全垫 */
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+/* 核心状态卡片 */
+.device-hero {
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 60rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.02);
+}
+.ring-mock-img {
+  width: 200rpx;
+  height: 200rpx;
+  background-color: #f9f9f9;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30rpx;
+  /* 如果有真的戒指图片，可以把 background 和 border-radius 去掉，换成 image */
+}
+.status-text {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+.status-sub {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 50rpx;
+  text-align: center;
+}
+.action-btn-wrap {
+  width: 85%;
+}
+
+/* 设备列表区 */
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-left: 10rpx;
+}
+.device-list {
+  margin-bottom: 40rpx;
+}
+.device-item {
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.02);
+  transition: all 0.2s;
+}
+.device-item:active {
+  background-color: #fcfcfc;
+  transform: scale(0.98);
+}
+.device-info {
+  display: flex;
+  flex-direction: column;
+}
+.d-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+.d-mac {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 帮助区 */
+.help-section {
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx 30rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.02);
+}
+.help-item {
+  margin-bottom: 35rpx;
+}
+.help-item:last-child {
+  margin-bottom: 0;
+}
+.h-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+.h-desc {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.6;
+  padding-left: 42rpx; /* 与文字对齐 */
+}
