@@ -1,0 +1,66 @@
+{
+  "pages": [
+    "pages/analysis/index",
+    "pages/records/index",
+    "pages/profile/index",
+    "pages/report/index",
+    "pages/pulse/index",
+    "pages/tizhi/index",
+    "pages/tizhi/history",
+    "pages/tizhi/detail",
+    "pages/tongue/index",
+    "pages/face/index",
+    "pages/device/index",
+    "pages/bletest/index",
+    "pages/spo2/index",
+    "pages/hrv/index",
+    "pages/temperature/index",
+    "pages/sleep/index",
+    "pages/stress/index",
+    "pages/history/index",
+    "pages/index/index",
+    "pages/example/index",
+    "pages/snconfig/index",
+    "pages/settings/index",
+    "pages/settings/device/index",
+    "pages/settings/targets/index",
+    "pages/settings/profile_edit/index",
+    "pages/settings/security/index"
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "中医AI健康助手",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#06B6D4",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/analysis/index",
+        "text": "体质辨识",
+        "iconPath": "images/icons/home.png",
+        "selectedIconPath": "images/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/records/index",
+        "text": "健康",
+        "iconPath": "images/icons/goods.png",
+        "selectedIconPath": "images/icons/goods-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "images/icons/usercenter.png",
+        "selectedIconPath": "images/icons/usercenter-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

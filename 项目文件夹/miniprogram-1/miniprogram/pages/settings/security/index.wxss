@@ -1,0 +1,5 @@
+.page { padding:16px; }
+.card { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:12px; margin-bottom:12px; }
+.title { font-weight:600; margin-bottom:6px; }
+.input { border:1px solid #eee; border-radius:6px; padding:6px 8px; margin:6px 0; }
+.danger { background:#ff6a00; color:#fff; }

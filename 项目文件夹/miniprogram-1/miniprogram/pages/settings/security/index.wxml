@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="card">
+    <view class="title">修改密码</view>
+    <input class="input" placeholder="旧密码" password="true" bindinput="onOldPwd"/>
+    <input class="input" placeholder="新密码" password="true" bindinput="onNewPwd"/>
+    <input class="input" placeholder="确认新密码" password="true" bindinput="onNewPwd2"/>
+    <button bindtap="changePwd">提交</button>
+  </view>
+  <view class="card">
+    <view class="title">修改手机号</view>
+    <input class="input" placeholder="手机号" bindinput="onPhone"/>
+    <input class="input" placeholder="验证码" bindinput="onCode"/>
+    <button bindtap="changePhone">提交</button>
+  </view>
+  <view class="card">
+    <view class="title">注销账号</view>
+    <button class="danger" bindtap="deactivate">注销账号</button>
+  </view>
+</view>

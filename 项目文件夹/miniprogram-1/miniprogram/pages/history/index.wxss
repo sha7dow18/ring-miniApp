@@ -1,0 +1,20 @@
+Page { background-color: #fff; }
+.page { padding: 16px; }
+.header { margin-bottom: 12px; }
+.title { font-size: 20px; font-weight: 600; }
+.subtitle { color: #888; font-size: 12px; }
+.item { background: #f7f7f7; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.item-title { font-weight: 600; }
+.item-value { color: #666; }
+.empty { color: #999; font-size: 12px; }
+Page { background:#F7F7F9; }
+.page { padding:16px; }
+.title { font-size:16px; font-weight:700; color:#111827; margin-bottom:8px; }
+.month-header { display:flex; justify-content:space-between; align-items:center; background:#fff; border-radius:12px; padding:12px 14px; box-shadow:0 4px 12px rgba(0,0,0,0.06); margin-bottom:8px; }
+.month-text { color:#111827; font-weight:600; }
+.chevron { color:#6B7280; }
+.month-list { background:#fff; border-radius:12px; padding:8px 12px; box-shadow:0 4px 12px rgba(0,0,0,0.04); margin-bottom:12px; }
+.item-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #F3F4F6; }
+.item-row:last-child { border-bottom:none; }
+.val { color:#111827; }
+.time { color:#6B7280; font-size:12px; }

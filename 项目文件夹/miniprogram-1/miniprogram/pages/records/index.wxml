@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="header">
+    <text class="title">健康</text>
+    <view class="date-row">
+      <picker mode="date" value="{{selectedDate}}" start="1900-01-01" end="{{today}}" bindchange="onDateChange">
+        <view class="date-btn">📅 {{selectedDate}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="cards">
+    <block wx:for="{{items}}" wx:key="type">
+      <view class="card {{isMeasuring?'measuring':''}}" bindtap="openDetail" data-type="{{item.type}}">
+        <view class="card-top">
+          <text class="card-title">{{item.name}}</text>
+        </view>
+        <canvas wx:if="{{!isMeasuring}}" class="spark" canvas-id="spark-{{item.type}}"></canvas>
+        <view class="card-bottom">
+          <text class="subtitle">{{item.value || item.brief}}</text>
+          <button wx:if="{{item.measurable}}" size="mini" class="measure-btn" catchtap="startMeasure" data-type="{{item.type}}">测量</button>
+        </view>
+      </view>
+    </block>
+  </view>
+  <view wx:if="{{isMeasuring}}" class="measure-mask">
+    <view class="circle">
+      <text class="circle-text">{{measureProgress}}%</text>
+      <text class="circle-tip">正在测量{{measuringLabel}}</text>
+      <text wx:if="{{measuredDone}}" class="circle-tip">{{resultText}}</text>
+      <view class="circle-actions">
+        <button size="mini" class="btn-cancel" bindtap="cancelMeasure">取消</button>
+        <button size="mini" class="btn-ok" wx:if="{{measuredDone}}" bindtap="confirmMeasureClose">确认</button>
+      </view>
+    </view>
+  </view>
+</view>

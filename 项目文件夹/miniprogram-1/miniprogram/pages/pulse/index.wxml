@@ -1,0 +1,53 @@
+<view class="page">
+  <view class="header">
+    <text class="title">脉率</text>
+    <picker mode="date" value="{{selectedDate}}" start="1900-01-01" end="{{today}}" bindchange="onDateChange">
+      <view class="date-btn">{{selectedDate}}</view>
+    </picker>
+  </view>
+  <view class="conn-row">
+    <view class="conn-dot {{connected?'green':'red'}}"></view>
+    <text class="conn-text">{{connected?'已连接':'未连接'}}</text>
+  </view>
+  <view class="summary">
+    <view class="big-row">
+      <text class="big-val">{{currentHR||'--'}} 次/分</text>
+      <text class="subtime">{{currentTime}}</text>
+    </view>
+    <view class="stats-row">
+      <view class="stat"><text class="stat-title">本日平均脉率</text><text class="stat-val">{{avgHR||'--'}} 次/分</text></view>
+      <view class="stat"><text class="stat-title">本日脉率范围</text><text class="stat-val">{{hrMin||'--'}}-{{hrMax||'--'}} 次/分</text></view>
+    </view>
+  </view>
+  <view class="chart-card">
+    <canvas class="chart" canvas-id="hr-chart"></canvas>
+    <view wx:if="{{!isMeasuring}}" class="chart-overlay" catchtouchstart="onChartTouch" catchtouchmove="onChartTouch" catchtouchend="onChartRelease"></view>
+    <view wx:if="{{!isMeasuring && tipVisible}}" class="tooltip">{{tipText}}</view>
+  </view>
+  <view class="about">
+    <text class="about-title">关于脉率</text>
+    <text class="about-text">脉率为每分钟脉搏跳动的次数，属“切诊”之要，中医常以脉象察阴阳、辨气血。一般静息脉率约60–100次/分，脉缓多见体质偏寒或训练有素，脉数常与热盛、烦躁或劳累相关。脉率受情志、饮食、作息影响而波动，宜结合自身状态综合判断，仅作日常自我观测参考，不替代医疗诊断。</text>
+  </view>
+  <view class="panel">
+    <button class="primary" bindtap="startMeasure">手动检测</button>
+    <button bindtap="viewHistory">查看历史</button>
+  </view>
+  <cover-view wx:if="{{isMeasuring}}" class="measure-mask">
+    <cover-view class="circle">
+      <cover-view class="circle-text">{{measureProgress}}%</cover-view>
+      <cover-view class="circle-tip">正在测量脉率</cover-view>
+      <cover-view class="btn-row">
+        <cover-view class="btn-cancel" bindtap="cancelMeasure">取消</cover-view>
+      </cover-view>
+    </cover-view>
+  </cover-view>
+  <cover-view wx:if="{{measuredDone}}" class="measure-mask">
+    <cover-view class="circle">
+      <cover-view class="circle-text">100%</cover-view>
+      <cover-view class="circle-tip">{{resultText}}</cover-view>
+      <cover-view class="btn-row">
+        <cover-view class="btn-cancel" bindtap="confirmMeasureClose">确认</cover-view>
+      </cover-view>
+    </cover-view>
+  </cover-view>
+</view>

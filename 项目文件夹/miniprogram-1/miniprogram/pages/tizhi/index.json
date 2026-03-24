@@ -1,0 +1,4 @@
+{
+  "navigationBarTitleText": "体质辨识",
+  "usingComponents": { "radar": "/components/radar/index", "clover": "/components/clover/index" }
+}

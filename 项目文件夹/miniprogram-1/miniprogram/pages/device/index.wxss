@@ -1,0 +1,6 @@
+Page { background: linear-gradient(180deg, #6EE7F0 0%, #FFFFFF 100%); }
+.page { padding: 16px; }
+.title { font-size: 20px; font-weight: 600; }
+.subtitle { color: #888; font-size: 12px; }
+.list-title { font-weight: 600; margin-bottom: 6px; }
+.connected-text { color:#111827; }

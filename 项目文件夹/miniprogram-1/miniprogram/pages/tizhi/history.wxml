@@ -1,0 +1,15 @@
+<view class="page">
+  <view class="header"><text class="title">历史记录</text></view>
+  <view class="list">
+    <block wx:for="{{items}}" wx:key="_id">
+      <view class="item" bindtap="openDetail" data-id="{{item._id}}">
+        <view class="row">
+          <text class="name">{{item.summary}}</text>
+          <text class="time">{{item.timeText}}</text>
+        </view>
+        <text class="summary">点击查看详情</text>
+      </view>
+    </block>
+    <view wx:if="{{!items||items.length===0}}" class="empty">暂无历史</view>
+  </view>
+</view>

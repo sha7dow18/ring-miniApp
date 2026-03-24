@@ -3,6 +3,7 @@
   <swiper class="banner-swiper" autoplay="true" circular="true" interval="3000" indicator-dots="true" indicator-active-color="#000">
     <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}">
       <view class="banner-box" style="background-color: {{item.color}};">
+        <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" style="position:absolute;left:0;top:0;width:100%;height:100%;border-radius:20rpx;" />
         <text class="banner-text">{{item.name}}</text>
         <text class="banner-sub">点击模拟购买验证</text>
       </view>
@@ -35,8 +36,10 @@
   </scroll-view>
 
   <view class="product-grid">
-    <view class="product-card" wx:for="{{products}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}">
-      <view class="p-img-box" style="background-color: {{item.color}};"></view>
+    <view class="product-card" wx:for="{{filteredProducts}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}">
+      <view class="p-img-box" style="background-color: {{item.color}};">
+        <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" style="width:100%;height:100%;border-radius:16rpx;" />
+      </view>
       <view class="p-info">
         <text class="p-title">{{item.name}}</text>
         <view class="p-bottom">

@@ -13,7 +13,7 @@
       </view>
     </view>
     <view class="device-box">
-      <image class="ring-img" src="/assets/images/ring-mock.png" mode="aspectFit" />
+      <image class="ring-img" src="/assets/images/ring-mock.svg" mode="aspectFit" />
     </view>
   </view>
 
@@ -39,14 +39,14 @@
     <view class="card-container half-card">
       <text class="card-title"><van-icon name="fire-o" color="#ff9900"/> 运动</text>
       <view class="data-display">
-        <text class="value">4562</text><text class="unit">/6000步</text>
+        <text class="value">{{sportSteps}}</text><text class="unit">/6000步</text>
       </view>
     </view>
     <view class="card-container half-card">
       <text class="card-title"><van-icon name="closed-eye" color="#4b83ce"/> 睡眠</text>
       <view class="data-display">
-        <text class="value">7</text><text class="unit">时</text>
-        <text class="value">58</text><text class="unit">分</text>
+        <text class="value">{{sleepHour}}</text><text class="unit">时</text>
+        <text class="value">{{sleepMinute}}</text><text class="unit">分</text>
       </view>
     </view>
   </view>
@@ -55,7 +55,7 @@
   <view class="other-data-grid">
     <view class="card-container mini-card">
       <view class="card-title"><van-icon name="hot-o" color="#fa5151"/> 体温</view>
-      <view class="data-display"><text class="value">36.8</text><text class="unit">℃</text></view>
+      <view class="data-display"><text class="value">{{bodyTemp}}</text><text class="unit">℃</text></view>
     </view>
     <view class="card-container mini-card">
       <view class="card-title"><van-icon name="like-o" color="#ee0a24"/> 心率</view>

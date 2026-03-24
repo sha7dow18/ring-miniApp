@@ -7,6 +7,7 @@
   <view class="user-info">
     <text class="user-name">{{isLogin ? userInfo.name : '未登录用户'}}</text>
     <text class="user-sub">{{isLogin ? '查看个人主页及健康档案' : '点击授权登录'}}</text>
+    <text class="user-sub">指环状态：{{ringStatus}}</text>
   </view>
   <van-icon name="arrow" color="#999" size="16px" />
 </view>

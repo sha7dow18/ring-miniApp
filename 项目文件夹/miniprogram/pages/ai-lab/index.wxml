@@ -4,18 +4,18 @@
   <view class="content-wrapper">
     <view class="intro-card">
       <view class="card-title">AI体质辨识测试</view>
-      <view class="card-desc">快来测一测您的体质类型，获取专业建议</view>
+      <view class="card-desc">{{isDeviceConnected ? '已连接指环，可开始体质检测' : '需先连接指环后才能进行体质检测'}}</view>
       <view class="start-btn" bindtap="goToChatTest">
-        点击进入测试 <van-icon name="arrow" size="14px" />
+        {{isDeviceConnected ? '点击进入测试' : '去服务页连接设备'}} <van-icon name="arrow" size="14px" />
       </view>
     </view>
 
     <view class="result-section">
       <view class="section-title">上次检测结果为：</view>
-      <view class="highlight-row">
+      <view class="highlight-row" wx:if="{{radarData.length}}">
         <view class="main-result">
-          <text class="constitution">气虚体质</text>
-          <text class="percentage">100%</text>
+          <text class="constitution">{{radarData[0].type}}</text>
+          <text class="percentage">{{radarData[0].score}}%</text>
         </view>
         <view class="badge-360">360°</view>
       </view>

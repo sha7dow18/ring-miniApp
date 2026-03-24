@@ -1,0 +1,81 @@
+<view class="page">
+  <view class="header">
+    <text class="title">体质辨识</text>
+  </view>
+  <view class="conn-row">
+    <view class="conn-dot {{connected?'green':'red'}}"></view>
+    <text class="conn-text">{{connected?'已连接':'未连接'}}</text>
+  </view>
+    <view class="steps">
+    <view class="progress"><text>步骤完成：{{stepStatus.pulseDone?'✓':'✗'}} 脉率 · {{stepStatus.faceDone?'✓':'✗'}} 面部 · {{stepStatus.tongueDone?'✓':'✗'}} 舌头</text></view>
+    <view class="step">
+      <text class="subtitle">步骤一：采集脉率</text>
+      <view class="panel">
+        <text class="metric">{{ heartrate>0 ? ('最新脉率：'+heartrate+'次/分（'+latestTimeText+'）') : '最新脉率：未采集' }}</text>
+        <text class="metric">平均脉率：{{avgHR||'--'}} 次/分</text>
+        <text class="metric">脉率范围：{{hrMin||'--'}}-{{hrMax||'--'}} 次/分</text>
+        <view class="row">
+          <button class="primary" bindtap="startPulse">开始采集</button>
+          <button bindtap="openPulseDetail">查看详情</button>
+        </view>
+      </view>
+      
+    </view>
+    <view class="step">
+      <text class="subtitle">步骤二：拍摄面部照片</text>
+      <view class="panel">
+        <image class="preview" mode="aspectFit" src="{{faceTempPath}}" wx:if="{{faceTempPath}}"></image>
+        <button class="primary" bindtap="pickFace">拍摄/上传面部照片</button>
+      </view>
+      
+    </view>
+    <view class="step">
+      <text class="subtitle">步骤三：拍摄舌头照片</text>
+      <view class="panel">
+        <image class="preview" mode="aspectFit" src="{{tongueTempPath}}" wx:if="{{tongueTempPath}}"></image>
+        <button class="primary" bindtap="pickTongue">拍摄/上传舌头照片</button>
+      </view>
+      
+    </view>
+    <view class="step">
+      <view class="panel">
+        <button class="primary" bindtap="uploadAndIdentify" loading="{{identifying}}" disabled="{{identifying||!canGenerate}}">开始辨识</button>
+      </view>
+      <view class="result-card" wx:if="{{lastResultId}}">
+        <view class="item" bindtap="openLastDetail">
+          <view class="row">
+            <text class="name">{{lastSummary||'体质结果'}}</text>
+            <text class="time">{{lastTimeText}}</text>
+          </view>
+          <text class="summary">点击查看详情</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view wx:if="{{cameraVisible}}" class="camera-modal">
+    <camera class="camera" device-position="front" flash="off"></camera>
+    <cover-image class="camera-mask" src="{{maskUrl}}" mode="aspectFit"></cover-image>
+    <cover-view class="cv-actions">
+      <cover-view class="cv-btn primary" bindtap="takePhoto">拍照</cover-view>
+      <cover-view class="cv-btn" bindtap="closeCamera">取消</cover-view>
+    </cover-view>
+  </view>
+  <cover-view wx:if="{{isMeasuring}}" class="measure-mask">
+    <cover-view class="circle">
+      <cover-view class="circle-text">{{measureProgress}}%</cover-view>
+      <cover-view class="circle-tip">正在测量脉率</cover-view>
+      <cover-view class="btn-row">
+        <cover-view class="btn-cancel" bindtap="cancelMeasure">取消</cover-view>
+      </cover-view>
+    </cover-view>
+  </cover-view>
+  <cover-view wx:if="{{measuredDone}}" class="measure-mask">
+    <cover-view class="circle">
+      <cover-view class="circle-text">100%</cover-view>
+      <cover-view class="circle-tip">{{resultText}}</cover-view>
+      <cover-view class="btn-row">
+        <cover-view class="btn-cancel" bindtap="confirmMeasureClose">确认</cover-view>
+      </cover-view>
+    </cover-view>
+  </cover-view>
+</view>

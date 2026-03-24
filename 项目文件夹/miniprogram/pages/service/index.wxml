@@ -3,21 +3,27 @@
   <view class="device-hero">
     <view class="ring-mock-img">
       <van-icon name="aim" size="60px" color="#07c160" wx:if="{{isSearching}}" />
+      <van-icon name="checked" size="60px" color="#07c160" wx:elif="{{isConnected}}" />
       <van-icon name="circle" size="60px" color="#ccc" wx:else />
     </view>
-    <view class="status-text">{{isSearching ? '正在搜索附近指环...' : '暂未绑定设备'}}</view>
-    <view class="status-sub">请确保手机蓝牙已开启，并保持指环电量充足</view>
+    <view class="status-text">
+      {{isSearching ? '正在搜索附近指环...' : (isConnected ? ('已连接: ' + connectedName) : '暂未绑定设备')}}
+    </view>
+    <view class="status-sub">{{isConnected ? '健康页和AI体质检测已可用' : '请确保手机蓝牙已开启，并保持指环电量充足'}}</view>
     
     <view class="action-btn-wrap">
-      <van-button type="primary" round block color="#07c160" bind:click="startSearch" loading="{{isSearching}}" loading-text="搜索中...">
+      <van-button wx:if="{{!isConnected}}" type="primary" round block color="#07c160" bind:click="startSearch" loading="{{isSearching}}" loading-text="搜索中...">
         {{isSearching ? '' : '搜索并绑定设备'}}
+      </van-button>
+      <van-button wx:else type="danger" round block bind:click="disconnectDevice">
+        断开当前设备
       </van-button>
     </view>
   </view>
 
   <view class="device-list" wx:if="{{deviceList.length > 0}}">
     <view class="section-title">发现可用设备</view>
-    <view class="device-item" wx:for="{{deviceList}}" wx:key="mac" bindtap="bindDevice" data-mac="{{item.mac}}">
+    <view class="device-item" wx:for="{{deviceList}}" wx:key="deviceId" bindtap="bindDevice" data-id="{{item.deviceId}}" data-name="{{item.name}}">
       <view class="device-info">
         <text class="d-name">{{item.name}}</text>
         <text class="d-mac">MAC: {{item.mac}}</text>

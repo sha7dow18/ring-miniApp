@@ -1,39 +1,74 @@
 Page({
   data: {
-    // 模拟登录状态
     isLogin: false,
     userInfo: {
-      name: 'Aita_用户',
+      name: '未登录用户',
       avatar: ''
-    }
+    },
+    ringStatus: '未连接'
   },
 
   onShow() {
-    // 核心代码：自定义 TabBar 页面同步高亮状态 (我的 页面索引为 4)
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 4 });
     }
+    this.refreshProfile();
+    this.fetchProfileFromCloud();
   },
 
-// 1. 点击头像/用户信息
-handleUserClick() {
-  if (!this.data.isLogin) {
-    wx.showLoading({ title: '唤起授权...' });
-    setTimeout(() => {
-      wx.hideLoading();
-      this.setData({
-        isLogin: true,
-        'userInfo.name': '李时珍的传人'
-      });
-      wx.showToast({ title: '登录成功', icon: 'success' });
-    }, 1000);
-  } else {
-    // 登录状态下，点击跳转到个人主页
-    wx.navigateTo({
-      url: '/pages/user-info/index'
+  refreshProfile() {
+    const store = require('../../utils/store.js');
+    const profile = store.getUserProfile();
+    const conn = store.getBleConn();
+    this.setData({
+      isLogin: !!(profile && profile.nickname && profile.nickname !== '未登录用户'),
+      userInfo: {
+        name: profile.nickname || '未登录用户',
+        avatar: profile.avatarUrl || ''
+      },
+      ringStatus: conn && conn.deviceId ? `已连接 ${conn.deviceName || ''}` : '未连接'
     });
-  }
-},
+  },
+
+  async fetchProfileFromCloud() {
+    try {
+      const api = require('../../services/api.js');
+      const res = await api.getUserProfile();
+      const p = res && res.profile;
+      if (!p) return;
+      const store = require('../../utils/store.js');
+      store.setUserProfile({
+        nickname: p.nickname || '未登录用户',
+        avatarUrl: p.avatarUrl || ''
+      });
+      this.refreshProfile();
+    } catch (_) {}
+  },
+
+  handleUserClick() {
+    if (!this.data.isLogin) {
+      wx.getUserProfile({
+        desc: '用于完善会员资料',
+        success: (res) => {
+          const store = require('../../utils/store.js');
+          const profile = {
+            nickname: res.userInfo.nickName || '微信用户',
+            avatarUrl: res.userInfo.avatarUrl || ''
+          };
+          store.setUserProfile(profile);
+          const api = require('../../services/api.js');
+          api.updateUserProfile(profile).catch(() => {});
+          this.refreshProfile();
+          wx.showToast({ title: '登录成功', icon: 'success' });
+        },
+        fail: () => {
+          wx.showToast({ title: '取消授权', icon: 'none' });
+        }
+      });
+      return;
+    }
+    wx.navigateTo({ url: '/pages/user-info/index' });
+  },
 
   // 2. 订单区域路由跳转
   goToOrders(e) {
@@ -52,6 +87,10 @@ handleUserClick() {
   // 3. 服务列表路由跳转
   handleService(e) {
     const action = e.currentTarget.dataset.action;
+    if (action === 'settings') {
+      wx.showToast({ title: `设备状态: ${this.data.ringStatus}`, icon: 'none' });
+      return;
+    }
     wx.showToast({ title: `功能[${action}]正在开发中`, icon: 'none' });
   },
 

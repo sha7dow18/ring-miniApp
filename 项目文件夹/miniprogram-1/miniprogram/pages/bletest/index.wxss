@@ -1,0 +1,18 @@
+.toolbar { display:flex; gap:10px; flex-wrap:wrap; }
+.btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+.form-row { display:flex; align-items:center; gap:10px; margin-top:8px; }
+.label { width:120rpx; color:#666; }
+.input { flex:1; border:1px solid #eee; border-radius:6rpx; padding:8rpx 12rpx; }
+.kv { display:flex; gap:10px; }
+.log { padding:6px 8px; font-size:12px; }
+.log.rx { color:#1a7f37; }
+.log.tx { color:#0b5ed7; }
+.action-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12rpx; margin-top:8px; }
+.action-grid button { width:100%; padding:14rpx 10rpx; }
+.action-section { margin-top:10rpx; }
+.section-title { font-size:28rpx; font-weight:500; color:#333; margin:6rpx 0; }
+.
+.result-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
+.result-item { display:flex; justify-content:space-between; padding:8px 10px; border:1px solid #f0f0f0; border-radius:8rpx; background:#fff; }
+.result-item .label { color:#666; }
+.result-item .value { font-weight:600; }

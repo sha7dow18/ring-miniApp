@@ -1,0 +1,11 @@
+<view class="page">
+  <view class="header">
+    <text class="title">睡眠</text>
+    <text class="subtitle">同步设备睡眠数据或开始记录</text>
+  </view>
+  <view class="panel">
+    <button class="primary" bindtap="startMeasure">开始记录</button>
+    <button bindtap="viewHistory">查看历史</button>
+  </view>
+  <view class="result">最近一晚睡眠：-- 小时</view>
+</view>

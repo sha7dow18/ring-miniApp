@@ -1,0 +1,33 @@
+<view class="page">
+  <view class="hero" bindtap="onHeroTap">
+    <view class="hero-card">
+      <image class="avatar" src="{{avatarUrl||'/images/avatar.png'}}" mode="aspectFill"></image>
+      <view class="hero-info">
+        <text class="name">{{loggedIn?nickname:'未登录'}}</text>
+        <text class="days">{{loggedIn?('陪伴您 '+companionshipDays+' 天'):'点击登录'}}</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="device-card" bindtap="onDeviceCardTap">
+    <image class="ring" src="{{ringImageUrl}}" style="opacity:{{(connected||connecting)?1:0.35}}" mode="aspectFit" binderror="onRingError"></image>
+    <view class="device-info">
+      <view class="row">
+        <text class="device-name">{{deviceName||'暂无设备'}}</text>
+        <text class="plus" wx:if="{{!connected}}">+</text>
+      </view>
+      <text class="device-status">设备状态：{{deviceStatus}}</text>
+      <text class="device-battery">{{batteryText}}</text>
+    </view>
+  </view>
+
+  <view class="list-card">
+    <view class="cell" bindtap="goFeedback"><text class="cell-title">问题反馈</text><text class="cell-arrow">›</text></view>
+    <view class="cell" bindtap="goManual"><text class="cell-title">使用手册</text><text class="cell-arrow">›</text></view>
+    <view class="cell" bindtap="goFAQ"><text class="cell-title">常见问题</text><text class="cell-arrow">›</text></view>
+    <view class="cell" bindtap="goUpdate"><text class="cell-title">版本更新</text><text class="cell-arrow">›</text></view>
+    <view class="cell" bindtap="goAbout"><text class="cell-title">关于我们</text><text class="cell-arrow">›</text></view>
+    <view class="cell" bindtap="goSync"><text class="cell-title">数据同步</text><text class="cell-arrow">›</text></view>
+  </view>
+</view>
