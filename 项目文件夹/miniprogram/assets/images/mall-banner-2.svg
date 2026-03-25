@@ -1,11 +1,0 @@
-<svg width="1200" height="420" viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#FFF2E6"/>
-      <stop offset="100%" stop-color="#F9DEC9"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#bg2)"/>
-  <text x="80" y="180" font-size="64" fill="#a35b1c">PöyàeB</text>
-  <text x="80" y="250" font-size="34" fill="#935c2e">%{eE9„a b¶</text>
-</svg>
