@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+miniprogram_npm/
+package-lock.json
+
+# Build output
+*.js.map
+
+# IDE & Editor
+.idea/
+.vscode/
+.trae/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# WeChat DevTools
+project.private.config.json
+
+# OS
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.*
