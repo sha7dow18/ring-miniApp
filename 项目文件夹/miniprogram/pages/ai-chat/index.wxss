@@ -1,26 +1,24 @@
-page { height: 100%; background-color: #EDEDED; }
-.chat-page { display: flex; flex-direction: column; height: 100vh; }
-.chat-list { flex: 1; padding: 30rpx 20rpx; box-sizing: border-box; overflow: hidden; }
-.msg-row { display: flex; margin-bottom: 40rpx; align-items: flex-start; }
-.msg-left { flex-direction: row; }
-.msg-right { flex-direction: row; justify-content: flex-end; }
-
-.avatar { width: 80rpx; height: 80rpx; border-radius: 12rpx; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 28rpx; flex-shrink: 0; }
-.ai-avatar { background-color: #4b83ce; color: #fff; margin-right: 20rpx; }
-.user-avatar { background-color: #c96434; color: #fff; margin-left: 20rpx; }
-
-.bubble { max-width: 65%; padding: 20rpx 30rpx; border-radius: 16rpx; font-size: 32rpx; line-height: 1.5; word-wrap: break-word; box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.02); }
-.img-bubble { padding: 0; background-color: transparent !important; overflow: hidden; } /* 图片气泡去除内边距 */
-.chat-img { width: 200rpx; border-radius: 16rpx; display: block; }
-.msg-left .bubble { background-color: #ffffff; color: #333; }
-.msg-right .bubble { background-color: #95ec69; color: #333; }
-.bottom-padding { height: 60rpx; }
-
-/* 操作栏样式 */
-.action-bar { min-height: 110rpx; background-color: #F7F7F7; border-top: 1px solid #E5E5E5; display: flex; align-items: center; padding: 15rpx 20rpx; padding-bottom: calc(15rpx + env(safe-area-inset-bottom)); flex-shrink: 0; }
-.icon-btn { margin: 0 15rpx; display: flex; align-items: center; }
-.voice-btn { flex: 1; height: 80rpx; background-color: #FFFFFF; border-radius: 12rpx; display: flex; justify-content: center; align-items: center; font-size: 32rpx; font-weight: bold; color: #333; margin: 0 10rpx; }
-.voice-btn-active { background-color: #C8C8C8; }
-.text-input { flex: 1; height: 80rpx; background-color: #FFFFFF; border-radius: 12rpx; padding: 0 20rpx; font-size: 30rpx; margin: 0 10rpx; }
-.action-right { width: 100rpx; display: flex; justify-content: center; align-items: center; }
-.send-btn { background-color: #07c160; color: #fff; font-size: 28rpx; padding: 12rpx 24rpx; border-radius: 8rpx; }
+page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
+.chat-page{ min-height:100vh; padding:22rpx; box-sizing:border-box; }
+.gate-card,.chat-top,.quick-row,.chat-list,.input-bar{ background:#f8f2e8; border-radius:24rpx; box-shadow:0 8rpx 18rpx rgba(46,56,50,.08); }
+.gate-card{ margin-top:120rpx; padding:26rpx; }
+.gate-title{ color:#23342e; font-size:34rpx; font-weight:700; }
+.gate-desc{ margin:10rpx 0 16rpx; color:#727a75; font-size:23rpx; line-height:1.7; }
+.capsule{ display:inline-block; background:#2f4a42; color:#f6eee2; border-radius:999rpx; padding:13rpx 24rpx; font-size:22rpx; }
+.chat-main{ height:calc(100vh - 44rpx); display:flex; flex-direction:column; }
+.chat-top{ padding:22rpx; margin-bottom:12rpx; }
+.chat-title{ color:#1f2d28; font-size:30rpx; font-weight:700; }
+.chat-tip{ color:#6f7772; font-size:22rpx; margin:8rpx 0 10rpx; }
+.clear{ display:inline-block; border-radius:999rpx; background:#ebdfcf; color:#635946; padding:8rpx 14rpx; font-size:21rpx; }
+.quick-row{ padding:14rpx; margin-bottom:12rpx; display:flex; flex-wrap:wrap; gap:10rpx; }
+.quick-item{ background:#ece2d4; color:#304a42; border-radius:999rpx; font-size:22rpx; padding:10rpx 14rpx; }
+.chat-list{ flex:1; padding:16rpx; margin-bottom:12rpx; box-sizing:border-box; }
+.msg-row{ display:flex; margin-bottom:14rpx; }
+.msg-row.left{ justify-content:flex-start; }
+.msg-row.right{ justify-content:flex-end; }
+.bubble{ max-width:78%; border-radius:18rpx; padding:16rpx 18rpx; font-size:24rpx; line-height:1.6; }
+.ai-bubble{ background:#efe6d8; color:#32423c; }
+.user-bubble{ background:#3f5e54; color:#f8f2e8; }
+.input-bar{ padding:14rpx; display:flex; gap:10rpx; align-items:center; padding-bottom:calc(14rpx + env(safe-area-inset-bottom)); }
+.text-input{ flex:1; height:72rpx; background:#fff9f0; border:1rpx solid #e3d6c2; border-radius:14rpx; padding:0 16rpx; font-size:24rpx; box-sizing:border-box; }
+.send{ border-radius:999rpx; background:#2f4a42; color:#f8f2e8; font-size:22rpx; padding:12rpx 22rpx; }

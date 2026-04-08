@@ -1,0 +1,19 @@
+<view class="page" wx:if="{{hasDevice && deviceInfo}}">
+  <view class="card">
+    <view class="title">设备详情</view>
+    <view class="row"><text>设备名称</text><text>{{deviceInfo.deviceName}}</text></view>
+    <view class="row"><text>deviceId</text><text>{{deviceInfo.deviceId}}</text></view>
+    <view class="row"><text>MAC</text><text>{{deviceInfo.mac}}</text></view>
+    <view class="row"><text>SN</text><text>{{deviceInfo.sn}}</text></view>
+    <view class="row"><text>固件版本</text><text>{{deviceInfo.firmwareVersion}}</text></view>
+    <view class="row"><text>硬件版本</text><text>{{deviceInfo.hardwareVersion}}</text></view>
+    <view class="row"><text>充电状态</text><text>{{deviceInfo.chargeState}}</text></view>
+  </view>
+</view>
+
+<view class="page" wx:else>
+  <view class="card">
+    <view class="title">暂无设备信息</view>
+    <view class="desc">连接设备后可查看完整设备信息。</view>
+  </view>
+</view>

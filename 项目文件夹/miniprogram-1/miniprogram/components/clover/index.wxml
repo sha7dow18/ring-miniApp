@@ -1,1 +1,0 @@
-<canvas canvas-id="cloverCanvas" class="clover-canvas" style="width:{{size}}px;height:{{size}}px"></canvas>

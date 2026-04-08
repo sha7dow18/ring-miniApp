@@ -1,8 +1,0 @@
-Page { background-color: #fff; }
-.page { padding: 16px; }
-.header { margin-bottom: 12px; }
-.title { font-size: 20px; font-weight: 600; }
-.subtitle { color: #888; font-size: 12px; }
-.section { background: #f7f7f7; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
-.section-title { font-weight: 600; margin-bottom: 6px; }
-.section-content { color: #666; font-size: 12px; }

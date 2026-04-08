@@ -1,9 +1,5 @@
 {
-  "navigationBarTitleText": "个人主页",
-  "navigationBarBackgroundColor": "#F6F6F8",
-  "usingComponents": {
-    "van-icon": "@vant/weapp/icon/index",
-    "van-cell": "@vant/weapp/cell/index",
-    "van-cell-group": "@vant/weapp/cell-group/index"
-  }
+  "navigationBarTitleText": "我的资料",
+  "navigationBarBackgroundColor": "#F6F7FB",
+  "navigationBarTextStyle": "black"
 }

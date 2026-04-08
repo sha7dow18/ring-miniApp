@@ -1,1 +1,0 @@
-<canvas canvas-id="radarCanvas" class="radar-canvas" style="width:{{size}}px;height:{{size}}px"></canvas>

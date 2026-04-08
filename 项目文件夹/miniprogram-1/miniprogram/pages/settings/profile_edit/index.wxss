@@ -1,7 +1,0 @@
-.page { padding:16px; }
-.card { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:12px; }
-.avatar-row { display:flex; gap:10px; align-items:center; }
-.avatar { width:64px; height:64px; border-radius:50%; background:#eee; }
-.row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
-.input { border:1px solid #eee; border-radius:6px; padding:6px 8px; width:160px; text-align:right; }
-.save { margin-top:12px; background:#1aad19; color:#fff; }

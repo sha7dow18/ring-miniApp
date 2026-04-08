@@ -1,48 +1,66 @@
-<view class="dashboard-bg">
-  <view class="body-outline-bg"></view>
-
-  <view class="content-wrapper">
-    <view class="intro-card">
-      <view class="card-title">AI体质辨识测试</view>
-      <view class="card-desc">{{isDeviceConnected ? '已连接指环，可开始体质检测' : '需先连接指环后才能进行体质检测'}}</view>
-      <view class="start-btn" bindtap="goToChatTest">
-        {{isDeviceConnected ? '点击进入测试' : '去服务页连接设备'}} <van-icon name="arrow" size="14px" />
-      </view>
-    </view>
-
-    <view class="result-section">
-      <view class="section-title">上次检测结果为：</view>
-      <view class="highlight-row" wx:if="{{radarData.length}}">
-        <view class="main-result">
-          <text class="constitution">{{radarData[0].type}}</text>
-          <text class="percentage">{{radarData[0].score}}%</text>
-        </view>
-        <view class="badge-360">360°</view>
-      </view>
-
-      <view class="radar-placeholder">
-        <view wx:if="{{isAnalyzing}}" class="loading-state">
-          <van-icon name="clock-o" size="24px" color="#999" />
-          <text>大模型正在生成体质图谱...</text>
-        </view>
-        
-        <radar-chart 
-          wx:else 
-          chartData="{{radarData}}" 
-          style="width: 100%; height: 100%;">
-        </radar-chart>
-      </view>
-    </view>
-
-    <view class="tongue-section">
-      <view class="section-title">舌面采集分析：</view>
-      <view class="petals-container">
-        <view class="petal petal-top"><text>淡红舌</text></view>
-        <view class="petal petal-left"><text>薄苔</text></view>
-        <view class="petal petal-right"><text>白苔</text></view>
-        <view class="petal petal-bottom"><text>胖大舌</text></view>
-        <view class="petal-center"></view>
-      </view>
-    </view>
+<view class="ai-lab-page">
+  <view class="hero-card">
+    <view class="hero-title">AI体质辨识测试</view>
+    <view class="hero-desc">结合舌象与近期指标，为你生成更生动的体质倾向报告。</view>
+    <view class="hero-btn" bindtap="chooseTonguePhoto">点击进入测试</view>
+    <view class="line-art"></view>
   </view>
+
+  <view class="gate-card" wx:if="{{!isConnected}}">
+    <view class="gate-title">请先连接设备</view>
+    <view class="gate-desc">完成连接后即可使用完整 AI 分析能力。</view>
+    <view class="capsule" bindtap="goConnectDevice">去连接设备</view>
+  </view>
+
+  <scroll-view wx:else class="content-scroll" scroll-y="true">
+    <view class="result-card" wx:if="{{latestTongueResult}}">
+      <view class="result-title">上次检测结果</view>
+      <view class="result-name">{{latestTongueResult.riskTip}}</view>
+      <view class="result-percent">倾向值 80%</view>
+    </view>
+
+    <view class="feature-card">
+      <view class="f-title">舌诊分析</view>
+      <view class="f-desc">拍照或从相册选择舌象图，快速生成结果。</view>
+      <view class="tongue-preview" wx:if="{{selectedImage}}"><image src="{{selectedImage}}" mode="aspectFill" class="tongue-img" /></view>
+      <view class="empty-preview" wx:else>尚未选择图片</view>
+      <view class="btn-row">
+        <view class="capsule" bindtap="chooseTonguePhoto">拍照 / 相册</view>
+        <view class="capsule dark" bindtap="startTongueAnalyze">开始分析</view>
+      </view>
+    </view>
+
+    <view class="feature-card" wx:if="{{latestTongueResult}}">
+      <view class="f-title">分析摘要</view>
+      <view class="kv"><text>舌质</text><text>{{latestTongueResult.tongueBody}}</text></view>
+      <view class="kv"><text>舌苔</text><text>{{latestTongueResult.tongueCoating}}</text></view>
+      <view class="kv"><text>建议</text><text>{{latestTongueResult.suggestion}}</text></view>
+
+      <view class="vis-title">图像可视化分析</view>
+      <view class="vis-shot-row">
+        <view class="shot" wx:for="{{visionShots}}" wx:key="id">
+          <view class="shot-dot"></view>
+          <view class="shot-t">{{item.label}}</view>
+          <view class="shot-d">{{item.desc}}</view>
+        </view>
+      </view>
+
+      <view class="bar-row" wx:for="{{visionBars}}" wx:key="name">
+        <text class="bar-name">{{item.name}}</text>
+        <view class="bar-bg"><view class="bar-fill" style="width: {{item.width}};"></view></view>
+        <text class="bar-score">{{item.score}}</text>
+      </view>
+    </view>
+
+    <view class="feature-card">
+      <view class="f-title">AI 问诊</view>
+      <view class="f-desc">围绕睡眠、压力、心率等问题进行多轮对话。</view>
+      <view class="preset-row">
+        <view class="preset" wx:for="{{presets}}" wx:key="*this" data-q="{{item}}" bindtap="usePreset">{{item}}</view>
+      </view>
+      <view class="capsule" bindtap="goChatPage">进入问诊</view>
+    </view>
+
+    <view style="height: 120rpx;"></view>
+  </scroll-view>
 </view>

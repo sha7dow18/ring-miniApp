@@ -1,6 +1,6 @@
 <view class="tab-bar-container">
   <block wx:for="{{tabList}}" wx:key="index">
-    <view class="tab-bar-item {{selected === index ? 'selected' : ''}} {{index === 2 ? 'item-ai' : ''}}" 
+    <view class="tab-bar-item {{selected === index ? 'selected' : ''}}" 
           bindtap="switchTab" 
           data-path="{{item.pagePath}}" 
           data-index="{{index}}">

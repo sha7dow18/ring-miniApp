@@ -1,36 +1,20 @@
-<view class="info-container">
-  <view class="avatar-section" bindtap="changeAvatar">
-    <image class="avatar-img" src="{{userInfo.avatar || '/assets/tabbar/profile.png'}}" mode="aspectFill"></image>
-    <view class="edit-hint">点击更换头像</view>
+<view class="user-info-page">
+  <view class="card avatar-card" bindtap="chooseAvatar">
+    <view class="avatar" wx:if="{{form.avatarUrl}}"><image src="{{form.avatarUrl}}" mode="aspectFill" /></view>
+    <view class="avatar placeholder" wx:else>头像</view>
+    <view class="hint">点击更换头像</view>
   </view>
 
-  <view class="section-title">基础信息</view>
-  <van-cell-group inset custom-class="cell-group-custom">
-    <van-cell title="昵称" value="{{userInfo.name}}" is-link bind:click="editInfo" data-field="name" data-title="修改昵称" />
-    <van-cell title="性别" value="{{userInfo.gender}}" is-link bind:click="editGender" />
-    <van-cell title="出生年月" value="{{userInfo.birthday}}" is-link bind:click="editBirthday" />
-  </van-cell-group>
+  <view class="card form-card">
+    <view class="row"><text>昵称</text><input value="{{form.nickname}}" data-field="nickname" bindinput="onInput"/></view>
+    <view class="row"><text>性别</text><input value="{{form.gender}}" data-field="gender" bindinput="onInput"/></view>
+    <view class="row"><text>生日</text><input value="{{form.birthday}}" data-field="birthday" bindinput="onInput"/></view>
+    <view class="row"><text>身高(cm)</text><input value="{{form.heightCm}}" data-field="heightCm" bindinput="onInput" type="number"/></view>
+    <view class="row"><text>体重(kg)</text><input value="{{form.weightKg}}" data-field="weightKg" bindinput="onInput" type="number"/></view>
+    <view class="row"><text>手机号</text><input value="{{form.phone}}" data-field="phone" bindinput="onInput"/></view>
+    <view class="row textarea-row"><text>过敏史</text><textarea value="{{form.allergyHistory}}" data-field="allergyHistory" bindinput="onInput"/></view>
+    <view class="row textarea-row"><text>既往病史</text><textarea value="{{form.medicalHistory}}" data-field="medicalHistory" bindinput="onInput"/></view>
+  </view>
 
-  <view class="section-title">健康档案</view>
-  <van-cell-group inset custom-class="cell-group-custom">
-    <van-cell title="过敏史" value="{{userInfo.allergies}}" is-link bind:click="editInfo" data-field="allergies" data-title="填写过敏史" />
-    <van-cell title="既往病史" value="{{userInfo.medicalHistory}}" is-link bind:click="editInfo" data-field="medicalHistory" data-title="填写既往病史" />
-  </van-cell-group>
-
-  <view class="section-title">服务与设备</view>
-  <van-cell-group inset custom-class="cell-group-custom">
-    <van-cell title="收货地址管理" is-link bind:click="manageAddress" />
-    <van-cell title="我的指环" value="{{deviceStatus}}" label="MAC: AA:BB:CC:DD:EE:FF" is-link bind:click="manageDevice" />
-  </van-cell-group>
-
-  <view class="section-title">账号安全</view>
-  <van-cell-group inset custom-class="cell-group-custom">
-    <van-cell title="手机号" value="{{userInfo.phone}}" is-link bind:click="bindPhone" />
-    <van-cell title="密码设置" is-link bind:click="setupPassword" />
-    <van-cell title="账号注销" is-link bind:click="cancelAccount" title-style="color: #999;" />
-  </van-cell-group>
-
-  <view class="logout-btn" bindtap="handleLogout">退出登录</view>
-  
-  <view style="height: 60rpx;"></view>
+  <view class="save-btn" bindtap="saveProfile">保存资料</view>
 </view>

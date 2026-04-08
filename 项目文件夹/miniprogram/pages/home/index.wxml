@@ -1,73 +1,102 @@
-<view class="custom-nav" style="height: {{navHeight}}px; padding-top: {{statusBarHeight}}px;">
-  <text class="nav-title">Aita健康</text>
-</view>
-
-<view class="page-container" style="background-color: {{healthData.themeColor}}10; padding-top: {{navHeight + 10}}px;" wx:if="{{healthData}}">
-  
-  <view class="header-section">
-    <view class="greeting-box">
-      <text class="title">早上好，</text>
-      <view class="ai-insight" bindtap="playTTS">
-        <text class="insight-text">{{healthData.summary || '今日数据解析中...'}}</text>
-        <van-icon name="volume-o" size="40rpx" color="#333" class="tts-icon" />
-      </view>
-    </view>
-    <view class="device-box">
-      <image class="ring-img" src="/assets/images/ring-mock.svg" mode="aspectFit" />
-    </view>
+<view class="home-page">
+  <view class="top-brand">
+    <view class="hello">{{greetingText}}</view>
+    <view class="name">User！</view>
   </view>
 
-  <scroll-view class="date-scroll" scroll-x="true">
-    <view class="date-row">
-      <text class="date-text">24 周一</text>
-      <text class="date-text active">25 周二</text>
-      <text class="date-text">26 周三</text>
-      <text class="date-text">27 周四</text>
+  <view class="month-row">
+    <text class="arrow">‹</text>
+    <text class="month">{{monthText}}</text>
+    <text class="arrow">›</text>
+  </view>
+
+  <scroll-view class="date-scroll" scroll-x="true" show-scrollbar="false">
+    <view class="date-list">
+      <view class="date-chip {{selectedDate===item.key?'active':''}}" wx:for="{{dateTabs}}" wx:key="key" data-key="{{item.key}}" bindtap="onPickDate">
+        <text class="day">{{item.day}}</text>
+        <text class="week">{{item.week}}</text>
+      </view>
     </view>
   </scroll-view>
 
-  <view class="card-container bp-card">
-    <view class="card-header">
-      <text class="card-title">血压</text>
-      <view class="tag-btn">月度 <van-icon name="arrow-down" /></view>
-    </view>
-    <view class="canvas-container">
-    </view>
+  <view class="empty-card" wx:if="{{!isConnected}}">
+    <view class="empty-title">设备还未连接</view>
+    <view class="empty-desc">连接后即可查看完整健康摘要与 AI 分析。</view>
+    <view class="capsule-btn" bindtap="goConnectDevice">去连接设备</view>
   </view>
 
-  <view class="quick-glance-row">
-    <view class="card-container half-card">
-      <text class="card-title"><van-icon name="fire-o" color="#ff9900"/> 运动</text>
-      <view class="data-display">
-        <text class="value">{{sportSteps}}</text><text class="unit">/6000步</text>
+  <scroll-view wx:else class="content-scroll" scroll-y="true">
+    <view class="card bp-card">
+      <view class="bp-head">
+        <text class="bp-title">血压</text>
+        <text class="bp-tag">月度</text>
+      </view>
+      <view class="bp-graph">
+        <canvas type="2d" id="bpCanvas" class="bp-canvas"></canvas>
+      </view>
+      <view class="time-row">
+        <text wx:for="{{bpTrendTime}}" wx:key="index">{{item}}</text>
+      </view>
+      <view class="bp-legend">
+        <text class="lg red-dot">收缩压 {{metrics.systolic}}</text>
+        <text class="lg dark-dot">舒张压 {{metrics.diastolic}}</text>
       </view>
     </view>
-    <view class="card-container half-card">
-      <text class="card-title"><van-icon name="closed-eye" color="#4b83ce"/> 睡眠</text>
-      <view class="data-display">
-        <text class="value">{{sleepHour}}</text><text class="unit">时</text>
-        <text class="value">{{sleepMinute}}</text><text class="unit">分</text>
-      </view>
-    </view>
-  </view>
 
-  <view class="section-title">其他数据</view>
-  <view class="other-data-grid">
-    <view class="card-container mini-card">
-      <view class="card-title"><van-icon name="hot-o" color="#fa5151"/> 体温</view>
-      <view class="data-display"><text class="value">{{bodyTemp}}</text><text class="unit">℃</text></view>
+    <view class="duo-grid">
+      <view class="card duo-card sport-card">
+        <view class="sport-head">
+          <view class="duo-title">运动</view>
+          <image class="sport-ring-image" src="/assets/health/icon_sport_ring.png" mode="aspectFit" />
+        </view>
+        <view class="sport-row">
+          <text class="sport-main">{{metrics.steps}}</text>
+          <text class="sport-target">/{{metrics.stepGoal}}步</text>
+        </view>
+        <view class="sport-row calories-row">
+          <text class="sport-main small">{{metrics.calories}}</text>
+          <text class="sport-target">/50千卡</text>
+        </view>
+      </view>
+      <view class="card duo-card sleep-card">
+        <view class="duo-title">睡眠</view>
+        <view class="sleep-gauge">
+        <image class="sleep-hero" src="/assets/health/icon_sleep.png" mode="aspectFit" />
+      </view>
+        <view class="sleep-score">{{metrics.sleepScore}}<text>{{metrics.sleepGrade}}</text></view>
+        <view class="sleep-time">{{metrics.sleepDisplay}}</view>
+      </view>
     </view>
-    <view class="card-container mini-card">
-      <view class="card-title"><van-icon name="like-o" color="#ee0a24"/> 心率</view>
-      <view class="data-display"><text class="value">{{healthData.metrics.heartRate.value}}</text><text class="unit">次/分</text></view>
+
+    <view class="other-title">其他数据</view>
+    <view class="other-list">
+      <view class="other-item" wx:for="{{otherRows}}" wx:key="key">
+        <view class="left">
+          <text class="icon">{{item.icon}}</text>
+          <view>
+            <view class="nm">{{item.label}}</view>
+            <view class="vl">{{item.value}}</view>
+          </view>
+        </view>
+        <view class="right">
+          <view class="spark">
+            <view wx:for="{{item.trend}}" wx:key="index" class="bar" style="height: {{item}}rpx;"></view>
+          </view>
+          <view class="jump">›</view>
+        </view>
+      </view>
     </view>
-    <view class="card-container mini-card">
-      <view class="card-title"><van-icon name="gem-o" color="#1989fa"/> 血氧</view>
-      <view class="data-display"><text class="value">{{healthData.metrics.bloodOxygen.value}}</text><text class="unit">%</text></view>
+
+    <view class="analysis-row">
+      <view class="ana">简要分析：指标整体稳定，继续保持规律作息与低强度运动。</view>
+      <view class="action-row">
+        <view class="ghost-btn" bindtap="onRefreshMetrics">刷新数据</view>
+        <view class="ghost-btn" bindtap="goToAi">去 AI 分析</view>
+        <view class="ghost-btn" bindtap="showMetricDetail">查看详情</view>
+        <view class="ghost-btn" bindtap="goToDevice">设备中心</view>
+      </view>
     </view>
-    <view class="card-container mini-card">
-      <view class="card-title"><van-icon name="smile-o" color="#07c160"/> 压力</view>
-      <view class="data-display"><text class="value">{{healthData.metrics.stress.value}}</text><text class="unit">{{healthData.metrics.stress.unit}}</text></view>
-    </view>
-  </view>
+
+    <view style="height: 120rpx;"></view>
+  </scroll-view>
 </view>

@@ -1,42 +1,33 @@
 <view class="chat-page">
-  <scroll-view class="chat-list" scroll-y="true" scroll-into-view="{{scrollToId}}" scroll-with-animation>
-    <block wx:for="{{messageList}}" wx:key="id">
-      <view class="msg-row {{item.role === 'user' ? 'msg-right' : 'msg-left'}}" id="msg-{{item.id}}">
-        <view class="avatar ai-avatar" wx:if="{{item.role === 'ai'}}">AI</view>
-        
-        <view class="bubble {{item.type === 'image' ? 'img-bubble' : ''}}">
-          <text wx:if="{{item.type === 'text'}}">{{item.content}}</text>
-          <image wx:if="{{item.type === 'image'}}" src="{{item.content}}" mode="widthFix" class="chat-img"></image>
-        </view>
+  <view class="gate-card" wx:if="{{!isConnected}}">
+    <view class="gate-title">连接设备后即可开始咨询</view>
+    <view class="gate-desc">完成设备连接后，可结合你的近期数据给出更贴合的建议。</view>
+    <view class="capsule" bindtap="goConnectDevice">去连接设备</view>
+  </view>
 
-        <view class="avatar user-avatar" wx:if="{{item.role === 'user'}}">我</view>
-      </view>
-    </block>
-    <view class="bottom-padding"></view>
-  </scroll-view>
-
-  <view class="action-bar">
-    <van-icon name="{{isKeyboard ? 'audio' : 'edit'}}" size="28px" color="#333" class="icon-btn" bindtap="toggleInputMode" />
-    
-    <input wx:if="{{isKeyboard}}" 
-           class="text-input" 
-           value="{{inputText}}" 
-           bindinput="onInput" 
-           confirm-type="send" 
-           bindconfirm="sendText" 
-           placeholder="描述您的症状..." />
-           
-    <view wx:else 
-          class="voice-btn" 
-          bindtouchstart="handleTouchStart" 
-          bindtouchend="handleTouchEnd"
-          hover-class="voice-btn-active">
-      <text>按住 说话</text>
+  <view wx:else class="chat-main">
+    <view class="chat-top">
+      <view class="chat-title">AI 健康咨询</view>
+      <view class="chat-tip">仅用于健康管理参考，不替代专业医疗诊断。</view>
+      <view class="clear" bindtap="clearConversation">清空对话</view>
     </view>
-    
-    <view class="action-right">
-      <view wx:if="{{isKeyboard && inputText.length > 0}}" class="send-btn" bindtap="sendText">发送</view>
-      <van-icon wx:else name="add-o" size="28px" color="#333" class="icon-btn" bindtap="chooseImage" />
+
+    <view class="quick-row">
+      <view class="quick-item" wx:for="{{quickQuestions}}" wx:key="*this" data-q="{{item}}" bindtap="useQuickQuestion">{{item}}</view>
+    </view>
+
+    <scroll-view class="chat-list" scroll-y="true" scroll-into-view="{{scrollToId}}" scroll-with-animation>
+      <block wx:for="{{messageList}}" wx:key="id">
+        <view class="msg-row {{item.role === 'user' ? 'right' : 'left'}}" id="msg-{{item.id}}">
+          <view class="bubble {{item.role === 'user' ? 'user-bubble' : 'ai-bubble'}}"><text>{{item.content}}</text></view>
+        </view>
+      </block>
+      <view style="height: 30rpx;"></view>
+    </scroll-view>
+
+    <view class="input-bar">
+      <input class="text-input" value="{{inputText}}" bindinput="onInput" placeholder="请输入你的问题" confirm-type="send" bindconfirm="sendText"/>
+      <view class="send" bindtap="sendText">发送</view>
     </view>
   </view>
 </view>

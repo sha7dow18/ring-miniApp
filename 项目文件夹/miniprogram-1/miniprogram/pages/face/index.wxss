@@ -1,8 +1,0 @@
-Page { background-color: #fff; }
-.page { padding: 16px; }
-.header { margin-bottom: 12px; }
-.title { font-size: 20px; font-weight: 600; }
-.subtitle { color: #888; font-size: 12px; }
-.panel { display: flex; gap: 10px; margin-bottom: 12px; }
-.primary { background: #06B6D4; color: #fff; }
-.result { color: #666; font-size: 14px; }

@@ -1,7 +1,5 @@
 {
-  "navigationBarTitleText": "AI 健康助手",
-  "navigationBarBackgroundColor": "#EDEDED",
-  "usingComponents": {
-    "van-icon": "@vant/weapp/icon/index"
-  }
+  "navigationBarTitleText": "AI 问诊",
+  "navigationBarBackgroundColor": "#F1F5F9",
+  "navigationBarTextStyle": "black"
 }

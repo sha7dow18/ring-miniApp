@@ -1,73 +1,29 @@
-<view class="profile-container">
-
-<view class="user-card" bindtap="handleUserClick">
-  <view class="avatar-wrap">
-    <image class="avatar" src="{{isLogin ? userInfo.avatar : '/assets/tabbar/profile.png'}}" mode="aspectFill"></image>
-  </view>
-  <view class="user-info">
-    <text class="user-name">{{isLogin ? userInfo.name : '未登录用户'}}</text>
-    <text class="user-sub">{{isLogin ? '查看个人主页及健康档案' : '点击授权登录'}}</text>
-    <text class="user-sub">指环状态：{{ringStatus}}</text>
-  </view>
-  <van-icon name="arrow" color="#999" size="16px" />
-</view>
-
-<view class="section-card">
-  <view class="card-header" bindtap="goToOrders" data-type="all">
-    <text class="card-title">我的订单</text>
-    <view class="card-more">查看全部订单 <van-icon name="arrow" /></view>
-  </view>
-  
-  <view class="order-grid">
-    <view class="order-item" bindtap="goToOrders" data-type="pay">
-      <van-icon name="pending-payment" size="28px" color="#333" />
-      <text>待付款</text>
-    </view>
-    <view class="order-item" bindtap="goToOrders" data-type="ship">
-      <van-icon name="send-gift-o" size="28px" color="#333" />
-      <text>待发货</text>
-    </view>
-    <view class="order-item" bindtap="goToOrders" data-type="receive">
-      <van-icon name="logistics" size="28px" color="#333" />
-      <text>待收货</text>
-    </view>
-    <view class="order-item" bindtap="goToOrders" data-type="comment">
-      <van-icon name="comment-o" size="28px" color="#333" />
-      <text>待评价</text>
-    </view>
-    <view class="order-item" bindtap="goToOrders" data-type="refund">
-      <van-icon name="after-sale" size="28px" color="#333" />
-      <text>退款/售后</text>
+<view class="profile-page">
+  <view class="user-card" bindtap="goUserInfo">
+    <view class="avatar" wx:if="{{profile.avatarUrl}}"><image src="{{profile.avatarUrl}}" mode="aspectFill" /></view>
+    <view class="avatar placeholder" wx:else>头像</view>
+    <view class="user-meta">
+      <view class="title">个人中心</view>
+      <view class="name">{{profile.nickname}}</view>
+      <view class="phone">{{profile.phone}}</view>
+      <view class="device">{{deviceStatusText}}</view>
     </view>
   </view>
-</view>
 
-<view class="section-card">
-  <text class="card-title" style="margin-bottom: 20rpx; display: block;">更多服务</text>
-  
-  <view class="service-list">
-    <view class="service-item" bindtap="handleService" data-action="coupon">
-      <view class="service-left"><van-icon name="coupon-o" size="22px" color="#333" /><text>优惠券</text></view>
-      <van-icon name="arrow" color="#ccc" />
-    </view>
-    <view class="service-item" bindtap="handleService" data-action="enterprise">
-      <view class="service-left"><van-icon name="shop-o" size="22px" color="#333" /><text>企业服务</text></view>
-      <van-icon name="arrow" color="#ccc" />
-    </view>
-    <view class="service-item" bindtap="handleService" data-action="notice">
-      <view class="service-left"><van-icon name="info-o" size="22px" color="#333" /><text>用户须知</text></view>
-      <van-icon name="arrow" color="#ccc" />
-    </view>
-    <view class="service-item" bindtap="handleService" data-action="settings">
-      <view class="service-left"><van-icon name="setting-o" size="22px" color="#333" /><text>设置</text></view>
-      <van-icon name="arrow" color="#ccc" />
+  <view class="menu-group">
+    <view class="group-title">我的服务</view>
+    <view class="menu-card">
+      <view class="menu-item" bindtap="goMyDevice"><text>我的设备</text><text>›</text></view>
+      <view class="menu-item" bindtap="goAiRecords"><text>AI 分析记录</text><text>›</text></view>
     </view>
   </view>
-</view>
 
-</view>
-
-<view class="float-cs-bubble" bindtap="goToCustomerService">
-<van-icon name="service" size="26px" color="#07c160" />
-<text class="bubble-text">咨询</text>
+  <view class="menu-group">
+    <view class="group-title">设置与支持</view>
+    <view class="menu-card">
+      <view class="menu-item" bindtap="goUserInfo"><text>我的资料</text><text>›</text></view>
+      <view class="menu-item" bindtap="goSettings"><text>设置</text><text>›</text></view>
+      <view class="menu-item" bindtap="goAbout"><text>关于我们</text><text>›</text></view>
+    </view>
+  </view>
 </view>

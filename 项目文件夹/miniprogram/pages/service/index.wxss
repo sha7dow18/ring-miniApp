@@ -1,119 +1,25 @@
-page {
-  background-color: #F6F6F8;
-}
-
-.service-container {
-  padding: 30rpx;
-  /* 必须保留：底部防 TabBar 遮挡安全垫 */
-  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
-  box-sizing: border-box;
-  min-height: 100vh;
-}
-
-/* 核心状态卡片 */
-.device-hero {
-  background-color: #fff;
-  border-radius: 24rpx;
-  padding: 60rpx 30rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.02);
-}
-.ring-mock-img {
-  width: 200rpx;
-  height: 200rpx;
-  background-color: #f9f9f9;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 30rpx;
-  /* 如果有真的戒指图片，可以把 background 和 border-radius 去掉，换成 image */
-}
-.status-text {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 15rpx;
-}
-.status-sub {
-  font-size: 24rpx;
-  color: #999;
-  margin-bottom: 50rpx;
-  text-align: center;
-}
-.action-btn-wrap {
-  width: 85%;
-}
-
-/* 设备列表区 */
-.section-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
-  padding-left: 10rpx;
-}
-.device-list {
-  margin-bottom: 40rpx;
-}
-.device-item {
-  background-color: #fff;
-  border-radius: 20rpx;
-  padding: 30rpx;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.02);
-  transition: all 0.2s;
-}
-.device-item:active {
-  background-color: #fcfcfc;
-  transform: scale(0.98);
-}
-.device-info {
-  display: flex;
-  flex-direction: column;
-}
-.d-name {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10rpx;
-}
-.d-mac {
-  font-size: 24rpx;
-  color: #999;
-}
-
-/* 帮助区 */
-.help-section {
-  background-color: #fff;
-  border-radius: 24rpx;
-  padding: 40rpx 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.02);
-}
-.help-item {
-  margin-bottom: 35rpx;
-}
-.help-item:last-child {
-  margin-bottom: 0;
-}
-.h-title {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 15rpx;
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-}
-.h-desc {
-  font-size: 24rpx;
-  color: #666;
-  line-height: 1.6;
-  padding-left: 42rpx; /* 与文字对齐 */
-}
+page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
+.service-page{ min-height:100vh; padding:24rpx; padding-bottom:calc(160rpx + env(safe-area-inset-bottom)); font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif; }
+.status-card,.panel-card,.actions-card{ background:#f8f2e8; border-radius:30rpx; padding:26rpx; box-shadow:0 8rpx 20rpx rgba(46,56,49,.08); margin-bottom:14rpx; }
+.status-card{ background:linear-gradient(145deg,#e2eadf 0%,#efe7d8 70%); }
+.status-title{ font-size:40rpx; font-weight:800; color:#243730; }
+.status-desc{ margin-top:10rpx; color:#6f7772; font-size:24rpx; line-height:1.6; }
+.status-tag{ margin-top:12rpx; display:inline-block; border-radius:999rpx; padding:8rpx 16rpx; background:#e8ddd0; color:#635946; font-size:22rpx; }
+.panel-title{ font-size:30rpx; color:#1f2d28; font-weight:700; margin-bottom:14rpx; }
+.searching-state,.connecting-state,.empty-state{ min-height:170rpx; border-radius:20rpx; background:#efe6d8; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8rpx; }
+.searching-text,.empty-text{ color:#243730; font-size:28rpx; font-weight:700; }
+.searching-sub,.empty-sub{ color:#7a807b; font-size:23rpx; }
+.device-list{ display:flex; flex-direction:column; gap:10rpx; }
+.device-item{ background:#f3eadf; border-radius:18rpx; padding:16rpx; }
+.device-head,.device-meta-row{ display:flex; justify-content:space-between; align-items:center; }
+.device-name{ color:#22322c; font-size:28rpx; font-weight:700; }
+.device-rssi,.device-meta{ color:#6b746f; font-size:22rpx; }
+.device-action{ color:#2f4a42; font-size:23rpx; font-weight:700; }
+.info-row{ display:flex; justify-content:space-between; padding:14rpx 0; border-bottom:1rpx solid #ebdfcf; }
+.info-row:last-child{ border-bottom:none; }
+.info-row .k{ color:#67706a; font-size:23rpx; }
+.info-row .v{ color:#22322c; font-size:24rpx; font-weight:700; }
+.action-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10rpx; }
+.capsule-btn{ text-align:center; border-radius:999rpx; padding:15rpx 0; background:#ebe1d2; color:#2f4a42; font-size:23rpx; }
+.capsule-btn.dark{ background:#2f4a42; color:#f5eee3; }
+.capsule-btn.danger{ background:#f1d9cd; color:#8b3f32; }

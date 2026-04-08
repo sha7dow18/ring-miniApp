@@ -1,158 +1,37 @@
-/* 渐变背景底色 */
-.dashboard-bg {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #eef1ec 0%, #e3d2bc 100%);
-  position: relative;
-  overflow: hidden;
-  padding-bottom: 50rpx;
-}
-
-/* 人体线稿背景伪元素 (这里用边框模拟，实际开发中请替换为您的 PNG 背景图) */
-.body-outline-bg {
-  position: absolute;
-  right: -50rpx;
-  top: 10%;
-  width: 300rpx;
-  height: 80%;
-  border-left: 2px dashed rgba(100, 100, 100, 0.2);
-  border-radius: 50%;
-  z-index: 0;
-}
-
-.content-wrapper {
-  position: relative;
-  z-index: 1;
-  padding: 40rpx 30rpx;
-}
-
-/* 顶部入口卡片 */
-.intro-card {
-  background: linear-gradient(to bottom, #d2dfd6, #f3ebdf);
-  border-radius: 30rpx;
-  padding: 40rpx 30rpx;
-  box-shadow: 0 8rpx 20rpx rgba(0,0,0,0.05);
-  margin-bottom: 50rpx;
-}
-.card-title {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10rpx;
-}
-.card-desc {
-  font-size: 26rpx;
-  color: #666;
-  margin-bottom: 30rpx;
-}
-.start-btn {
-  display: inline-flex;
-  align-items: center;
-  background-color: #fff;
-  padding: 16rpx 40rpx;
-  border-radius: 40rpx;
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #4b83ce; /* 提取的主题蓝 */
-  box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.05);
-}
-
-/* 标题通用样式 */
-.section-title {
-  font-size: 34rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
-}
-
-/* 检测结果高亮区 */
-.highlight-row {
-  display: flex;
-  align-items: flex-end;
-  margin-bottom: 40rpx;
-}
-.main-result {
-  display: flex;
-  flex-direction: column;
-}
-.constitution {
-  font-size: 56rpx;
-  font-weight: 900;
-  color: #c96434; /* 提取的主题橙 */
-  letter-spacing: 2rpx;
-}
-.percentage {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: #c96434;
-  margin-top: -10rpx;
-}
-.badge-360 {
-  background-color: #b0b8b6;
-  color: #fff;
-  font-size: 24rpx;
-  padding: 6rpx 20rpx;
-  border-radius: 20rpx;
-  margin-left: 30rpx;
-  margin-bottom: 10rpx;
-}
-
-/* 雷达图占位 */
-.radar-placeholder {
-  width: 100%;
-  height: 350rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 50rpx;
-}
-.mock-radar-box {
-  width: 300rpx;
-  height: 300rpx;
-  border: 1px dashed #999;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #999;
-  font-size: 24rpx;
-}
-
-/* 舌面花瓣分析区 (纯CSS绘制) */
-.tongue-section {
-  margin-top: 20rpx;
-}
-.petals-container {
-  position: relative;
-  width: 300rpx;
-  height: 300rpx;
-  margin: 40rpx auto;
-}
-.petal {
-  position: absolute;
-  width: 120rpx;
-  height: 120rpx;
-  background-color: rgba(144, 150, 120, 0.8);
-  border-radius: 50% 50% 0 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  font-size: 22rpx;
-}
-.petal-top { top: 0; left: 90rpx; transform: rotate(45deg); }
-.petal-top text { transform: rotate(-45deg); }
-.petal-left { top: 90rpx; left: 0; transform: rotate(-45deg); }
-.petal-left text { transform: rotate(45deg); }
-.petal-right { top: 90rpx; right: 0; transform: rotate(135deg); }
-.petal-right text { transform: rotate(-135deg); }
-.petal-bottom { bottom: 0; left: 90rpx; transform: rotate(-135deg); }
-.petal-bottom text { transform: rotate(135deg); }
-.petal-center {
-  position: absolute;
-  top: 135rpx;
-  left: 135rpx;
-  width: 30rpx;
-  height: 30rpx;
-  background-color: #fff;
-  border-radius: 50%;
-}
+page{ background:linear-gradient(180deg,#f3ede2 0%,#eee4d6 100%); }
+.ai-lab-page{ min-height:100vh; padding:24rpx; padding-bottom:calc(150rpx + env(safe-area-inset-bottom)); font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif; }
+.hero-card,.gate-card,.result-card,.feature-card{ background:#f8f2e8; border-radius:30rpx; padding:24rpx; box-shadow:0 8rpx 20rpx rgba(45,56,49,.08); margin-bottom:14rpx; position:relative; overflow:hidden; }
+.hero-card{ background:linear-gradient(145deg,#dfe9de 0%,#efe7d8 62%,#e8dcc7 100%); }
+.hero-title{ color:#243730; font-size:42rpx; font-weight:800; }
+.hero-desc{ margin-top:8rpx; color:#6f7772; font-size:23rpx; line-height:1.6; max-width:75%; }
+.hero-btn{ margin-top:14rpx; display:inline-block; background:#2f4a42; color:#f5eee3; border-radius:999rpx; padding:14rpx 28rpx; font-size:23rpx; }
+.line-art{ position:absolute; right:-24rpx; top:20rpx; width:220rpx; height:220rpx; border:2rpx solid rgba(47,74,66,.18); border-radius:50%; }
+.gate-title{ color:#253730; font-size:34rpx; font-weight:700; }
+.gate-desc{ margin:10rpx 0 16rpx; color:#78817b; font-size:24rpx; }
+.capsule{ display:inline-block; border-radius:999rpx; padding:13rpx 24rpx; background:#ece2d4; color:#2f4a42; font-size:22rpx; }
+.capsule.dark{ background:#2f4a42; color:#f5eee3; }
+.content-scroll{ min-height:100vh; }
+.result-title{ color:#6d756f; font-size:22rpx; }
+.result-name{ margin-top:8rpx; color:#1f2d28; font-size:40rpx; font-weight:800; }
+.result-percent{ margin-top:6rpx; color:#8b6235; font-size:24rpx; }
+.f-title{ color:#1f2d28; font-size:30rpx; font-weight:700; }
+.f-desc{ margin:8rpx 0 12rpx; color:#767f79; font-size:23rpx; line-height:1.6; }
+.tongue-preview,.empty-preview{ width:100%; height:260rpx; border-radius:18rpx; margin-bottom:12rpx; }
+.tongue-preview{ overflow:hidden; }
+.tongue-img{ width:100%; height:100%; }
+.empty-preview{ background:#efe6d7; border:1rpx dashed #d7c8b1; display:flex; align-items:center; justify-content:center; color:#7b807b; font-size:23rpx; }
+.btn-row{ display:flex; gap:10rpx; flex-wrap:wrap; }
+.kv{ margin-top:10rpx; display:flex; justify-content:space-between; gap:10rpx; color:#3d4c45; font-size:23rpx; }
+.vis-title{ margin-top:14rpx; color:#283a33; font-size:25rpx; font-weight:700; }
+.vis-shot-row{ margin-top:8rpx; display:flex; gap:8rpx; }
+.shot{ flex:1; background:#efe6d8; border-radius:14rpx; padding:10rpx; }
+.shot-dot{ width:12rpx; height:12rpx; border-radius:50%; background:#2f4a42; margin-bottom:6rpx; }
+.shot-t{ color:#4a5852; font-size:20rpx; }
+.shot-d{ color:#1f2d28; font-size:22rpx; margin-top:2rpx; }
+.bar-row{ margin-top:8rpx; display:flex; align-items:center; gap:8rpx; }
+.bar-name{ width:140rpx; color:#55615b; font-size:21rpx; }
+.bar-bg{ flex:1; height:16rpx; border-radius:999rpx; background:#e6dbc9; overflow:hidden; }
+.bar-fill{ height:100%; border-radius:999rpx; background:linear-gradient(90deg,#9fbcab 0%,#41645a 100%); }
+.bar-score{ width:44rpx; text-align:right; color:#304840; font-size:22rpx; font-weight:700; }
+.preset-row{ display:flex; flex-wrap:wrap; gap:8rpx; margin:4rpx 0 12rpx; }
+.preset{ background:#ece2d4; color:#2f4a42; border-radius:999rpx; padding:10rpx 14rpx; font-size:21rpx; }

@@ -1,78 +1,101 @@
+const mockStore = require("../../utils/mockStore.js");
+const mockAiService = require("../../services/mockAiService.js");
+
 Page({
   data: {
-    messageList: [
-      { id: 'init', role: 'ai', type: 'text', content: '您好！我是中医AI助手。您可以打字、发送舌象图片，或直接语音告诉我您的不适。' }
-    ],
-    scrollToId: '', 
-    isKeyboard: true, // 默认开启键盘模式
-    inputText: '' // 绑定的输入文字
+    isConnected: false,
+    canChat: false,
+    messageList: [],
+    quickQuestions: [],
+    inputText: "",
+    isSending: false,
+    scrollToId: "",
+    pendingPreset: ""
   },
 
-  // 切换输入模式
-  toggleInputMode() {
-    this.setData({ isKeyboard: !this.data.isKeyboard });
+  onLoad(query) {
+    const preset = decodeURIComponent(query.preset || "");
+    if (preset) this.setData({ pendingPreset: preset });
   },
 
-  // 监听键盘输入
-  onInput(e) {
-    this.setData({ inputText: e.detail.value });
+  onShow() {
+    const state = mockStore.getState();
+    if (!(state.aiState.chatHistory || []).length) {
+      mockAiService.clearChatHistory();
+    }
+
+    this.syncFromState(mockStore.getState());
+    this.setData({ quickQuestions: mockAiService.getQuickQuestions() });
+    this.unsubscribe = mockStore.subscribe((s) => this.syncFromState(s));
+
+    if (this.data.pendingPreset) {
+      this.setData({ inputText: this.data.pendingPreset, pendingPreset: "" });
+      this.sendText();
+    }
   },
 
-  // 发送文本消息
-  sendText() {
-    const text = this.data.inputText.trim();
-    if (!text) return;
+  onHide() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
+  onUnload() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
 
-    this.appendMessage('user', 'text', text);
-    this.setData({ inputText: '' }); // 清空输入框
+  syncFromState(state) {
+    const connected = state.deviceStatus === "connected";
+    const list = state.aiState.chatHistory || [];
+    const last = list[list.length - 1];
 
-    // 模拟将文字发送给大模型并获取回复
-    this.mockAIResponse(`已接收到您的描述：${text}。正在为您结合体质进行分析...`);
+    this.setData({
+      isConnected: connected,
+      canChat: connected && !!state.aiState.canChat,
+      messageList: list,
+      scrollToId: last ? `msg-${last.id}` : ""
+    });
   },
 
-  // 调起原生相机/相册选择图片
-  chooseImage() {
-    wx.chooseMedia({
-      count: 1, // 每次只能选1张
-      mediaType: ['image'], // 只允许图片
-      sourceType: ['album', 'camera'], // 允许相册和直接拍照
+  goConnectDevice() { wx.switchTab({ url: "/pages/service/index" }); },
+  onInput(e) { this.setData({ inputText: e.detail.value }); },
+  useQuickQuestion(e) { this.setData({ inputText: e.currentTarget.dataset.q || "" }); },
+
+  async sendText() {
+    if (!this.data.canChat) return wx.showToast({ title: "请先连接设备", icon: "none" });
+    const text = (this.data.inputText || "").trim();
+    if (!text) return wx.showToast({ title: "请输入问题", icon: "none" });
+    if (this.data.isSending) return;
+
+    this.setData({ isSending: true, inputText: "" });
+
+    const history = mockStore.getState().aiState.chatHistory || [];
+    const userMsg = { id: `u_${Date.now()}`, role: "user", type: "text", content: text };
+    const thinkingMsg = { id: `t_${Date.now() + 1}`, role: "ai", type: "text", content: "正在为你整理问诊建议..." };
+    mockStore.setAiState({ chatHistory: history.concat(userMsg, thinkingMsg).slice(-100) });
+
+    try {
+      const healthSummary = mockStore.getState().healthMetrics || {};
+      const historyForContext = mockStore.getState().aiState.chatHistory || [];
+      const reply = await mockAiService.sendChatMessage(text, healthSummary, historyForContext);
+      const latestHistory = mockStore.getState().aiState.chatHistory || [];
+      const withoutThinking = latestHistory.filter((item) => item.id !== thinkingMsg.id);
+      mockStore.setAiState({ chatHistory: withoutThinking.concat(reply).slice(-100) });
+    } catch (err) {
+      const latestHistory = mockStore.getState().aiState.chatHistory || [];
+      const withoutThinking = latestHistory.filter((item) => item.id !== thinkingMsg.id);
+      mockStore.setAiState({
+        chatHistory: withoutThinking.concat({ id: `e_${Date.now()}`, role: "ai", type: "text", content: "网络繁忙，请稍后再试。" }).slice(-100)
+      });
+    } finally {
+      this.setData({ isSending: false });
+    }
+  },
+
+  clearConversation() {
+    if (!this.data.canChat) return wx.showToast({ title: "请先连接设备", icon: "none" });
+
+    wx.showModal({
+      title: "清空对话",
+      content: "确认清空当前咨询记录吗？",
       success: (res) => {
-        const tempFilePath = res.tempFiles[0].tempFilePath; // 获取本地临时图片路径
-        
-        // 将图片作为消息推入屏幕
-        this.appendMessage('user', 'image', tempFilePath);
-        
-        // 模拟 AI 图片视觉识别返回
-        this.mockAIResponse('已收到您的舌象/面色图片，正在调用视觉大模型进行特征提取...');
+        if (!res.confirm) return;
+        mockAiService.clearChatHistory();
+        wx.showToast({ title: "已清空", icon: "none" });
       }
     });
-  },
-
-  // 通用方法：追加消息并滚动到底部
-  appendMessage(role, type, content) {
-    const newMessageId = 'msg_' + Date.now();
-    const newMsg = { id: newMessageId, role, type, content };
-    
-    this.setData({
-      messageList: [...this.data.messageList, newMsg],
-      scrollToId: `msg-${newMessageId}`
-    });
-  },
-
-  // 模拟发送大模型网络请求并接收回复
-  mockAIResponse(mockReplyText) {
-    wx.showNavigationBarLoading(); // 顶部菊花转，模拟网络请求中
-    setTimeout(() => {
-      wx.hideNavigationBarLoading();
-      this.appendMessage('ai', 'text', mockReplyText);
-    }, 1500);
-  },
-
-  // 语音模拟 (与之前逻辑相同)
-  handleTouchStart() { wx.showToast({ title: '正在录音...', icon: 'none' }); },
-  handleTouchEnd() { 
-    wx.hideToast();
-    this.appendMessage('user', 'text', '(语音)我最近容易出汗。');
-    this.mockAIResponse('气虚或阴虚可能导致多汗，请问您是白天动一下就出汗，还是晚上睡觉出汗？');
   }
 });

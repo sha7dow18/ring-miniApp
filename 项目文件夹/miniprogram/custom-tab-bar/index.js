@@ -1,7 +1,6 @@
-// custom-tab-bar/index.js
 Component({
   data: {
-    selected: 0, 
+    selected: 0,
     tabList: [
       {
         pagePath: "/pages/home/index",
@@ -10,15 +9,9 @@ Component({
         selectedIconPath: "/assets/tabbar/health_active.png"
       },
       {
-        pagePath: "/pages/mall/index",
-        text: "商城",
-        iconPath: "/assets/tabbar/mall.png",
-        selectedIconPath: "/assets/tabbar/mall_active.png"
-      },
-      {
         pagePath: "/pages/ai-lab/index",
         text: "AI",
-        iconPath: "/assets/tabbar/ai.png", 
+        iconPath: "/assets/tabbar/ai.png",
         selectedIconPath: "/assets/tabbar/ai_active.png"
       },
       {
@@ -35,10 +28,14 @@ Component({
       }
     ]
   },
+
   methods: {
     switchTab(e) {
-      const data = e.currentTarget.dataset;
-      wx.switchTab({ url: data.path });
+      const { path, index } = e.currentTarget.dataset;
+      if (!path) return;
+
+      this.setData({ selected: Number(index) || 0 });
+      wx.switchTab({ url: path });
     }
   }
 });
