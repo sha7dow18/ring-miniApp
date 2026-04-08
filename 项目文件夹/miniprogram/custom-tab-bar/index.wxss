@@ -1,7 +1,0 @@
-.tab-bar-container{ position:fixed; left:16rpx; right:16rpx; bottom:10rpx; height:104rpx; border-radius:30rpx; background:#f7f2e8; display:flex; box-shadow:0 8rpx 24rpx rgba(46,58,51,.16); z-index:999; padding-bottom:env(safe-area-inset-bottom); overflow:visible; }
-.tab-bar-item{ flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; }
-.icon-box{ width:48rpx; height:48rpx; margin-bottom:6rpx; display:flex; justify-content:center; align-items:center; }
-.tab-icon{ width:100%; height:100%; object-fit:contain; }
-.tab-text{ font-size:22rpx; color:#7a807a; }
-.tab-bar-item.selected .tab-text{ color:#3f5e54; font-weight:700; }
-.tab-bar-item.selected .tab-icon{ transform:scale(1.08); }

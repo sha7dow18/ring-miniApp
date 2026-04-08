@@ -1,0 +1,25 @@
+<view class="detail-page" wx:if="{{product}}">
+  <view class="hero" style="background: linear-gradient(145deg, #f7efe3 0%, {{product.color}} 100%);">
+    <view class="hero-glow {{glowClass}}"></view>
+    <image wx:if="{{product.imageName}}" class="img-box {{imageClass}}" src="{{imagePath}}" mode="aspectFit" />
+    <view wx:else class="img-box" style="background: {{product.color}};"></view>
+  </view>
+
+  <view class="title">{{product.name}}</view>
+  <view class="meta">分类：{{product.category}} · 价格：¥{{product.price}}</view>
+  <view class="desc">{{product.desc}}</view>
+  <view class="pitch">{{product.detailPitch || product.desc}}</view>
+
+  <view class="tag-row">
+    <text class="tag" wx:for="{{product.tags}}" wx:key="*this">{{item}}</text>
+  </view>
+
+  <view class="actions">
+    <view class="btn buy" bindtap="onBuyNow">立即购买</view>
+    <view class="btn contact" bindtap="onContact">联系客服</view>
+  </view>
+</view>
+
+<view class="detail-page" wx:else>
+  <view class="title">商品不存在</view>
+</view>

@@ -1,0 +1,7 @@
+page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
+.page{ padding:24rpx; }
+.card{ background:#f8f2e8; border-radius:20rpx; padding:20rpx; box-shadow:0 6rpx 16rpx rgba(45,56,49,.08); }
+.title{ font-size:30rpx; font-weight:700; color:#1f2d28; margin-bottom:12rpx; }
+.desc{ color:#6f7772; font-size:24rpx; }
+.row{ display:flex; justify-content:space-between; padding:14rpx 0; border-bottom:1rpx solid #eaddcb; color:#405048; font-size:23rpx; }
+.row:last-child{ border-bottom:none; }

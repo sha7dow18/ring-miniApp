@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="card" wx:if="{{isConnected && deviceInfo}}">
+    <view class="title">当前设备</view>
+    <view class="row"><text>设备名称</text><text>{{deviceInfo.deviceName}}</text></view>
+    <view class="row"><text>连接状态</text><text>已连接</text></view>
+    <view class="row"><text>电量</text><text>{{deviceInfo.battery}}%</text></view>
+    <view class="row"><text>最近同步</text><text>{{deviceInfo.lastSyncTime}}</text></view>
+  </view>
+
+  <view class="card" wx:else>
+    <view class="title">设备未连接</view>
+    <view class="desc">请先前往服务页连接设备后查看设备状态。</view>
+  </view>
+
+  <view class="btn-row">
+    <view class="btn" bindtap="goService">前往设备服务</view>
+    <view class="btn" wx:if="{{isConnected}}" bindtap="goDeviceDetail">查看设备详情</view>
+    <view class="btn danger" wx:if="{{isConnected}}" bindtap="disconnectDevice">断开连接</view>
+  </view>
+</view>

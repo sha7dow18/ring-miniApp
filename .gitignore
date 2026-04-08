@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+miniprogram_npm/
+package-lock.json
+
+# WeChat DevTools
+project.private.config.json
+
+# Build output
+*.js.map
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Archives & binaries
+*.zip
+*.rar
+*.7z
+
+# Worktrees
+.worktrees/

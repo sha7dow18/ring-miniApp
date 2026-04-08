@@ -1,0 +1,8 @@
+page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
+.page{ padding:24rpx; }
+.card{ background:#f8f2e8; border-radius:20rpx; padding:18rpx; margin-bottom:12rpx; box-shadow:0 6rpx 16rpx rgba(45,56,49,.08); }
+.title{ font-size:30rpx; color:#1f2d28; font-weight:700; margin-bottom:10rpx; }
+.row{ display:flex; justify-content:space-between; padding:14rpx 0; border-bottom:1rpx solid #eaddcb; color:#405048; font-size:23rpx; }
+.row:last-child{ border-bottom:none; }
+.desc{ color:#707a74; font-size:23rpx; line-height:1.7; }
+.btn{ text-align:center; background:#2f4a42; color:#f5eee3; border-radius:999rpx; padding:18rpx 0; font-size:25rpx; }

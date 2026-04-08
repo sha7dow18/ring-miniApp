@@ -1,0 +1,8 @@
+<view class="page">
+  <view class="card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="viewRecord">
+    <view class="title">{{item.type}}</view>
+    <view class="summary">{{item.summary}}</view>
+    <view class="time">{{item.time}}</view>
+  </view>
+  <view class="empty" wx:if="{{!list.length}}">暂无记录</view>
+</view>

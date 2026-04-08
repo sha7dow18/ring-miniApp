@@ -1,4 +1,0 @@
-<view class="page">
-  <view class="title">关于我们</view>
-  <view class="line" wx:for="{{lines}}" wx:key="*this">{{item}}</view>
-</view>

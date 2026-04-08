@@ -1,0 +1,21 @@
+<view class="page" wx:if="{{order}}">
+  <view class="card">
+    <view class="title">订单详情</view>
+    <view class="row"><text>订单号</text><text>{{order.id}}</text></view>
+    <view class="row"><text>商品</text><text>{{order.productName}}</text></view>
+    <view class="row"><text>状态</text><text>{{order.statusText}}</text></view>
+    <view class="row"><text>下单时间</text><text>{{order.createdAt}}</text></view>
+    <view class="row"><text>订单金额</text><text>¥{{order.amount}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="title">购买说明</view>
+    <view class="desc">订单状态会在支付与发货后自动更新。若有配送或售后问题，可联系在线客服处理。</view>
+  </view>
+
+  <view class="btn" bindtap="contactSupport">联系售后支持</view>
+</view>
+
+<view class="page" wx:else>
+  <view class="card"><view class="title">未找到订单</view><view class="desc">请返回订单列表重新选择。</view></view>
+</view>

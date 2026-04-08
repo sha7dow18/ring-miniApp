@@ -1,0 +1,45 @@
+page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
+.mall-page{
+  min-height:100vh;
+  padding:24rpx;
+  padding-bottom:calc(160rpx + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+}
+.hero-text .t1{ font-size:34rpx; color:#2b3140; font-weight:700; line-height:1.2; }
+.hero-text .t2{ font-size:52rpx; font-weight:900; line-height:1.08; color:#111827; }
+.hero-text .t3{ margin-top:8rpx; font-size:28rpx; color:#5f6677; }
+.search-row{ margin-top:14rpx; display:flex; align-items:center; }
+.search-box{ width:100%; height:76rpx; border-radius:20rpx; background:#f8f2e8; display:flex; align-items:center; padding:0 18rpx; box-shadow:0 6rpx 18rpx rgba(45,56,49,.08); }
+.search-input{ flex:1; color:#1f2937; font-size:28rpx; }
+.search-input::placeholder{ color:#9ba4b5; }
+.icon-search{ width:30rpx; height:30rpx; border:4rpx solid #7b879c; border-radius:50%; position:relative; }
+.icon-search::after{ content:""; position:absolute; width:16rpx; height:4rpx; background:#7b879c; border-radius:4rpx; transform:rotate(45deg); right:-10rpx; bottom:-6rpx; }
+.banner-wrap{ margin-top:16rpx; border-radius:28rpx; overflow:hidden; box-shadow:0 10rpx 26rpx rgba(37,48,75,.12); }
+.banner{ width:100%; height:250rpx; display:block; }
+.cat-row{ margin:18rpx 0 14rpx; display:flex; gap:12rpx; flex-wrap:wrap; }
+.cat{ min-width:130rpx; height:58rpx; border-radius:999rpx; background:#e8ebf2; text-align:center; line-height:58rpx; font-size:26rpx; color:#55607a; font-weight:600; padding:0 20rpx; }
+.cat.active{ background:#2f4a42; color:#f5f7fa; }
+
+.goods-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14rpx; }
+.goods-card{ background:#f8f2e8; border-radius:24rpx; overflow:hidden; box-shadow:0 8rpx 20rpx rgba(45,56,49,.1); display:flex; flex-direction:column; }
+.goods-image-wrap{ height:230rpx; background:linear-gradient(180deg,#efe6d8 0%,#f7f2e9 100%); display:flex; align-items:center; justify-content:center; position:relative; }
+.goods-image{ width:210rpx; height:210rpx; }
+.goods-image.ph{ border-radius:14rpx; opacity:.78; }
+
+/* 每个商品独立可调（商城列表） */
+.product-image-m1{ width:300rpx; height:200rpx; transform:translateY(8rpx) rotate(0deg); }
+.product-image-m2{ width:300rpx; height:200rpx; transform:translateY(8rpx) rotate(0deg); }
+.product-image-m3{ width:300rpx; height:200rpx; transform:translateY(6rpx) rotate(0deg); }
+.product-image-m4{ width:300rpx; height:200rpx; transform:translateY(6rpx) rotate(0deg); }
+
+.goods-body{ padding:16rpx 16rpx 18rpx; display:flex; flex-direction:column; gap:8rpx; }
+.goods-name{ font-size:30rpx; color:#111827; font-weight:800; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.goods-desc{ color:#6b7280; font-size:22rpx; line-height:1.4; height:62rpx; overflow:hidden; }
+.goods-tags{ display:flex; gap:6rpx; flex-wrap:wrap; min-height:34rpx; }
+.goods-tag{ font-size:18rpx; color:#5f6b63; background:#ece2d4; border-radius:999rpx; padding:4rpx 10rpx; }
+.goods-foot{ margin-top:auto; display:flex; align-items:center; justify-content:space-between; }
+.goods-price{ font-size:38rpx; color:#1f2937; font-weight:900; }
+.goods-price text{ font-size:22rpx; color:#6b7280; margin-left:4rpx; }
+.buy{ background:#2f4a42; color:#f5f7fa; border-radius:999rpx; padding:10rpx 18rpx; font-size:22rpx; font-weight:700; }
+.empty{ text-align:center; color:#667085; font-size:26rpx; padding:50rpx 0; }

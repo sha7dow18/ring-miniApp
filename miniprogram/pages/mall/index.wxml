@@ -1,0 +1,47 @@
+<view class="mall-page">
+  <view class="hero-text">
+    <view class="t1">获取您的专属</view>
+    <view class="t2">健康补剂</view>
+    <view class="t3">守护您的健康</view>
+  </view>
+
+  <view class="search-row">
+    <view class="search-box">
+      <input class="search-input" placeholder="搜索" value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm" confirm-type="search" />
+      <view class="icon-search" bindtap="onSearchConfirm"></view>
+    </view>
+  </view>
+
+  <view class="banner-wrap">
+    <image class="banner" src="{{bannerImage}}" mode="aspectFill" />
+  </view>
+
+  <view class="cat-row">
+    <view wx:for="{{categories}}" wx:key="id" class="cat {{activeCategory===item.id?'active':''}}" data-id="{{item.id}}" bindtap="onSwitchCategory">{{item.name}}</view>
+  </view>
+
+  <view class="goods-grid" wx:if="{{filteredProducts.length}}">
+    <view class="goods-card" wx:for="{{filteredProducts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <view class="goods-image-wrap">
+        <image wx:if="{{item.imageName}}" class="goods-image {{item.imageClass}}" src="{{item.imagePath}}" mode="aspectFit" />
+        <view wx:else class="goods-image ph" style="background: {{item.color}}"></view>
+      </view>
+
+      <view class="goods-body">
+        <view class="goods-name">{{item.name}}</view>
+        <view class="goods-desc">{{item.desc}}</view>
+
+        <view class="goods-tags">
+          <text class="goods-tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+        </view>
+
+        <view class="goods-foot">
+          <view class="goods-price">¥{{item.price}}<text>起</text></view>
+          <view class="buy">立即购买</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:else>暂无匹配商品，试试其他关键词</view>
+</view>
