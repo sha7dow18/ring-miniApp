@@ -5,6 +5,7 @@ package-lock.json
 
 # WeChat DevTools
 project.private.config.json
+typings/
 
 # Build output
 *.js.map
