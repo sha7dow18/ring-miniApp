@@ -1,5 +1,6 @@
 const mockStore = require("../../utils/mockStore.js");
 const mockAiService = require("../../services/mockAiService.js");
+const aiService = require("../../services/aiService.js");
 
 Page({
   data: {
@@ -16,6 +17,8 @@ Page({
   onLoad(query) {
     const preset = decodeURIComponent(query.preset || "");
     if (preset) this.setData({ pendingPreset: preset });
+    // 原型阶段：进入页面即重置欢迎语（避免显示旧的"连接设备后..."提示）
+    mockAiService.clearChatHistory();
   },
 
   onShow() {
@@ -38,13 +41,13 @@ Page({
   onUnload() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
 
   syncFromState(state) {
-    const connected = state.deviceStatus === "connected";
     const list = state.aiState.chatHistory || [];
     const last = list[list.length - 1];
 
+    // 原型阶段：AI 聊天不依赖设备连接，直接放行
     this.setData({
-      isConnected: connected,
-      canChat: connected && !!state.aiState.canChat,
+      isConnected: true,
+      canChat: true,
       messageList: list,
       scrollToId: last ? `msg-${last.id}` : ""
     });
@@ -55,39 +58,51 @@ Page({
   useQuickQuestion(e) { this.setData({ inputText: e.currentTarget.dataset.q || "" }); },
 
   async sendText() {
-    if (!this.data.canChat) return wx.showToast({ title: "请先连接设备", icon: "none" });
     const text = (this.data.inputText || "").trim();
     if (!text) return wx.showToast({ title: "请输入问题", icon: "none" });
     if (this.data.isSending) return;
 
     this.setData({ isSending: true, inputText: "" });
 
-    const history = mockStore.getState().aiState.chatHistory || [];
+    // 组装发给 AI 的对话历史（role: ai -> assistant）
+    const historySnapshot = mockStore.getState().aiState.chatHistory || [];
+    const apiMessages = historySnapshot
+      .filter((m) => m.role === "user" || m.role === "ai")
+      .map((m) => ({
+        role: m.role === "ai" ? "assistant" : "user",
+        content: m.content || ""
+      }));
+    apiMessages.push({ role: "user", content: text });
+
+    // 立即把用户消息和一个空的 AI 消息插入对话列表
     const userMsg = { id: `u_${Date.now()}`, role: "user", type: "text", content: text };
-    const thinkingMsg = { id: `t_${Date.now() + 1}`, role: "ai", type: "text", content: "正在为你整理问诊建议..." };
-    mockStore.setAiState({ chatHistory: history.concat(userMsg, thinkingMsg).slice(-100) });
+    const aiMsgId = `a_${Date.now() + 1}`;
+    const aiMsg = { id: aiMsgId, role: "ai", type: "text", content: "" };
+    mockStore.setAiState({ chatHistory: historySnapshot.concat(userMsg, aiMsg).slice(-100) });
 
     try {
-      const healthSummary = mockStore.getState().healthMetrics || {};
-      const historyForContext = mockStore.getState().aiState.chatHistory || [];
-      const reply = await mockAiService.sendChatMessage(text, healthSummary, historyForContext);
-      const latestHistory = mockStore.getState().aiState.chatHistory || [];
-      const withoutThinking = latestHistory.filter((item) => item.id !== thinkingMsg.id);
-      mockStore.setAiState({ chatHistory: withoutThinking.concat(reply).slice(-100) });
-    } catch (err) {
-      const latestHistory = mockStore.getState().aiState.chatHistory || [];
-      const withoutThinking = latestHistory.filter((item) => item.id !== thinkingMsg.id);
-      mockStore.setAiState({
-        chatHistory: withoutThinking.concat({ id: `e_${Date.now()}`, role: "ai", type: "text", content: "网络繁忙，请稍后再试。" }).slice(-100)
+      await aiService.streamChat(apiMessages, (chunk) => {
+        // 每收到一个 chunk 就追加到 AI 消息末尾，触发页面刷新 → 打字机效果
+        const current = mockStore.getState().aiState.chatHistory || [];
+        const updated = current.map((m) =>
+          m.id === aiMsgId ? { ...m, content: (m.content || "") + chunk } : m
+        );
+        mockStore.setAiState({ chatHistory: updated });
       });
+    } catch (err) {
+      const current = mockStore.getState().aiState.chatHistory || [];
+      const updated = current.map((m) =>
+        m.id === aiMsgId
+          ? { ...m, content: "抱歉，AI 暂时无法回复：" + ((err && err.message) || "未知错误") }
+          : m
+      );
+      mockStore.setAiState({ chatHistory: updated });
     } finally {
       this.setData({ isSending: false });
     }
   },
 
   clearConversation() {
-    if (!this.data.canChat) return wx.showToast({ title: "请先连接设备", icon: "none" });
-
     wx.showModal({
       title: "清空对话",
       content: "确认清空当前咨询记录吗？",

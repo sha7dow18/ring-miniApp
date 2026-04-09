@@ -4,6 +4,13 @@ App({
   },
 
   onLaunch() {
+    if (wx.cloud) {
+      wx.cloud.init({
+        env: this.globalData.env,
+        traceUser: true
+      });
+    }
+
     const mockStore = require("./utils/mockStore.js");
     mockStore.hydrate();
   }
