@@ -10,29 +10,31 @@ const DEFAULT_HEALTH_METRICS = {
   updatedAt: ""
 };
 
+// 原型阶段：没有真实设备，默认状态即视为已连接，使用演示用的设备信息
+// 未来接入真实硬件时，恢复 deviceStatus: "disconnected" 并通过真实连接流程填充
 const defaultState = {
-  deviceStatus: "disconnected",
+  deviceStatus: "connected",
   deviceInfo: {
-    deviceName: "Aita Ring",
-    deviceId: "",
-    mac: "",
-    sn: "",
-    firmwareVersion: "",
-    hardwareVersion: "",
-    battery: 0,
+    deviceName: "Aita Ring Pro",
+    deviceId: "RING-PRO-DEMO",
+    mac: "AA:12:BC:34:DE:01",
+    sn: "SN-DEMO0001",
+    firmwareVersion: "1.2.0",
+    hardwareVersion: "HW-2026A",
+    battery: 82,
     chargeState: "not_charging",
     lastSyncTime: ""
   },
   healthMetrics: { ...DEFAULT_HEALTH_METRICS },
   aiState: {
-    canChat: false,
+    canChat: true,
     latestTongueResult: null,
     chatHistory: [
       {
         id: "init",
         role: "ai",
         type: "text",
-        content: "您好！连接设备后可开始健康咨询。"
+        content: "你好，我是你的健康助手 Aita。有什么想问的？"
       }
     ]
   },
@@ -121,6 +123,22 @@ function hydrate() {
     categories: deepClone(defaultState.mallState.categories),
     products: deepClone(defaultState.mallState.products),
     selectedCategory: (state.mallState.selectedCategory === "herb" || state.mallState.selectedCategory === "sleep") ? state.mallState.selectedCategory : "herb"
+  };
+
+  // 原型阶段：强制覆盖设备连接状态（即使旧缓存里是 disconnected）
+  // 未来接入真实设备后可移除此段
+  state.deviceStatus = "connected";
+  if (!state.deviceInfo || !state.deviceInfo.deviceName || !state.deviceInfo.deviceId) {
+    state.deviceInfo = deepClone(defaultState.deviceInfo);
+  }
+  if (!state.deviceInfo.lastSyncTime) {
+    const d = new Date();
+    const p = (v) => (v < 10 ? `0${v}` : `${v}`);
+    state.deviceInfo.lastSyncTime = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  }
+  state.aiState = {
+    ...state.aiState,
+    canChat: true
   };
 
   saveState();
