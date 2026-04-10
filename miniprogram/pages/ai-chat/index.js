@@ -184,17 +184,14 @@ Page({
         // 立刻显示图片（用临时路径）
         self._pendingImage = { tempPath: tempPath, fileID: "", url: "" };
 
-        // 后台上传
-        self.setData({ isSending: true });
+        // 后台上传（不设 isSending，留给 doSend 管）
         try {
           var result = await aiService.uploadImage(tempPath);
           self._pendingImage = { tempPath: tempPath, fileID: result.fileID, url: result.url };
-          // 自动发送
-          await self.doSend();
+          self.doSend();
         } catch (err) {
           wx.showToast({ title: "图片上传失败", icon: "none" });
           self._pendingImage = null;
-          self.setData({ isSending: false });
         }
       }
     });
