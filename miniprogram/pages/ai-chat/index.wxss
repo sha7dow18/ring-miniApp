@@ -120,4 +120,30 @@ page { background: #F4F0EB; }
   flex-shrink: 0;
 }
 .btn-off { opacity: 0.35; }
+
+/* ═══ 附件预览区 ═══ */
+.att-preview {
+  display: flex; align-items: center; gap: 14rpx;
+  background: #FFF; border: 2rpx solid #E0D9CE; border-radius: 18rpx;
+  padding: 14rpx 16rpx; margin-bottom: 12rpx;
+}
+.att-thumb {
+  width: 96rpx; height: 96rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+}
+.att-info { flex: 1; }
+.att-label { font-size: 26rpx; color: #2C3E36; font-weight: 600; display: block; }
+.att-hint { font-size: 22rpx; color: #8A8E8B; margin-top: 2rpx; display: block; }
+.att-remove {
+  width: 48rpx; height: 48rpx;
+  border-radius: 50%; background: #F0EAE0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28rpx; color: #8A8E8B; flex-shrink: 0;
+}
+.att-uploading {
+  text-align: center; font-size: 24rpx; color: #6B7B73;
+  padding: 8rpx 0; margin-bottom: 8rpx;
+}
+
 .input-hint { text-align: center; font-size: 20rpx; color: #B0B5B1; margin-top: 8rpx; }

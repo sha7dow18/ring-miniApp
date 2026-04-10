@@ -60,8 +60,22 @@
     <view class="scroll-end" id="scroll-end"></view>
   </scroll-view>
 
-  <!-- ── 底部输入栏 ── -->
+  <!-- ── 底部输入区 ── -->
   <view class="input-area">
+    <!-- 附件预览（选图后、发送前） -->
+    <view class="att-preview" wx:if="{{attachment}}">
+      <image class="att-thumb" src="{{attachment.tempPath}}" mode="aspectFill"/>
+      <view class="att-info">
+        <text class="att-label">已选择图片</text>
+        <text class="att-hint">点发送一起提交，或输入文字描述</text>
+      </view>
+      <view class="att-remove" bindtap="removeAttachment" hover-class="tap-dim">✕</view>
+    </view>
+    <!-- 上传中提示 -->
+    <view class="att-uploading" wx:if="{{isUploading}}">
+      <text>正在上传图片...</text>
+    </view>
+    <!-- 输入行 -->
     <view class="input-row">
       <view class="btn-add" bindtap="chooseImage" hover-class="tap-dim">
         <text>+</text>
@@ -70,7 +84,7 @@
         class="msg-input"
         value="{{inputText}}"
         bindinput="onInput"
-        placeholder="输入问题，或上传图片..."
+        placeholder="{{attachment ? '可输入描述，或直接发送' : '输入问题，或上传图片...'}}"
         confirm-type="send"
         bindconfirm="doSend"
         disabled="{{isSending}}"

@@ -7,7 +7,7 @@ var QUICK_QUESTIONS = [
   { icon: "📋", text: "给我一周调理建议" }
 ];
 
-// ── 云数据库操作（用户数据隔离靠 _openid 自动注入） ──
+// ── 云数据库 ──
 function getDB() { return wx.cloud.database(); }
 
 function createSession(firstText) {
@@ -20,17 +20,13 @@ function createSession(firstText) {
 
 function saveMessages(sessionId, messages) {
   return getDB().collection("chat_sessions").doc(sessionId).update({
-    data: {
-      messages: messages,
-      updatedAt: new Date()
-    }
+    data: { messages: messages, updatedAt: new Date() }
   }).catch(function() {});
 }
 
 function loadSessionList() {
   return getDB().collection("chat_sessions")
-    .orderBy("updatedAt", "desc")
-    .limit(20)
+    .orderBy("updatedAt", "desc").limit(20)
     .field({ _id: true, title: true, updatedAt: true })
     .get()
     .then(function(res) { return res.data || []; })
@@ -45,28 +41,28 @@ function loadSession(sessionId) {
 
 Page({
   data: {
-    messages: [],           // parts-based 消息列表
+    messages: [],
     quickQuestions: QUICK_QUESTIONS,
     inputText: "",
     isSending: false,
+    isUploading: false,
     scrollToId: "",
-    sessionId: "",          // 当前会话 ID
-    showHistory: false,     // 历史侧边栏
-    sessionList: []         // 历史会话列表
+    sessionId: "",
+    showHistory: false,
+    sessionList: [],
+    // 待发送的附件图片（选图后、发送前）
+    attachment: null  // { tempPath, fileID, url }
   },
 
   onLoad: function(query) {
     var preset = decodeURIComponent(query.preset || "");
-    if (preset) {
-      this._pendingPreset = preset;
-    }
+    if (preset) this._pendingPreset = preset;
   },
 
   onShow: function() {
     if (typeof this.getTabBar === "function" && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });
     }
-    // 首次进入如果没有 session，不急着创建，等用户发第一条消息时创建
     if (this._pendingPreset) {
       var q = this._pendingPreset;
       this._pendingPreset = "";
@@ -88,86 +84,7 @@ Page({
     this.doSend();
   },
 
-  // ── 核心发送逻辑 ──
-  doSend: async function() {
-    var text = (this.data.inputText || "").trim();
-    if (!text && !this._pendingImage) return;
-    if (this.data.isSending) return;
-
-    this.setData({ isSending: true, inputText: "" });
-    var self = this;
-
-    try {
-      // 确保 session 存在
-      if (!this.data.sessionId) {
-        var sid = await createSession(text || "图片分析");
-        this.setData({ sessionId: sid });
-      }
-
-      // 构建用户消息 parts
-      var parts = [];
-      if (this._pendingImage) {
-        parts.push({
-          type: "image",
-          tempPath: this._pendingImage.tempPath,
-          fileID: this._pendingImage.fileID || "",
-          url: this._pendingImage.url || ""
-        });
-        this._pendingImage = null;
-      }
-      if (text) {
-        parts.push({ type: "text", content: text });
-      }
-
-      var userMsg = { id: aiService.msgId(), role: "user", parts: parts, ts: aiService.nowISO() };
-      var aiMsg = { id: aiService.msgId(), role: "assistant", parts: [{ type: "text", content: "" }], ts: aiService.nowISO() };
-
-      var msgs = self.data.messages.concat(userMsg, aiMsg);
-      self.setData({ messages: msgs, scrollToId: "msg-" + aiMsg.id });
-
-      // 调 AI（自动路由文字/图片）
-      var allExceptAi = self.data.messages.filter(function(m) { return m.id !== aiMsg.id; });
-      allExceptAi.push(userMsg);
-
-      await aiService.sendMessage(allExceptAi, function(chunk) {
-        var cur = self.data.messages;
-        var updated = cur.map(function(m) {
-          if (m.id !== aiMsg.id) return m;
-          var newParts = m.parts.map(function(p) {
-            if (p.type === "text") return { type: "text", content: (p.content || "") + chunk };
-            return p;
-          });
-          return { ...m, parts: newParts };
-        });
-        self.setData({ messages: updated, scrollToId: "msg-" + aiMsg.id });
-      });
-
-      // 存数据库
-      var toSave = self.data.messages.map(function(m) {
-        return {
-          id: m.id, role: m.role, ts: m.ts,
-          parts: m.parts.map(function(p) {
-            if (p.type === "image") return { type: "image", fileID: p.fileID, url: p.url };
-            return { type: "text", content: p.content };
-          })
-        };
-      });
-      saveMessages(self.data.sessionId, toSave);
-
-    } catch (err) {
-      // 错误消息
-      var cur = self.data.messages;
-      var updated = cur.map(function(m) {
-        if (m.role !== "assistant" || (m.parts[0] && m.parts[0].content)) return m;
-        return { ...m, parts: [{ type: "text", content: "抱歉，AI 暂时无法回复：" + ((err && err.message) || "未知错误") }] };
-      });
-      self.setData({ messages: updated });
-    } finally {
-      self.setData({ isSending: false });
-    }
-  },
-
-  // ── 选择图片 ──
+  // ── 选择图片 → 只放入 attachment 预览，不发送 ──
   chooseImage: function() {
     if (this.data.isSending) return;
     var self = this;
@@ -176,34 +93,117 @@ Page({
       mediaType: ["image"],
       sizeType: ["compressed"],
       sourceType: ["camera", "album"],
-      success: async function(res) {
+      success: function(res) {
         var file = res.tempFiles && res.tempFiles[0];
         if (!file) return;
-        var tempPath = file.tempFilePath;
-
-        // 立刻显示图片（用临时路径）
-        self._pendingImage = { tempPath: tempPath, fileID: "", url: "" };
-
-        // 后台上传（不设 isSending，留给 doSend 管）
-        try {
-          var result = await aiService.uploadImage(tempPath);
-          self._pendingImage = { tempPath: tempPath, fileID: result.fileID, url: result.url };
-          self.doSend();
-        } catch (err) {
-          wx.showToast({ title: "图片上传失败", icon: "none" });
-          self._pendingImage = null;
-        }
+        // 放入附件预览区，等用户点发送
+        self.setData({
+          attachment: { tempPath: file.tempFilePath, fileID: "", url: "" }
+        });
       }
     });
   },
 
-  // ── 图片预览 ──
+  // 移除附件
+  removeAttachment: function() {
+    this.setData({ attachment: null });
+  },
+
+  // ── 发送（文字 + 可选附件图片）──
+  doSend: async function() {
+    var text = (this.data.inputText || "").trim();
+    var att = this.data.attachment;
+    if (!text && !att) return;
+    if (this.data.isSending) return;
+
+    this.setData({ isSending: true, inputText: "", attachment: null });
+    var self = this;
+
+    try {
+      // 确保 session 存在
+      if (!self.data.sessionId) {
+        var sid = await createSession(text || "图片分析");
+        self.setData({ sessionId: sid });
+      }
+
+      // 如果有图片附件，先上传
+      var imgPart = null;
+      if (att) {
+        self.setData({ isUploading: true });
+        try {
+          var uploaded = await aiService.uploadImage(att.tempPath);
+          imgPart = { type: "image", tempPath: att.tempPath, fileID: uploaded.fileID, url: uploaded.url };
+        } catch (uploadErr) {
+          // 上传失败也别卡住，图片用临时路径，AI 那边没 url 会走纯文字
+          imgPart = { type: "image", tempPath: att.tempPath, fileID: "", url: "" };
+          console.warn("[ai-chat] image upload failed:", uploadErr);
+        }
+        self.setData({ isUploading: false });
+      }
+
+      // 构建用户消息 parts
+      var parts = [];
+      if (imgPart) parts.push(imgPart);
+      if (text) parts.push({ type: "text", content: text });
+
+      // 如果有图片但没文字，自动加舌诊提示
+      if (imgPart && !text) {
+        parts.push({ type: "text", content: "请帮我分析这张图片" });
+      }
+
+      var userMsg = { id: aiService.msgId(), role: "user", parts: parts, ts: aiService.nowISO() };
+      var aiMsgId = aiService.msgId();
+      var aiMsg = { id: aiMsgId, role: "assistant", parts: [{ type: "text", content: "" }], ts: aiService.nowISO() };
+
+      var msgs = self.data.messages.concat(userMsg, aiMsg);
+      self.setData({ messages: msgs, scrollToId: "msg-" + aiMsgId });
+
+      // 给 AI 的历史（不含当前空的 AI 消息）
+      var historyForAI = self.data.messages.filter(function(m) { return m.id !== aiMsgId; });
+
+      await aiService.sendMessage(historyForAI, function(chunk) {
+        var cur = self.data.messages;
+        var updated = cur.map(function(m) {
+          if (m.id !== aiMsgId) return m;
+          var newParts = m.parts.map(function(p) {
+            if (p.type === "text") return { type: "text", content: (p.content || "") + chunk };
+            return p;
+          });
+          return { id: m.id, role: m.role, parts: newParts, ts: m.ts };
+        });
+        self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
+      });
+
+      // 存数据库（剥掉 tempPath）
+      var toSave = self.data.messages.map(function(m) {
+        return {
+          id: m.id, role: m.role, ts: m.ts,
+          parts: m.parts.map(function(p) {
+            if (p.type === "image") return { type: "image", fileID: p.fileID || "", url: p.url || "" };
+            return { type: "text", content: p.content || "" };
+          })
+        };
+      });
+      saveMessages(self.data.sessionId, toSave);
+
+    } catch (err) {
+      var cur = self.data.messages;
+      var updated = cur.map(function(m) {
+        if (m.role !== "assistant") return m;
+        if (m.parts && m.parts[0] && m.parts[0].content) return m;
+        return { id: m.id, role: m.role, ts: m.ts, parts: [{ type: "text", content: "AI 暂时无法回复：" + ((err && err.message) || "未知错误") }] };
+      });
+      self.setData({ messages: updated });
+    } finally {
+      self.setData({ isSending: false, isUploading: false });
+    }
+  },
+
   previewImage: function(e) {
     var url = e.currentTarget.dataset.url;
     if (url) wx.previewImage({ current: url, urls: [url] });
   },
 
-  // ── 历史侧边栏 ──
   toggleHistory: async function() {
     if (!this.data.showHistory) {
       var list = await loadSessionList();
@@ -213,45 +213,28 @@ Page({
     }
   },
 
-  closeHistory: function() {
-    this.setData({ showHistory: false });
-  },
+  closeHistory: function() { this.setData({ showHistory: false }); },
 
-  // ── 加载历史会话 ──
   loadOldSession: async function(e) {
     var sid = e.currentTarget.dataset.sid;
     if (!sid) return;
     var session = await loadSession(sid);
     if (!session) return wx.showToast({ title: "会话不存在", icon: "none" });
-    this.setData({
-      sessionId: sid,
-      messages: session.messages || [],
-      showHistory: false
-    });
+    this.setData({ sessionId: sid, messages: session.messages || [], showHistory: false, attachment: null });
   },
 
-  // ── 新建对话 ──
   newChat: function() {
-    this.setData({
-      sessionId: "",
-      messages: [],
-      showHistory: false,
-      inputText: ""
-    });
+    this.setData({ sessionId: "", messages: [], showHistory: false, inputText: "", attachment: null });
   },
 
-  // ── 清空当前对话 ──
   clearConversation: function() {
     var self = this;
     wx.showModal({
-      title: "清空对话",
-      content: "确认清空当前对话？",
+      title: "清空对话", content: "确认清空当前对话？",
       success: function(res) {
         if (!res.confirm) return;
-        if (self.data.sessionId) {
-          saveMessages(self.data.sessionId, []);
-        }
-        self.setData({ messages: [] });
+        if (self.data.sessionId) saveMessages(self.data.sessionId, []);
+        self.setData({ messages: [], attachment: null });
       }
     });
   }
