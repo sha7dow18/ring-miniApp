@@ -64,7 +64,7 @@
   <view class="input-area">
     <!-- 附件预览（选图后、发送前） -->
     <view class="att-preview" wx:if="{{attachment}}">
-      <image class="att-thumb" src="{{attachment.tempPath}}" mode="aspectFill"/>
+      <image class="att-thumb" src="{{attachment.tempPath}}" mode="widthFix"/>
       <view class="att-info">
         <text class="att-label">已选择图片</text>
         <text class="att-hint">点发送一起提交，或输入文字描述</text>
