@@ -1,37 +1,13 @@
 page{ background:linear-gradient(180deg,#f3ede2 0%,#eee4d6 100%); }
-.ai-lab-page{ min-height:100vh; padding:24rpx; padding-bottom:calc(150rpx + env(safe-area-inset-bottom)); font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif; }
-.hero-card,.gate-card,.result-card,.feature-card{ background:#f8f2e8; border-radius:30rpx; padding:24rpx; box-shadow:0 8rpx 20rpx rgba(45,56,49,.08); margin-bottom:14rpx; position:relative; overflow:hidden; }
-.hero-card{ background:linear-gradient(145deg,#dfe9de 0%,#efe7d8 62%,#e8dcc7 100%); }
+.ai-lab-page{ min-height:100vh; padding:24rpx; padding-bottom:calc(150rpx + env(safe-area-inset-bottom)); }
+.hero-card{ background:linear-gradient(145deg,#dfe9de 0%,#efe7d8 62%,#e8dcc7 100%); border-radius:30rpx; padding:32rpx 24rpx; box-shadow:0 8rpx 20rpx rgba(45,56,49,.08); margin-bottom:20rpx; position:relative; overflow:hidden; }
 .hero-title{ color:#243730; font-size:42rpx; font-weight:800; }
-.hero-desc{ margin-top:8rpx; color:#6f7772; font-size:23rpx; line-height:1.6; max-width:75%; }
-.hero-btn{ margin-top:14rpx; display:inline-block; background:#2f4a42; color:#f5eee3; border-radius:999rpx; padding:14rpx 28rpx; font-size:23rpx; }
+.hero-desc{ margin-top:10rpx; color:#6f7772; font-size:24rpx; line-height:1.6; max-width:70%; }
+.hero-btn{ margin-top:18rpx; display:inline-block; background:#2f4a42; color:#f5eee3; border-radius:999rpx; padding:16rpx 32rpx; font-size:24rpx; font-weight:600; }
 .line-art{ position:absolute; right:-24rpx; top:20rpx; width:220rpx; height:220rpx; border:2rpx solid rgba(47,74,66,.18); border-radius:50%; }
-.gate-title{ color:#253730; font-size:34rpx; font-weight:700; }
-.gate-desc{ margin:10rpx 0 16rpx; color:#78817b; font-size:24rpx; }
-.capsule{ display:inline-block; border-radius:999rpx; padding:13rpx 24rpx; background:#ece2d4; color:#2f4a42; font-size:22rpx; }
-.capsule.dark{ background:#2f4a42; color:#f5eee3; }
-.content-scroll{ min-height:100vh; }
-.result-title{ color:#6d756f; font-size:22rpx; }
-.result-name{ margin-top:8rpx; color:#1f2d28; font-size:40rpx; font-weight:800; }
-.result-percent{ margin-top:6rpx; color:#8b6235; font-size:24rpx; }
-.f-title{ color:#1f2d28; font-size:30rpx; font-weight:700; }
-.f-desc{ margin:8rpx 0 12rpx; color:#767f79; font-size:23rpx; line-height:1.6; }
-.tongue-preview,.empty-preview{ width:100%; height:260rpx; border-radius:18rpx; margin-bottom:12rpx; }
-.tongue-preview{ overflow:hidden; }
-.tongue-img{ width:100%; height:100%; }
-.empty-preview{ background:#efe6d7; border:1rpx dashed #d7c8b1; display:flex; align-items:center; justify-content:center; color:#7b807b; font-size:23rpx; }
-.btn-row{ display:flex; gap:10rpx; flex-wrap:wrap; }
-.kv{ margin-top:10rpx; display:flex; justify-content:space-between; gap:10rpx; color:#3d4c45; font-size:23rpx; }
-.vis-title{ margin-top:14rpx; color:#283a33; font-size:25rpx; font-weight:700; }
-.vis-shot-row{ margin-top:8rpx; display:flex; gap:8rpx; }
-.shot{ flex:1; background:#efe6d8; border-radius:14rpx; padding:10rpx; }
-.shot-dot{ width:12rpx; height:12rpx; border-radius:50%; background:#2f4a42; margin-bottom:6rpx; }
-.shot-t{ color:#4a5852; font-size:20rpx; }
-.shot-d{ color:#1f2d28; font-size:22rpx; margin-top:2rpx; }
-.bar-row{ margin-top:8rpx; display:flex; align-items:center; gap:8rpx; }
-.bar-name{ width:140rpx; color:#55615b; font-size:21rpx; }
-.bar-bg{ flex:1; height:16rpx; border-radius:999rpx; background:#e6dbc9; overflow:hidden; }
-.bar-fill{ height:100%; border-radius:999rpx; background:linear-gradient(90deg,#9fbcab 0%,#41645a 100%); }
-.bar-score{ width:44rpx; text-align:right; color:#304840; font-size:22rpx; font-weight:700; }
-.preset-row{ display:flex; flex-wrap:wrap; gap:8rpx; margin:4rpx 0 12rpx; }
-.preset{ background:#ece2d4; color:#2f4a42; border-radius:999rpx; padding:10rpx 14rpx; font-size:21rpx; }
+.feature-card{ background:#f8f2e8; border-radius:24rpx; padding:24rpx; box-shadow:0 6rpx 16rpx rgba(45,56,49,.06); margin-bottom:14rpx; display:flex; align-items:center; gap:18rpx; }
+.f-icon{ font-size:44rpx; flex-shrink:0; }
+.f-body{ flex:1; }
+.f-title{ color:#1f2d28; font-size:28rpx; font-weight:700; }
+.f-desc{ color:#767f79; font-size:22rpx; margin-top:4rpx; }
+.f-arrow{ color:#9fa5a0; font-size:36rpx; flex-shrink:0; }

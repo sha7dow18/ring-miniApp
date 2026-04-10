@@ -1,14 +1,8 @@
 <view class="chat-page">
-  <view class="gate-card" wx:if="{{!isConnected}}">
-    <view class="gate-title">连接设备后即可开始咨询</view>
-    <view class="gate-desc">完成设备连接后，可结合你的近期数据给出更贴合的建议。</view>
-    <view class="capsule" bindtap="goConnectDevice">去连接设备</view>
-  </view>
-
-  <view wx:else class="chat-main">
+  <view class="chat-main">
     <view class="chat-top">
-      <view class="chat-title">AI 健康咨询</view>
-      <view class="chat-tip">仅用于健康管理参考，不替代专业医疗诊断。</view>
+      <view class="chat-title">AI 健康助手</view>
+      <view class="chat-tip">支持文字问答和舌诊/体质图片分析。仅供健康参考。</view>
       <view class="clear" bindtap="clearConversation">清空对话</view>
     </view>
 
@@ -19,15 +13,23 @@
     <scroll-view class="chat-list" scroll-y="true" scroll-into-view="{{scrollToId}}" scroll-with-animation>
       <block wx:for="{{messageList}}" wx:key="id">
         <view class="msg-row {{item.role === 'user' ? 'right' : 'left'}}" id="msg-{{item.id}}">
-          <view class="bubble {{item.role === 'user' ? 'user-bubble' : 'ai-bubble'}}"><text>{{item.content}}</text></view>
+          <view class="bubble {{item.role === 'user' ? 'user-bubble' : 'ai-bubble'}}">
+            <!-- 图片消息 -->
+            <image wx:if="{{item.type === 'image'}}" src="{{item.imagePath || item.imageUrl || item.content}}" mode="widthFix" class="chat-image" bindtap="previewImage" data-src="{{item.imagePath || item.imageUrl || item.content}}"/>
+            <!-- 文字消息 -->
+            <text wx:else>{{item.content}}</text>
+          </view>
         </view>
       </block>
       <view style="height: 30rpx;"></view>
     </scroll-view>
 
     <view class="input-bar">
-      <input class="text-input" value="{{inputText}}" bindinput="onInput" placeholder="请输入你的问题" confirm-type="send" bindconfirm="sendText"/>
-      <view class="send" bindtap="sendText">发送</view>
+      <view class="img-btn" bindtap="chooseImage">
+        <text class="img-icon">📷</text>
+      </view>
+      <input class="text-input" value="{{inputText}}" bindinput="onInput" placeholder="输入问题，或上传舌诊/体质截图" confirm-type="send" bindconfirm="sendText" disabled="{{isSending}}"/>
+      <view class="send {{isSending ? 'send-disabled' : ''}}" bindtap="sendText">发送</view>
     </view>
   </view>
 </view>

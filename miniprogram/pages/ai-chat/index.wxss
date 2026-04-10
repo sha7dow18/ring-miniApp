@@ -1,11 +1,7 @@
 page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
 .chat-page{ min-height:100vh; padding:22rpx; box-sizing:border-box; }
-.gate-card,.chat-top,.quick-row,.chat-list,.input-bar{ background:#f8f2e8; border-radius:24rpx; box-shadow:0 8rpx 18rpx rgba(46,56,50,.08); }
-.gate-card{ margin-top:120rpx; padding:26rpx; }
-.gate-title{ color:#23342e; font-size:34rpx; font-weight:700; }
-.gate-desc{ margin:10rpx 0 16rpx; color:#727a75; font-size:23rpx; line-height:1.7; }
-.capsule{ display:inline-block; background:#2f4a42; color:#f6eee2; border-radius:999rpx; padding:13rpx 24rpx; font-size:22rpx; }
 .chat-main{ height:calc(100vh - 44rpx); display:flex; flex-direction:column; }
+.chat-top,.quick-row,.chat-list,.input-bar{ background:#f8f2e8; border-radius:24rpx; box-shadow:0 8rpx 18rpx rgba(46,56,50,.08); }
 .chat-top{ padding:22rpx; margin-bottom:12rpx; }
 .chat-title{ color:#1f2d28; font-size:30rpx; font-weight:700; }
 .chat-tip{ color:#6f7772; font-size:22rpx; margin:8rpx 0 10rpx; }
@@ -19,6 +15,15 @@ page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
 .bubble{ max-width:78%; border-radius:18rpx; padding:16rpx 18rpx; font-size:24rpx; line-height:1.6; }
 .ai-bubble{ background:#efe6d8; color:#32423c; }
 .user-bubble{ background:#3f5e54; color:#f8f2e8; }
+
+/* 图片消息 */
+.chat-image{ width:100%; max-width:400rpx; border-radius:12rpx; }
+.user-bubble .chat-image{ max-width:320rpx; }
+
+/* 输入栏 */
 .input-bar{ padding:14rpx; display:flex; gap:10rpx; align-items:center; padding-bottom:calc(14rpx + env(safe-area-inset-bottom)); }
+.img-btn{ width:72rpx; height:72rpx; display:flex; align-items:center; justify-content:center; background:#ece2d4; border-radius:14rpx; flex-shrink:0; }
+.img-icon{ font-size:32rpx; }
 .text-input{ flex:1; height:72rpx; background:#fff9f0; border:1rpx solid #e3d6c2; border-radius:14rpx; padding:0 16rpx; font-size:24rpx; box-sizing:border-box; }
-.send{ border-radius:999rpx; background:#2f4a42; color:#f8f2e8; font-size:22rpx; padding:12rpx 22rpx; }
+.send{ border-radius:999rpx; background:#2f4a42; color:#f8f2e8; font-size:22rpx; padding:12rpx 22rpx; flex-shrink:0; }
+.send-disabled{ opacity:0.5; }
