@@ -1,35 +1,85 @@
 <view class="chat-page">
-  <view class="chat-main">
-    <view class="chat-top">
-      <view class="chat-title">AI 健康助手</view>
-      <view class="chat-tip">支持文字问答和舌诊/体质图片分析。仅供健康参考。</view>
-      <view class="clear" bindtap="clearConversation">清空对话</view>
+  <!-- ── 顶栏 ── -->
+  <view class="top-bar">
+    <view class="top-left" bindtap="toggleHistory" hover-class="tap-dim">
+      <text class="icon-history">☰</text>
+      <text class="top-label">历史</text>
     </view>
-
-    <view class="quick-row">
-      <view class="quick-item" wx:for="{{quickQuestions}}" wx:key="*this" data-q="{{item}}" bindtap="useQuickQuestion">{{item}}</view>
+    <text class="top-title">AI 健康助手</text>
+    <view class="top-right" bindtap="newChat" hover-class="tap-dim">
+      <text class="top-label">新对话</text>
+      <text class="icon-new">+</text>
     </view>
+  </view>
 
-    <scroll-view class="chat-list" scroll-y="true" scroll-into-view="{{scrollToId}}" scroll-with-animation>
-      <block wx:for="{{messageList}}" wx:key="id">
-        <view class="msg-row {{item.role === 'user' ? 'right' : 'left'}}" id="msg-{{item.id}}">
-          <view class="bubble {{item.role === 'user' ? 'user-bubble' : 'ai-bubble'}}">
-            <!-- 图片消息 -->
-            <image wx:if="{{item.type === 'image'}}" src="{{item.imagePath || item.imageUrl || item.content}}" mode="widthFix" class="chat-image" bindtap="previewImage" data-src="{{item.imagePath || item.imageUrl || item.content}}"/>
-            <!-- 文字消息 -->
-            <text wx:else>{{item.content}}</text>
-          </view>
+  <!-- ── 历史侧边栏 ── -->
+  <view class="mask" wx:if="{{showHistory}}" bindtap="closeHistory"></view>
+  <view class="sidebar {{showHistory ? 'sidebar-show' : ''}}">
+    <view class="sidebar-title">聊天记录</view>
+    <view class="sidebar-item" wx:for="{{sessionList}}" wx:key="_id" data-sid="{{item._id}}" bindtap="loadOldSession">
+      <text class="sidebar-text">{{item.title || '对话'}}</text>
+    </view>
+    <view class="sidebar-empty" wx:if="{{!sessionList.length}}">暂无历史记录</view>
+  </view>
+
+  <!-- ── 消息列表 ── -->
+  <scroll-view class="chat-list" scroll-y="true" scroll-into-view="{{scrollToId}}" scroll-with-animation enhanced show-scrollbar="{{false}}">
+    <!-- 欢迎区：只在空对话时显示 -->
+    <view class="welcome" wx:if="{{messages.length === 0}}">
+      <view class="welcome-logo">Aita</view>
+      <view class="welcome-title">你好，有什么可以帮你？</view>
+      <view class="welcome-sub">支持文字问答、舌诊照片分析、体质截图分析</view>
+      <view class="quick-grid">
+        <view class="quick-card" wx:for="{{quickQuestions}}" wx:key="text" data-q="{{item.text}}" bindtap="useQuickQuestion">
+          <text class="qc-icon">{{item.icon}}</text>
+          <text class="qc-text">{{item.text}}</text>
         </view>
-      </block>
-      <view style="height: 30rpx;"></view>
-    </scroll-view>
-
-    <view class="input-bar">
-      <view class="img-btn" bindtap="chooseImage">
-        <text class="img-icon">📷</text>
       </view>
-      <input class="text-input" value="{{inputText}}" bindinput="onInput" placeholder="输入问题，或上传舌诊/体质截图" confirm-type="send" bindconfirm="sendText" disabled="{{isSending}}"/>
-      <view class="send {{isSending ? 'send-disabled' : ''}}" bindtap="sendText">发送</view>
     </view>
+
+    <!-- 消息气泡 -->
+    <block wx:for="{{messages}}" wx:key="id">
+      <view class="msg-row {{item.role === 'user' ? 'msg-right' : 'msg-left'}}" id="msg-{{item.id}}">
+        <view class="avatar" wx:if="{{item.role !== 'user'}}">A</view>
+        <view class="bubble {{item.role === 'user' ? 'b-user' : 'b-ai'}}">
+          <!-- 遍历 parts -->
+          <block wx:for="{{item.parts}}" wx:for-item="part" wx:key="type">
+            <image
+              wx:if="{{part.type === 'image'}}"
+              src="{{part.url || part.tempPath}}"
+              mode="widthFix"
+              class="part-img"
+              bindtap="previewImage"
+              data-url="{{part.url || part.tempPath}}"
+            />
+            <text wx:if="{{part.type === 'text' && part.content}}" selectable="true" class="part-text">{{part.content}}</text>
+          </block>
+        </view>
+      </view>
+    </block>
+    <view class="scroll-end" id="scroll-end"></view>
+  </scroll-view>
+
+  <!-- ── 底部输入栏 ── -->
+  <view class="input-area">
+    <view class="input-row">
+      <view class="btn-add" bindtap="chooseImage" hover-class="tap-dim">
+        <text>+</text>
+      </view>
+      <input
+        class="msg-input"
+        value="{{inputText}}"
+        bindinput="onInput"
+        placeholder="输入问题，或上传图片..."
+        confirm-type="send"
+        bindconfirm="doSend"
+        disabled="{{isSending}}"
+        cursor-spacing="16"
+      />
+      <view class="btn-send {{isSending ? 'btn-off' : ''}}" bindtap="doSend" hover-class="tap-dim">
+        <text>发送</text>
+      </view>
+    </view>
+    <view class="input-hint">仅供健康参考 · 不替代医疗诊断</view>
   </view>
 </view>

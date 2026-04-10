@@ -25,7 +25,7 @@
     "list": [
       { "pagePath": "pages/home/index", "text": "健康" },
       { "pagePath": "pages/mall/index", "text": "商城" },
-      { "pagePath": "pages/ai-lab/index", "text": "AI" },
+      { "pagePath": "pages/ai-chat/index", "text": "AI" },
       { "pagePath": "pages/service/index", "text": "服务" },
       { "pagePath": "pages/profile/index", "text": "我的" }
     ]

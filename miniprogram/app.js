@@ -1,6 +1,6 @@
 App({
   globalData: {
-    env: "cloud1-4gc4du0b822bf3d0"
+    env: "ring-9gl8ntyu292bc1e7"
   },
 
   onLaunch() {

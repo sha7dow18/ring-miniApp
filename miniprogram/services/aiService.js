@@ -1,18 +1,16 @@
-// 真实 AI 对话服务 - 使用微信云开发 AI 扩展（wx.cloud.extend.AI）
-// 需要基础库 >= 3.7.1，且已在 app.js 中 wx.cloud.init 过
-//
-// 文字对话用 DeepSeek，图片分析用混元 VL（hunyuan-vision）
+// AI 对话服务 — wx.cloud.extend.AI
+// 文字 → DeepSeek, 图片 → 混元 VL
+// 消息格式：{ id, role, parts: [{type, content, tempPath, fileID, url}], ts }
 
-const TEXT_PROVIDER = "deepseek";
-const TEXT_MODEL = "deepseek-v3.2";
+var TEXT_PROVIDER = "deepseek";
+var TEXT_MODEL = "deepseek-v3.2";
+var VISION_PROVIDER = "hunyuan-exp";
+var VISION_MODEL = "hunyuan-vision";
 
-const VISION_PROVIDER = "hunyuan-exp";
-const VISION_MODEL = "hunyuan-vision";
-
-const SYSTEM_PROMPT =
+var SYSTEM_PROMPT =
   "你是一位专业友好的健康助手 Aita。用简洁、可操作的方式回答用户的健康疑问，必要时提醒用户就医，不做医学诊断。回答使用中文。";
 
-const TONGUE_PROMPT =
+var TONGUE_PROMPT =
   "请仔细分析这张舌诊照片。从以下维度给出评估：\n" +
   "1. 舌质（颜色、形态）\n" +
   "2. 舌苔（厚薄、颜色、分布）\n" +
@@ -23,26 +21,79 @@ const TONGUE_PROMPT =
 
 function checkAI() {
   if (!wx.cloud || !wx.cloud.extend || !wx.cloud.extend.AI) {
-    throw new Error("当前基础库不支持 AI 扩展，请升级微信到最新版");
+    throw new Error("当前基础库不支持 AI 扩展，请升级微信");
   }
 }
 
-/**
- * 纯文字流式对话（DeepSeek）
- */
-async function streamChat(messages, onChunk) {
-  checkAI();
-  const model = wx.cloud.extend.AI.createModel(TEXT_PROVIDER);
-  const res = await model.streamText({
-    data: {
-      model: TEXT_MODEL,
-      messages: [{ role: "system", content: SYSTEM_PROMPT }].concat(messages)
+function msgId() {
+  return "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+}
+
+function nowISO() {
+  return new Date().toISOString();
+}
+
+// ── 判断 parts 中是否有图片 ──
+function hasImage(parts) {
+  return (parts || []).some(function(p) { return p.type === "image" && p.url; });
+}
+
+// ── 把 parts-based 历史转成 AI API 格式 ──
+function toApiMessages(messages) {
+  var out = [{ role: "system", content: SYSTEM_PROMPT }];
+  (messages || []).forEach(function(m) {
+    if (!m.parts || !m.parts.length) return;
+    var role = m.role === "assistant" ? "assistant" : "user";
+
+    // 纯文字
+    var texts = m.parts.filter(function(p) { return p.type === "text" && p.content; });
+    var imgs = m.parts.filter(function(p) { return p.type === "image" && p.url; });
+
+    if (imgs.length === 0) {
+      var t = texts.map(function(p) { return p.content; }).join("\n");
+      if (t) out.push({ role: role, content: t });
+    } else {
+      // 多模态：content 是数组
+      var contentArr = [];
+      texts.forEach(function(p) {
+        contentArr.push({ type: "text", text: p.content });
+      });
+      imgs.forEach(function(p) {
+        contentArr.push({ type: "image_url", image_url: { url: p.url } });
+      });
+      out.push({ role: role, content: contentArr });
     }
   });
+  return out;
+}
 
-  let full = "";
-  for await (const chunk of res.textStream) {
-    const piece = typeof chunk === "string" ? chunk : "";
+// ── 流式文字对话 ──
+async function streamText(apiMessages, onChunk) {
+  checkAI();
+  var model = wx.cloud.extend.AI.createModel(TEXT_PROVIDER);
+  var res = await model.streamText({
+    data: { model: TEXT_MODEL, messages: apiMessages }
+  });
+  var full = "";
+  for await (var chunk of res.textStream) {
+    var piece = typeof chunk === "string" ? chunk : "";
+    if (!piece) continue;
+    full += piece;
+    if (typeof onChunk === "function") onChunk(piece);
+  }
+  return full;
+}
+
+// ── 流式图片分析 ──
+async function streamVision(apiMessages, onChunk) {
+  checkAI();
+  var model = wx.cloud.extend.AI.createModel(VISION_PROVIDER);
+  var res = await model.streamText({
+    data: { model: VISION_MODEL, messages: apiMessages }
+  });
+  var full = "";
+  for await (var chunk of res.textStream) {
+    var piece = typeof chunk === "string" ? chunk : "";
     if (!piece) continue;
     full += piece;
     if (typeof onChunk === "function") onChunk(piece);
@@ -51,74 +102,59 @@ async function streamChat(messages, onChunk) {
 }
 
 /**
- * 图片分析流式对话（混元 VL）
- * @param {string} imageUrl - 图片的 HTTPS URL（不是 cloud:// fileID）
- * @param {string} [userText] - 用户附带的文字说明（可选，默认用舌诊 prompt）
- * @param {(chunk: string) => void} onChunk
- * @returns {Promise<string>}
+ * 发送消息（自动路由文字/图片模型）
+ * @param {Array} history — parts-based 消息历史
+ * @param {(chunk:string)=>void} onChunk
+ * @returns {Promise<string>} 完整回复
  */
-async function streamVisionChat(imageUrl, userText, onChunk) {
-  checkAI();
-  const model = wx.cloud.extend.AI.createModel(VISION_PROVIDER);
-
-  const textContent = userText && userText.trim() ? userText.trim() : TONGUE_PROMPT;
-
-  const res = await model.streamText({
-    data: {
-      model: VISION_MODEL,
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: textContent },
-            { type: "image_url", image_url: { url: imageUrl } }
-          ]
-        }
-      ]
+async function sendMessage(history, onChunk) {
+  var apiMessages = toApiMessages(history);
+  // 检查最后一条用户消息是否含图片
+  var last = history[history.length - 1];
+  if (last && hasImage(last.parts)) {
+    // 如果用户只发了图片没文字，补一个舌诊提示
+    var lastApi = apiMessages[apiMessages.length - 1];
+    if (lastApi && Array.isArray(lastApi.content)) {
+      var hasText = lastApi.content.some(function(c) { return c.type === "text"; });
+      if (!hasText) {
+        lastApi.content.unshift({ type: "text", text: TONGUE_PROMPT });
+      }
     }
-  });
-
-  let full = "";
-  for await (const chunk of res.textStream) {
-    const piece = typeof chunk === "string" ? chunk : "";
-    if (!piece) continue;
-    full += piece;
-    if (typeof onChunk === "function") onChunk(piece);
+    return streamVision(apiMessages, onChunk);
   }
-  return full;
+  return streamText(apiMessages, onChunk);
 }
 
 /**
- * 上传图片到云存储并获取 HTTPS URL
- * @param {string} tempFilePath - wx.chooseMedia 返回的临时文件路径
+ * 上传图片到云存储
  * @returns {Promise<{fileID: string, url: string}>}
  */
 async function uploadImage(tempFilePath) {
-  const ext = tempFilePath.split(".").pop() || "jpg";
-  const cloudPath = "chat-images/" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + "." + ext;
+  var ext = tempFilePath.split(".").pop() || "jpg";
+  var cloudPath = "chat-images/" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + "." + ext;
 
-  const uploadRes = await wx.cloud.uploadFile({
+  var uploadRes = await wx.cloud.uploadFile({
     cloudPath: cloudPath,
     filePath: tempFilePath
   });
 
-  const urlRes = await wx.cloud.getTempFileURL({
+  var urlRes = await wx.cloud.getTempFileURL({
     fileList: [uploadRes.fileID]
   });
 
-  const fileItem = urlRes.fileList && urlRes.fileList[0];
+  var fileItem = urlRes.fileList && urlRes.fileList[0];
   if (!fileItem || fileItem.status !== 0 || !fileItem.tempFileURL) {
     throw new Error("获取图片链接失败");
   }
 
-  return {
-    fileID: uploadRes.fileID,
-    url: fileItem.tempFileURL
-  };
+  return { fileID: uploadRes.fileID, url: fileItem.tempFileURL };
 }
 
 module.exports = {
-  streamChat,
-  streamVisionChat,
-  uploadImage
+  msgId: msgId,
+  nowISO: nowISO,
+  hasImage: hasImage,
+  sendMessage: sendMessage,
+  uploadImage: uploadImage,
+  TONGUE_PROMPT: TONGUE_PROMPT
 };
