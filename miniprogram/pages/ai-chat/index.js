@@ -204,6 +204,11 @@ Page({
     if (url) wx.previewImage({ current: url, urls: [url] });
   },
 
+  previewAttachment: function() {
+    var att = this.data.attachment;
+    if (att && att.tempPath) wx.previewImage({ current: att.tempPath, urls: [att.tempPath] });
+  },
+
   toggleHistory: async function() {
     if (!this.data.showHistory) {
       var list = await loadSessionList();
