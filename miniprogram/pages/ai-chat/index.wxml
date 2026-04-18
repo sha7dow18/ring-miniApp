@@ -1,15 +1,4 @@
 <view class="page">
-  <!-- ═══ 顶栏 ═══ -->
-  <view class="nav">
-    <view class="nav-btn" bindtap="toggleHistory" hover-class="hover">
-      <text class="nav-ico">☰</text>
-    </view>
-    <text class="nav-title">AI 健康助手</text>
-    <view class="nav-btn" bindtap="newChat" hover-class="hover">
-      <text class="nav-ico">✎</text>
-    </view>
-  </view>
-
   <!-- ═══ 历史侧边栏 ═══ -->
   <view class="mask" wx:if="{{showHistory}}" bindtap="closeHistory" catchtouchmove="{{true}}"></view>
   <view class="drawer {{showHistory ? 'drawer-open' : ''}}">
@@ -24,6 +13,7 @@
       </view>
       <view class="drawer-empty" wx:if="{{!sessionList.length}}">暂无记录</view>
     </scroll-view>
+    <view class="drawer-foot">仅供健康参考 · 不替代医疗诊断</view>
   </view>
 
   <!-- ═══ 消息区 ═══ -->
@@ -35,25 +25,26 @@
     enhanced
     show-scrollbar="{{false}}"
   >
-    <!-- 空状态欢迎 -->
+    <!-- 空状态 -->
     <view class="empty" wx:if="{{messages.length === 0}}">
       <view class="empty-logo">Aita</view>
-      <view class="empty-h">你好，有什么可以帮你？</view>
-      <view class="empty-p">文字问答 · 舌诊照片 · 体质截图</view>
-      <view class="cards">
-        <view class="card" wx:for="{{quickQuestions}}" wx:key="text" data-q="{{item.text}}" bindtap="useQuickQuestion" hover-class="hover">
-          <image class="card-ico" src="/assets/icons/{{item.iconName}}.svg" mode="aspectFit" aria-label="{{item.text}}"/>
-          <text class="card-txt">{{item.text}}</text>
+      <view class="empty-h">你好，今天聊什么？</view>
+      <scroll-view class="chip-scroll" scroll-x="true" show-scrollbar="{{false}}">
+        <view class="chip-row">
+          <view class="chip" wx:for="{{quickQuestions}}" wx:key="text" data-q="{{item.text}}" bindtap="useQuickQuestion" hover-class="hover">
+            <view class="chip-ico">
+              <image src="/assets/icons/inv/{{item.iconName}}.svg" mode="aspectFit" aria-label="{{item.text}}"/>
+            </view>
+            <text class="chip-txt">{{item.text}}</text>
+          </view>
         </view>
-      </view>
+      </scroll-view>
     </view>
 
     <!-- 气泡 -->
     <block wx:for="{{messages}}" wx:key="id">
       <view class="row {{item.role === 'user' ? 'row-r' : 'row-l'}}" id="msg-{{item.id}}">
-        <!-- AI 头像 -->
         <view class="ava" wx:if="{{item.role !== 'user'}}">A</view>
-        <!-- 气泡体 -->
         <view class="bbl {{item.role === 'user' ? 'bbl-u' : 'bbl-a'}}">
           <block wx:for="{{item.parts}}" wx:for-item="p" wx:for-index="pi" wx:key="pi">
             <image
@@ -73,35 +64,36 @@
     <view id="scroll-anchor" style="height:24rpx;"></view>
   </scroll-view>
 
-  <!-- ═══ 底部输入区 ═══ -->
+  <!-- ═══ Composer ═══ -->
   <view class="foot">
     <!-- 附件预览 -->
     <view class="att" wx:if="{{attachment}}">
       <image class="att-img" src="{{attachment.tempPath}}" mode="widthFix" bindtap="previewAttachment"/>
       <view class="att-x" bindtap="removeAttachment" hover-class="hover">✕</view>
     </view>
-    <!-- 上传状态 -->
-    <view class="att-loading" wx:if="{{isUploading}}">正在上传...</view>
-    <!-- 输入行 -->
+    <view class="att-loading" wx:if="{{isUploading}}">正在上传…</view>
+
     <view class="bar">
-      <view class="bar-plus" bindtap="chooseImage" hover-class="hover">
-        <text>+</text>
+      <view class="bar-btn" bindtap="toggleHistory" hover-class="hover" aria-label="历史记录">
+        <image src="/assets/icons/menu.svg" mode="aspectFit"/>
+      </view>
+      <view class="bar-btn" bindtap="chooseImage" hover-class="hover" aria-label="上传图片">
+        <image src="/assets/icons/camera.svg" mode="aspectFit"/>
       </view>
       <input
         class="bar-input"
         value="{{inputText}}"
         bindinput="onInput"
-        placeholder="{{attachment ? '添加描述...' : '输入问题或上传图片'}}"
+        placeholder="{{attachment ? '补充描述…' : '说点什么'}}"
         confirm-type="send"
         bindconfirm="doSend"
         disabled="{{isSending}}"
         adjust-position="{{true}}"
         cursor-spacing="16"
       />
-      <view class="bar-send {{isSending ? 'bar-off' : ''}}" bindtap="doSend" hover-class="hover">
-        <text>发送</text>
+      <view class="bar-send {{canSend ? '' : 'bar-off'}}" bindtap="doSend" hover-class="hover" aria-label="发送">
+        <image src="/assets/icons/inv/send.svg" mode="aspectFit"/>
       </view>
     </view>
-    <view class="bar-tip">仅供健康参考 · 不替代医疗诊断</view>
   </view>
 </view>

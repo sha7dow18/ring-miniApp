@@ -21,7 +21,14 @@ Page({
     sessionTag: "",
     showHistory: false,
     sessionList: [],
-    attachment: null
+    attachment: null,
+    canSend: false
+  },
+
+  _syncCanSend: function() {
+    var has = !!(this.data.inputText.trim() || this.data.attachment);
+    var ok = has && !this.data.isSending;
+    if (ok !== this.data.canSend) this.setData({ canSend: ok });
   },
 
   onLoad: function(query) {
@@ -45,7 +52,10 @@ Page({
     }
   },
 
-  onInput: function(e) { this.setData({ inputText: e.detail.value }); },
+  onInput: function(e) {
+    this.setData({ inputText: e.detail.value });
+    this._syncCanSend();
+  },
 
   useQuickQuestion: function(e) {
     var q = e.currentTarget.dataset.q || "";
@@ -68,12 +78,14 @@ Page({
         self.setData({
           attachment: { tempPath: file.tempFilePath, fileID: "", url: "" }
         });
+        self._syncCanSend();
       }
     });
   },
 
   removeAttachment: function() {
     this.setData({ attachment: null });
+    this._syncCanSend();
   },
 
   doSend: async function() {
@@ -82,7 +94,7 @@ Page({
     if (!text && !att) return;
     if (this.data.isSending) return;
 
-    this.setData({ isSending: true, inputText: "", attachment: null });
+    this.setData({ isSending: true, inputText: "", attachment: null, canSend: false });
     var self = this;
 
     try {
