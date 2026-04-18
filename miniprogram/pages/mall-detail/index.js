@@ -30,10 +30,6 @@ Page({
   },
 
   onContact() {
-    wx.showModal({
-      title: "联系客服",
-      content: "你可以在“我的 > 设置 > 关于我们”中获取服务联系方式。",
-      showCancel: false
-    });
+    wx.navigateTo({ url: "/pages/customer-service/index" });
   }
 });

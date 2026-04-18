@@ -3,5 +3,5 @@
     <text>{{item.label}}</text>
     <text>›</text>
   </view>
-  <view class="logout" bindtap="logout">退出登录</view>
+  <view class="logout" bindtap="resetApp">重置应用</view>
 </view>

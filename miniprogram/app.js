@@ -1,12 +1,15 @@
+var config = require("./config/index.js");
+
 App({
   globalData: {
-    env: "ring-9gl8ntyu292bc1e7"
+    env: config.cloud.env,
+    version: config.app.versionName
   },
 
   onLaunch() {
     if (wx.cloud) {
       wx.cloud.init({
-        env: this.globalData.env,
+        env: config.cloud.env,
         traceUser: true
       });
 
@@ -16,6 +19,10 @@ App({
 
     var mockStore = require("./utils/mockStore.js");
     mockStore.hydrate();
+
+    // 启动流式蓝牙 mock
+    var mockBleStream = require("./utils/mockBleStream.js");
+    mockBleStream.start();
   },
 
   ensureUser() {
@@ -35,7 +42,6 @@ App({
       .catch(function() {});
   },
 
-  // 保证今日健康记录 + user_profile 存在（静默失败，不阻塞启动）
   ensureCloudData() {
     var healthService = require("./services/healthService.js");
     var profileService = require("./services/profileService.js");

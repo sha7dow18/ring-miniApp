@@ -146,6 +146,27 @@ function ensureTodayRecord() {
 }
 
 /**
+ * 用 BLE 聚合结果合并到今日记录。步数取 stream 与现有中的较大值（防止重置/重登回退）。
+ * 若当日记录不存在，先生成一条基线再合并。
+ * @param {Object} agg - aggregate() 产出
+ */
+function mergeTodayMetrics(agg) {
+  if (!agg) return Promise.resolve(null);
+  return getTodayRecord().then(function(existing) {
+    var patch = Object.assign({}, agg);
+    if (existing && (existing.steps || 0) > (patch.steps || 0)) {
+      patch.steps = existing.steps;
+    }
+    if (!existing) {
+      return addRecord(Object.assign({}, generateDailyMock(), patch));
+    }
+    return updateRecord(existing._id, patch).then(function(ok) {
+      return ok ? Object.assign({}, existing, patch) : null;
+    });
+  });
+}
+
+/**
  * 强制用新 mock 重写今日记录。首页下拉刷新调用。
  */
 function refreshToday() {
@@ -167,6 +188,7 @@ module.exports = {
   // cloud
   getTodayRecord: getTodayRecord,
   getRecent: getRecent,
+  mergeTodayMetrics: mergeTodayMetrics,
   ensureTodayRecord: ensureTodayRecord,
   refreshToday: refreshToday
 };

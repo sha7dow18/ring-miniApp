@@ -114,7 +114,7 @@ Page({
   },
 
   onViewDeviceDetail() {
-    wx.navigateTo({ url: "/pages/my-device/index" });
+    wx.navigateTo({ url: "/pages/device-detail/index" });
   },
 
   onReconnectSearch() { this.onSearchDevices(); },

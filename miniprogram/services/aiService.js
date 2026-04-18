@@ -2,10 +2,11 @@
 // 文字 → DeepSeek, 图片 → 混元 VL
 // 消息格式：{ id, role, parts: [{type, content, tempPath, fileID, url}], ts }
 
-var TEXT_PROVIDER = "deepseek";
-var TEXT_MODEL = "deepseek-v3.2";
-var VISION_PROVIDER = "hunyuan-exp";
-var VISION_MODEL = "hunyuan-vision";
+var config = require("../config/index.js");
+var TEXT_PROVIDER = config.ai.textProvider;
+var TEXT_MODEL = config.ai.textModel;
+var VISION_PROVIDER = config.ai.visionProvider;
+var VISION_MODEL = config.ai.visionModel;
 
 var BASE_SYSTEM_PROMPT =
   "你是一位专业友好的健康助手 Aita。用简洁、可操作的方式回答用户的健康疑问，必要时提醒用户就医，不做医学诊断。回答使用中文。";

@@ -162,4 +162,59 @@ describe("healthService cloud functions", () => {
     expect(addedData).not.toBeNull();
     expect(typeof addedData.sleep_score).toBe("number");
   });
+
+  test("mergeTodayMetrics updates existing and keeps larger steps", async () => {
+    const updates = [];
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: () => Promise.resolve({ data: [{ _id: "tdoc", steps: 5000, sleep_score: 85 }] }),
+          update: (id, patch) => { updates.push({ id, patch }); return Promise.resolve({}); }
+        })
+      }
+    };
+    const hs = require("../miniprogram/services/healthService.js");
+    const merged = await hs.mergeTodayMetrics({ hr_resting: 78, hrv: 55, spo2: 98, stress: 42, body_temp: 36.6, steps: 1200, hr_max: 120 });
+    expect(updates).toHaveLength(1);
+    expect(updates[0].patch.data.steps).toBe(5000);
+    expect(updates[0].patch.data.hr_resting).toBe(78);
+    expect(merged.steps).toBe(5000);
+  });
+
+  test("mergeTodayMetrics adds baseline record when none exists", async () => {
+    let addedData = null;
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: () => Promise.resolve({ data: [] }),
+          add: (x) => { addedData = x.data; return Promise.resolve({ _id: "newm" }); }
+        })
+      }
+    };
+    const hs = require("../miniprogram/services/healthService.js");
+    const r = await hs.mergeTodayMetrics({ hr_resting: 70, hrv: 50, spo2: 97, stress: 40, body_temp: 36.5, steps: 200, hr_max: 110 });
+    expect(r._id).toBe("newm");
+    expect(addedData.hr_resting).toBe(70);
+    expect(typeof addedData.sleep_score).toBe("number");
+  });
+
+  test("mergeTodayMetrics returns null on null agg", async () => {
+    const hs = require("../miniprogram/services/healthService.js");
+    expect(await hs.mergeTodayMetrics(null)).toBeNull();
+  });
+
+  test("mergeTodayMetrics keeps stream steps when larger than existing", async () => {
+    const updates = [];
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: () => Promise.resolve({ data: [{ _id: "d1", steps: 100 }] }),
+          update: (id, patch) => { updates.push(patch); return Promise.resolve({}); }
+        })
+      }
+    };
+    const hs = require("../miniprogram/services/healthService.js");
+    await hs.mergeTodayMetrics({ hr_resting: 70, hrv: 50, spo2: 97, stress: 40, body_temp: 36.5, steps: 9999, hr_max: 110 });
+    expect(updates[0].data.steps).toBe(9999);
+  });
 });

@@ -2,20 +2,19 @@
   "pages": [
     "pages/home/index",
     "pages/mall/index",
-    "pages/ai-lab/index",
+    "pages/ai-chat/index",
     "pages/service/index",
     "pages/profile/index",
     "pages/user-info/index",
-    "pages/ai-chat/index",
     "pages/mall-detail/index",
+    "pages/customer-service/index",
     "pages/my-device/index",
     "pages/device-detail/index",
     "pages/orders/index",
     "pages/order-detail/index",
     "pages/settings/index",
     "pages/settings-detail/index",
-    "pages/about/index",
-    "pages/ai-records/index"
+    "pages/about/index"
   ],
   "tabBar": {
     "custom": true,

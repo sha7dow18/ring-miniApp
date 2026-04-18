@@ -1,7 +1,0 @@
-page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
-.page{ padding:24rpx; }
-.card{ background:#f8f2e8; border-radius:18rpx; padding:18rpx; margin-bottom:10rpx; box-shadow:0 6rpx 16rpx rgba(45,56,49,.08); }
-.title{ color:#1f2d28; font-size:28rpx; font-weight:700; }
-.summary{ margin-top:8rpx; color:#405048; font-size:24rpx; }
-.time{ margin-top:6rpx; color:#6f7772; font-size:22rpx; }
-.empty{ text-align:center; color:#6f7772; padding:40rpx 0; }

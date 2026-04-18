@@ -1,0 +1,58 @@
+// 全局配置中心。业务代码不要散落魔法数字/字符串，改这里。
+
+module.exports = {
+  app: {
+    versionName: "0.2.0"
+  },
+
+  cloud: {
+    env: "ring-9gl8ntyu292bc1e7"
+  },
+
+  ai: {
+    textProvider: "deepseek",
+    textModel: "deepseek-v3.2",
+    visionProvider: "hunyuan-exp",
+    visionModel: "hunyuan-vision",
+    historyRecentDays: 3
+  },
+
+  // 流式蓝牙 mock
+  ble: {
+    tickInterval: 3000,         // ms，采样周期
+    aggregateInterval: 300000,  // ms，聚合 + 写云周期（5 分钟）
+    // 初始值（冷启动或重置后）
+    seed: {
+      hr_resting: 72,           // 静息心率
+      hrv: 48,                  // ms
+      spo2: 98,                 // %
+      stress: 40,               // 0-100
+      body_temp: 36.6,          // °C
+      steps: 0                  // 从 0 累积
+    },
+    // 每 tick 随机游走幅度（±）
+    walk: {
+      hr_resting: 3,
+      hrv: 2,
+      spo2: 1,
+      stress: 2,
+      body_temp: 0.05,
+      steps: { min: 3, max: 20 }  // 步数只增不减
+    },
+    // 物理边界（防止游走越界）
+    bounds: {
+      hr_resting: [55, 100],
+      hrv: [20, 85],
+      spo2: [93, 100],
+      stress: [10, 90],
+      body_temp: [36.0, 37.2]
+    }
+  },
+
+  // 客服联系方式
+  support: {
+    wechat: "aita-support-2026",
+    email: "support@aita-ring.example",
+    hours: "工作日 09:00 - 18:00"
+  }
+};

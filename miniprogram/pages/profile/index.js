@@ -49,7 +49,6 @@ Page({
 
   goUserInfo() { wx.navigateTo({ url: "/pages/user-info/index" }); },
   goMyDevice() { wx.navigateTo({ url: "/pages/my-device/index" }); },
-  goAiRecords() { wx.navigateTo({ url: "/pages/ai-records/index" }); },
   goOrders() { wx.navigateTo({ url: "/pages/orders/index" }); },
   goSettings() { wx.navigateTo({ url: "/pages/settings/index" }); },
   goAbout() { wx.navigateTo({ url: "/pages/about/index" }); }

@@ -1,4 +1,5 @@
 const mockStore = require("../../utils/mockStore.js");
+const mockBleStream = require("../../utils/mockBleStream.js");
 const healthService = require("../../services/healthService.js");
 
 function stressLabel(score) {
@@ -105,11 +106,34 @@ Page({
     }
     this.syncDevice(mockStore.getState());
     this.unsubscribe = mockStore.subscribe((state) => this.syncDevice(state));
+    this.unsubscribeBle = mockBleStream.subscribe((snap) => this.applyLiveSnapshot(snap));
     this.loadCloud();
   },
 
-  onHide() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
-  onUnload() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
+  onHide() {
+    if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null;
+    if (this.unsubscribeBle) this.unsubscribeBle(); this.unsubscribeBle = null;
+  },
+  onUnload() {
+    if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null;
+    if (this.unsubscribeBle) this.unsubscribeBle(); this.unsubscribeBle = null;
+  },
+
+  // BLE stream 每 3 秒推一次，只更新"活的"数字部分，不重绘整页
+  applyLiveSnapshot(snap) {
+    if (!snap) return;
+    const m = this.data.metrics;
+    if (!m) return;
+    this.setData({
+      "metrics.heartRate": snap.hr_resting,
+      "metrics.hrv": snap.hrv,
+      "metrics.spo2": snap.spo2,
+      "metrics.stress": snap.stress,
+      "metrics.stressTag": stressBadge(snap.stress),
+      "metrics.temperature": snap.body_temp,
+      "metrics.steps": (m.baseSteps || 0) + snap.steps
+    });
+  },
 
   onPullDownRefresh() {
     this.onRefreshMetrics().finally(() => wx.stopPullDownRefresh());
@@ -154,6 +178,7 @@ Page({
         ...metrics,
         stressTag: stressBadge(metrics.stress),
         stepGoal: 6000,
+        baseSteps: metrics.steps,     // stream 累计步数会加在此基线之上
         sleepGrade: sleepGrade(metrics.sleepScore),
         sleepDisplay: `${Math.floor(metrics.sleepMinutes / 60)} 小时 ${metrics.sleepMinutes % 60} 分钟`
       },
@@ -275,5 +300,6 @@ Page({
   goConnectDevice() { wx.switchTab({ url: "/pages/service/index" }); },
   goToAi() { wx.switchTab({ url: "/pages/ai-chat/index" }); },
   goToDevice() { wx.switchTab({ url: "/pages/service/index" }); },
-  showMetricDetail() { wx.navigateTo({ url: "/pages/device-detail/index" }); }
+  showMetricDetail() { wx.navigateTo({ url: "/pages/device-detail/index" }); },
+  goCustomerService() { wx.navigateTo({ url: "/pages/customer-service/index" }); }
 });

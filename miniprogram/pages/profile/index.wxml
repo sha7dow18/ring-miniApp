@@ -14,7 +14,6 @@
     <view class="group-title">我的服务</view>
     <view class="menu-card">
       <view class="menu-item" bindtap="goMyDevice"><text>我的设备</text><text>›</text></view>
-      <view class="menu-item" bindtap="goAiRecords"><text>AI 分析记录</text><text>›</text></view>
       <view class="menu-item" bindtap="goOrders"><text>我的订单</text><text>›</text></view>
     </view>
   </view>

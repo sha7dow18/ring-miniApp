@@ -10,6 +10,7 @@
 - [2026-04-09-docs-references.md](plans/2026-04-09-docs-references.md) — 参考文档沉淀
 - [2026-04-10-chat-redesign.md](plans/2026-04-10-chat-redesign.md) — 统一 AI 聊天界面（舌诊+体质+文字）
 - [2026-04-18-data-loop.md](plans/2026-04-18-data-loop.md) — 健康/会话/用户画像数据闭环 + 测试
+- [2026-04-18-sprint-a.md](plans/2026-04-18-sprint-a.md) — 修断按钮 + 流式蓝牙 mock + 客服页 + 重置应用 + 配置中心
 
 ## references/ — 技术参考
 微信小程序开发的项目无关知识。
@@ -32,10 +33,18 @@
 ### 服务层
 | 模块 | 职责 |
 |------|------|
-| `services/healthService.js` | 云持久 + 每日 mock 生成 + AI 上下文组装 |
+| `services/healthService.js` | 云持久 + 每日 mock 生成 + BLE 聚合合并 + AI 上下文组装 |
 | `services/sessionService.js` | 聊天会话 CRUD + 关键词打标 |
 | `services/profileService.js` | 用户画像 CRUD + 头像上传 |
 | `services/aiService.js` | wx.cloud.extend.AI 封装 + parts → OpenAI 格式转换 |
+
+### 运行态 / 配置
+
+| 模块 | 职责 |
+| ---- | ---- |
+| `config/index.js` | 云环境、AI 模型名、BLE 游走参数、客服联系方式集中管理 |
+| `utils/mockBleStream.js` | 流式蓝牙 mock：每 3s 产出新快照，每 5min 聚合写云。纯函数 `tick` / `aggregate` + 运行态 `start/stop/subscribe` |
+| `utils/mockStore.js` | 本地状态（设备/商城等，localStorage 持久） |
 
 ### 测试
 - 运行：`npm install && npm test`
