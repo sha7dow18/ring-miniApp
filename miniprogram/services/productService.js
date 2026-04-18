@@ -1,6 +1,6 @@
 // 商品目录服务 — cloud `products` 集合
-// products 权限：所有人可读，仅管理员可写（种子数据由云控制台导入）
-// 云为空时回退 mockStore 的 4 条商品，保证开发期可用
+// 云库为单一事实源。空库返回空数组（前端显示空态），不回退本地 mock。
+// 种子数据从 docs/seed-data/products.jsonl 通过云控制台导入。
 
 var COLLECTION = "products";
 
@@ -27,47 +27,28 @@ function filterProducts(list, opts) {
   return items;
 }
 
-// ─── 云 + fallback ───
+// ─── 云 ───
 function getDB() { return wx.cloud.database(); }
-
-function getMockProducts() {
-  var mockStore = require("../utils/mockStore.js");
-  var state = mockStore.getState();
-  return ((state || {}).mallState || {}).products || [];
-}
 
 function listProducts(opts) {
   return getDB().collection(COLLECTION).limit(100).get()
     .then(function(res) {
-      var data = (res && res.data) || [];
-      if (!data.length) data = getMockProducts();
-      return filterProducts(data, opts || {});
+      return filterProducts((res && res.data) || [], opts || {});
     })
-    .catch(function() {
-      return filterProducts(getMockProducts(), opts || {});
-    });
+    .catch(function() { return []; });
 }
 
 function getProduct(id) {
   if (!id) return Promise.resolve(null);
   return getDB().collection(COLLECTION).where({ id: id }).limit(1).get()
-    .then(function(res) {
-      var hit = (res.data && res.data[0]) || null;
-      if (hit) return hit;
-      // fallback
-      var mocks = getMockProducts();
-      return mocks.find(function(p) { return p.id === id; }) || null;
-    })
-    .catch(function() {
-      var mocks = getMockProducts();
-      return mocks.find(function(p) { return p.id === id; }) || null;
-    });
+    .then(function(res) { return (res.data && res.data[0]) || null; })
+    .catch(function() { return null; });
 }
 
 module.exports = {
   // pure
   filterProducts: filterProducts,
-  // cloud + fallback
+  // cloud
   listProducts: listProducts,
   getProduct: getProduct
 };
