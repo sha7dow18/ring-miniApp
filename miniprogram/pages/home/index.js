@@ -49,11 +49,11 @@ function sparkSvg(values) {
   const last = pts[pts.length - 1].split(",");
   const svg =
     "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + W + " " + H + "' preserveAspectRatio='none'>" +
-    "<polygon points='" + area + "' fill='%234E7E6F' opacity='0.16'/>" +
-    "<polyline points='" + line + "' fill='none' stroke='%232A4A3E' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/>" +
-    "<circle cx='" + last[0] + "' cy='" + last[1] + "' r='1.8' fill='%232A4A3E'/>" +
+    "<polygon points='" + area + "' fill='#4E7E6F' opacity='0.18'/>" +
+    "<polyline points='" + line + "' fill='none' stroke='#2A4A3E' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/>" +
+    "<circle cx='" + last[0] + "' cy='" + last[1] + "' r='1.8' fill='#2A4A3E'/>" +
     "</svg>";
-  return "data:image/svg+xml;utf8," + svg;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
 }
 
 // 把云端 health_record 转成首页 UI metrics 形状
