@@ -2,6 +2,31 @@ var aiService = require("../../services/aiService.js");
 var sessionService = require("../../services/sessionService.js");
 var healthService = require("../../services/healthService.js");
 
+// 把 markdown 字符串丢给 towxml 编译成 wxml nodes。
+// towxml 在开发者工具"构建 npm"后才可用；未构建时返回 null，WXML 会退回纯文本。
+function renderMd(text) {
+  if (!text) return null;
+  try {
+    var app = getApp();
+    if (!app || typeof app.towxml !== "function") return null;
+    return app.towxml(text, "markdown", { theme: "light" });
+  } catch (e) {
+    return null;
+  }
+}
+
+// assistant 消息每个 text part 附带 nodes（ephemeral，不持久化）
+function withNodes(msg) {
+  if (msg.role !== "assistant") return msg;
+  var parts = (msg.parts || []).map(function(p) {
+    if (p.type === "text") {
+      return { type: "text", content: p.content || "", nodes: renderMd(p.content || "") };
+    }
+    return p;
+  });
+  return { id: msg.id, role: msg.role, ts: msg.ts, parts: parts };
+}
+
 var QUICK_QUESTIONS = [
   { iconName: "camera", text: "拍舌头，帮我分析" },
   { iconName: "moon", text: "最近总是睡不好" },
@@ -143,11 +168,11 @@ Page({
         var cur = self.data.messages;
         var updated = cur.map(function(m) {
           if (m.id !== aiMsgId) return m;
-          var newParts = m.parts.map(function(p) {
+          var appended = m.parts.map(function(p) {
             if (p.type === "text") return { type: "text", content: (p.content || "") + chunk };
             return p;
           });
-          return { id: m.id, role: m.role, parts: newParts, ts: m.ts };
+          return withNodes({ id: m.id, role: m.role, parts: appended, ts: m.ts });
         });
         self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
       }, healthCtx);
@@ -205,10 +230,11 @@ Page({
     if (!sid) return;
     var session = await sessionService.loadSession(sid);
     if (!session) return wx.showToast({ title: "会话不存在", icon: "none" });
+    var msgs = (session.messages || []).map(withNodes);
     this.setData({
       sessionId: sid,
       sessionTag: session.tag || "",
-      messages: session.messages || [],
+      messages: msgs,
       showHistory: false,
       attachment: null
     });

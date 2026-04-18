@@ -16,6 +16,8 @@ HEXES=$(grep -rEn "#[0-9a-fA-F]{6}" "$ROOT" \
   --include='*.wxss' \
   --exclude-dir=styles \
   --exclude-dir=custom-tab-bar \
+  --exclude-dir=node_modules \
+  --exclude-dir=miniprogram_npm \
   | grep -vE "#(8a1d30|D6A15B|A87635|9A9A9A|6B6B6B|FCE4D6|D6E4FC|E4FCD6|FFF4E0|F4E0E0|F1D9CD|8B3F32|FAF6F0)" \
   || true)
 
@@ -32,6 +34,8 @@ echo ""
 echo "━━━ 2. 页面级 linear-gradient 扫描 ━━━"
 echo "(hero icon / 状态 hero / avatar / empty-logo 豁免)"
 GRADS=$(grep -rEn "linear-gradient" "$ROOT" --include='*.wxss' \
+  --exclude-dir=node_modules \
+  --exclude-dir=miniprogram_npm \
   | grep -vE "(hero-icon|hero-pending|hero-canceled|\.hero\s*\{|\.ava\s*\{|empty-logo|weekly-bar|\.bar\s*\{|sport-main)" \
   || true)
 
@@ -51,6 +55,8 @@ ALT=$(grep -rEn "(3F5E54|3f5e54|2f4a42|#3F6B5E|#3f6b5e)" "$ROOT" \
   --include='*.wxss' \
   --exclude-dir=styles \
   --exclude-dir=custom-tab-bar \
+  --exclude-dir=node_modules \
+  --exclude-dir=miniprogram_npm \
   | grep -vE "豁免" || true)
 if [ -n "$ALT" ]; then
   echo "$ALT"

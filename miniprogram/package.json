@@ -1,0 +1,9 @@
+{
+  "name": "ring-miniapp-inner",
+  "private": true,
+  "version": "0.1.0",
+  "description": "miniprogram npm deps (built via 微信开发者工具 → 工具 → 构建 npm)",
+  "dependencies": {
+    "towxml": "latest"
+  }
+}

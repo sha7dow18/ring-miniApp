@@ -68,7 +68,11 @@
             bindtap="previewImage"
             data-url="{{p.url || p.tempPath}}"
           />
-          <text wx:if="{{p.type === 'text' && p.content}}" class="ai-txt" selectable="true">{{p.content}}</text>
+          <!-- 有 nodes 走 towxml（markdown 渲染）；构建 npm 未跑或流式首块没追上时降级纯文本 -->
+          <view wx:if="{{p.type === 'text' && p.nodes}}" class="ai-md">
+            <towxml nodes="{{p.nodes}}"/>
+          </view>
+          <text wx:elif="{{p.type === 'text' && p.content}}" class="ai-txt" selectable="true">{{p.content}}</text>
         </block>
       </view>
     </block>
