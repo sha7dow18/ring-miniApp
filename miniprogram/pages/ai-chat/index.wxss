@@ -85,8 +85,10 @@
 }
 
 /* ═══ 消息区 ═══ */
+/* min-height:0 必须有 — flex 子项默认 min-height:auto 会撑到内容高度，scroll-view 内部 overflow 永不触发 */
 .msgs {
   flex: 1;
+  min-height: 0;
   padding: 20rpx 28rpx 0;
   box-sizing: border-box;
 }
