@@ -42,7 +42,7 @@
       <view class="empty-p">文字问答 · 舌诊照片 · 体质截图</view>
       <view class="cards">
         <view class="card" wx:for="{{quickQuestions}}" wx:key="text" data-q="{{item.text}}" bindtap="useQuickQuestion" hover-class="hover">
-          <text class="card-ico">{{item.icon}}</text>
+          <image class="card-ico" src="/assets/icons/{{item.iconName}}.svg" mode="aspectFit" aria-label="{{item.text}}"/>
           <text class="card-txt">{{item.text}}</text>
         </view>
       </view>

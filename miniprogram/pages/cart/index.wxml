@@ -1,7 +1,7 @@
 <view class="page">
   <!-- 空状态 -->
   <view class="empty" wx:if="{{!isLoading && isEmpty}}">
-    <view class="empty-icon">🛒</view>
+    <image class="empty-illust" src="/assets/icons/empty/cart.svg" mode="aspectFit" aria-label="空购物车"/>
     <view class="empty-title">购物车是空的</view>
     <view class="empty-desc">看看有什么想加入的</view>
     <view class="empty-btn" bindtap="goMall" hover-class="hover">去商城</view>

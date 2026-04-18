@@ -51,7 +51,7 @@
   position: relative;
   flex-shrink: 0;
 }
-.cart-ico { font-size: 40rpx; }
+.cart-ico { width: 44rpx; height: 44rpx; }
 .cart-badge {
   position: absolute;
   top: -10rpx; right: -10rpx;

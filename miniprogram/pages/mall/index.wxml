@@ -11,7 +11,7 @@
       <view class="icon-search" bindtap="onSearchConfirm"></view>
     </view>
     <view class="cart-btn" bindtap="goCart" hover-class="hover">
-      <text class="cart-ico">🛒</text>
+      <image class="cart-ico" src="/assets/icons/shopping-cart.svg" mode="aspectFit" aria-label="购物车"/>
       <text class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</text>
     </view>
   </view>

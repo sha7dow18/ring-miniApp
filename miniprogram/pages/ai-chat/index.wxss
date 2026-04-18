@@ -136,7 +136,7 @@
   padding: 22rpx 18rpx;
   display: flex; align-items: center; gap: 14rpx;
 }
-.card-ico { font-size: var(--fs-h2); flex-shrink: 0; }
+.card-ico { width: 48rpx; height: 48rpx; flex-shrink: 0; }
 .card-txt { font-size: 26rpx; color: var(--text-1); line-height: 1.5; }
 
 /* ═══ 消息行 ═══ */

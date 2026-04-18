@@ -13,7 +13,7 @@
 }
 .hero-pending { background: linear-gradient(135deg, #D6A15B, #A87635); }
 .hero-canceled { background: linear-gradient(135deg, #9A9A9A, #6B6B6B); }
-.hero-ico { font-size: 60rpx; margin-bottom: 14rpx; }
+.hero-ico { width: 72rpx; height: 72rpx; margin: 0 auto 14rpx; display: block; }
 .hero-title { font-size: var(--fs-h1); font-weight: var(--fw-bold); }
 .hero-sub { font-size: var(--fs-sub); opacity: 0.85; margin-top: var(--sp-2); }
 

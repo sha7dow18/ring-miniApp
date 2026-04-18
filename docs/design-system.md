@@ -121,6 +121,51 @@
 - `.safe-bottom` — 底部安全区 padding
 - `.flex` `.flex-center` `.flex-between` `.flex-col`
 
+## 图标
+
+**禁止 emoji 作 UI 图标**（跨设备渲染不一致、色彩与养生调性冲突、无障碍差）。全部用 SVG。
+
+### 基础（lucide 风格，brand 色烘焙）
+`miniprogram/assets/icons/*.svg` 14 个：
+- 体征：thermometer / heart-pulse / activity / droplet / wind
+- 电商：shopping-cart / package
+- AI 快捷：camera / moon / zap / clipboard-list
+- 通讯：smartphone / mail / map-pin
+
+### 变体
+- `icons/inv/*.svg` — 白 stroke（深底 hero 用）
+- `icons/status/*.svg` — 订单 5 状态 (pending/paid/shipping/done/canceled)，均白 stroke（hero 有色底）
+
+### 空态插画
+`icons/empty/*.svg` 200×200，≥3 视觉元素，养生调性：
+- `cart.svg` — 虚线购物车 + 飘落草叶
+- `orders.svg` — 打开纸箱 + 礼盒 + 红枣枸杞
+
+### 用法
+```html
+<image class="icon" src="/assets/icons/thermometer.svg" mode="aspectFit" aria-label="体温"/>
+```
+
+### 尺寸规范
+| 场景 | 宽高 |
+|------|------|
+| 列表行内 | 44-48rpx |
+| 卡片快捷 | 48rpx |
+| hero 状态 | 60-72rpx |
+| 空态插画 | 260rpx |
+
+### AI tabBar
+`assets/tabbar/ai.svg` = 听诊器（stethoscope），白色 stroke，放在凸起胶囊里。
+
+## TabBar 设计规范
+
+**标准贴底**，不做浮动胶囊（用户不预期 + 易撞内容）：
+- `position: fixed; left: 0; right: 0; bottom: 0`
+- 满宽 + 纯色底 + 顶部 1rpx 分隔线
+- 自动安全区 `padding-bottom: env(safe-area-inset-bottom)`
+- 中间 tab 凸起胶囊允许，但主 bar 必须贴底
+- 页面 scroll 区加 `padding-bottom: calc(150rpx + env(safe-area-inset-bottom))` 避免遮挡
+
 ## 豁免清单（允许的非 token 色）
 
 以下色值是有意的特殊用途，不进 token：

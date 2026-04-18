@@ -61,7 +61,7 @@
 .total { font-size: var(--fs-h2); color: var(--accent); font-weight: var(--fw-bold); }
 
 .empty { text-align: center; padding: 180rpx 40rpx 60rpx; }
-.empty-icon { font-size: 120rpx; opacity: 0.4; }
+.empty-illust { width: 260rpx; height: 260rpx; display: block; margin: 0 auto; }
 .empty-title {
   margin-top: var(--sp-5);
   font-size: 30rpx;

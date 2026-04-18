@@ -87,7 +87,8 @@ Page({
     metrics: null,
     bpTrendTime: [],
     otherRows: [],
-    weeklyBars: []
+    weeklyBars: [],
+    dateScrollLeft: 0
   },
 
   onLoad() {
@@ -98,6 +99,19 @@ Page({
       selectedDate: tabs[3] ? tabs[3].key : "",
       monthText: `${now.getFullYear()}年${now.getMonth() + 1}月`
     });
+    this.centerDateChip(3);
+  },
+
+  // 把第 idx 个 chip 滚到 viewport 中央
+  centerDateChip(idx) {
+    const CHIP = 84, GAP = 12, SLOT = CHIP + GAP;   // rpx
+    const HOME_PAD = 48;                             // .home-page padding 24*2
+    const viewRpx = 750 - HOME_PAD;
+    const chipCenter = idx * SLOT + CHIP / 2;
+    const targetRpx = Math.max(0, chipCenter - viewRpx / 2);
+    const winWidth = wx.getWindowInfo().windowWidth;
+    const scrollLeft = targetRpx * winWidth / 750;
+    this.setData({ dateScrollLeft: scrollLeft });
   },
 
   onShow() {
@@ -140,7 +154,10 @@ Page({
   },
 
   onPickDate(e) {
-    this.setData({ selectedDate: e.currentTarget.dataset.key });
+    const key = e.currentTarget.dataset.key;
+    const idx = this.data.dateTabs.findIndex((t) => t.key === key);
+    this.setData({ selectedDate: key });
+    if (idx >= 0) this.centerDateChip(idx);
   },
 
   syncDevice(state) {
@@ -195,11 +212,11 @@ Page({
     const stressTrend = toSpark([45, 41, 38, 44, metrics.stress], 20, 75);
 
     return [
-      { key: "temp", icon: "🌡", label: "体温", value: `${metrics.temperature} ℃`, sub: "平稳", trend: tempTrend },
-      { key: "hr", icon: "💓", label: "心率", value: `${metrics.heartRate} 次/分`, sub: "安静心率", trend: hrTrend },
-      { key: "hrv", icon: "🫀", label: "心率变异性", value: `${metrics.hrv} ms`, sub: "恢复参考", trend: hrvTrend },
-      { key: "spo2", icon: "💧", label: "血氧", value: `${metrics.spo2} %`, sub: "供氧状态", trend: spo2Trend },
-      { key: "stress", icon: "🧘", label: "压力", value: `${metrics.stress} ${stressLabel(metrics.stress)}`, sub: "放松指数", trend: stressTrend }
+      { key: "temp", iconName: "thermometer", label: "体温", value: `${metrics.temperature} ℃`, sub: "平稳", trend: tempTrend },
+      { key: "hr", iconName: "heart-pulse", label: "心率", value: `${metrics.heartRate} 次/分`, sub: "安静心率", trend: hrTrend },
+      { key: "hrv", iconName: "activity", label: "心率变异性", value: `${metrics.hrv} ms`, sub: "恢复参考", trend: hrvTrend },
+      { key: "spo2", iconName: "droplet", label: "血氧", value: `${metrics.spo2} %`, sub: "供氧状态", trend: spo2Trend },
+      { key: "stress", iconName: "wind", label: "压力", value: `${metrics.stress} ${stressLabel(metrics.stress)}`, sub: "放松指数", trend: stressTrend }
     ];
   },
 

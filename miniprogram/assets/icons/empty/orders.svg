@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- 背景圆 -->
+  <circle cx="100" cy="100" r="78" fill="#EAE3D6" opacity="0.55"/>
+
+  <!-- 打开的纸箱 · 后壁 -->
+  <path d="M60 85 L60 150 L140 150 L140 85 Z" fill="#D7C5A8" stroke="#8B7355" stroke-width="2.5"/>
+  <!-- 箱底阴影 -->
+  <path d="M60 150 L140 150 L136 158 L64 158 Z" fill="#8B7355" opacity="0.25"/>
+  <!-- 左翻盖 -->
+  <path d="M60 85 L40 70 L40 135 L60 150 Z" fill="#E8D9BE" stroke="#8B7355" stroke-width="2.5"/>
+  <!-- 右翻盖 -->
+  <path d="M140 85 L160 70 L160 135 L140 150 Z" fill="#E8D9BE" stroke="#8B7355" stroke-width="2.5"/>
+
+  <!-- 礼盒（箱内露出） -->
+  <rect x="80" y="100" width="40" height="34" fill="#3F6B5E" opacity="0.85" rx="2"/>
+  <!-- 礼盒缎带纵 -->
+  <rect x="96" y="100" width="8" height="34" fill="#2A4A3E"/>
+  <!-- 礼盒缎带横 -->
+  <rect x="80" y="112" width="40" height="8" fill="#2A4A3E"/>
+  <!-- 礼盒蝴蝶结 -->
+  <circle cx="100" cy="100" r="5" fill="#2A4A3E"/>
+  <path d="M95 100 Q88 93 90 88 Q95 92 100 100 M105 100 Q112 93 110 88 Q105 92 100 100" fill="#2A4A3E"/>
+
+  <!-- 红枣（右侧飘出）-->
+  <ellipse cx="150" cy="92" rx="7" ry="9" fill="#8B3A1A" transform="rotate(15 150 92)"/>
+  <line x1="150" y1="82" x2="152" y2="76" stroke="#5C3A1A" stroke-width="1.5"/>
+  <!-- 红枣 2 -->
+  <ellipse cx="158" cy="108" rx="5" ry="7" fill="#A04328" transform="rotate(-10 158 108)"/>
+
+  <!-- 枸杞（左侧飘出）-->
+  <circle cx="50" cy="94" r="4.5" fill="#B94A2A"/>
+  <circle cx="44" cy="106" r="3.5" fill="#B94A2A" opacity="0.85"/>
+  <circle cx="52" cy="114" r="3" fill="#B94A2A" opacity="0.7"/>
+
+  <!-- 小草叶点缀 -->
+  <path d="M120 72 Q126 64 132 70 Q128 76 120 72 Z" fill="#3F6B5E" opacity="0.6"/>
+  <path d="M70 64 Q76 56 82 62 Q78 68 70 64 Z" fill="#3F6B5E" opacity="0.5"/>
+
+  <!-- 浮游小圆点 -->
+  <circle cx="40" cy="60" r="2" fill="#A3ADA7" opacity="0.5"/>
+  <circle cx="168" cy="68" r="2.5" fill="#A3ADA7" opacity="0.5"/>
+  <circle cx="172" cy="130" r="1.8" fill="#A3ADA7" opacity="0.4"/>
+</svg>

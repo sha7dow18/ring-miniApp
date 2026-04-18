@@ -101,7 +101,7 @@
 }
 .other-item:last-child { border-bottom: none; }
 .left { display: flex; align-items: center; gap: 12rpx; }
-.icon { width: 54rpx; height: 54rpx; border-radius: 50%; background: var(--bg-muted); display: flex; align-items: center; justify-content: center; font-size: 26rpx; }
+.icon { width: 48rpx; height: 48rpx; flex-shrink: 0; }
 .nm { color: var(--text-2); font-size: var(--fs-caption); }
 .vl { color: var(--text-1); font-size: var(--fs-body); font-weight: var(--fw-bold); margin-top: 2rpx; }
 .right { display: flex; align-items: center; gap: var(--sp-2); }

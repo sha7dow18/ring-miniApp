@@ -3,7 +3,7 @@
 
 /* 空态 */
 .empty { padding: 160rpx 40rpx 40rpx; text-align: center; }
-.empty-icon { font-size: 140rpx; opacity: 0.4; }
+.empty-illust { width: 260rpx; height: 260rpx; display: block; margin: 0 auto; }
 .empty-title { margin-top: var(--sp-5); font-size: var(--fs-h2); color: var(--text-1); font-weight: var(--fw-bold); }
 .empty-desc { margin-top: var(--sp-2); font-size: var(--fs-sub); color: var(--text-2); }
 .empty-btn {

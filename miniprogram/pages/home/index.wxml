@@ -10,7 +10,7 @@
     <text class="arrow">›</text>
   </view>
 
-  <scroll-view class="date-scroll" scroll-x="true" show-scrollbar="false">
+  <scroll-view class="date-scroll" scroll-x="true" scroll-left="{{dateScrollLeft}}" scroll-with-animation show-scrollbar="false">
     <view class="date-list">
       <view class="date-chip {{selectedDate===item.key?'active':''}}" wx:for="{{dateTabs}}" wx:key="key" data-key="{{item.key}}" bindtap="onPickDate">
         <text class="day">{{item.day}}</text>
@@ -86,7 +86,7 @@
     <view class="other-list">
       <view class="other-item" wx:for="{{otherRows}}" wx:key="key">
         <view class="left">
-          <text class="icon">{{item.icon}}</text>
+          <image class="icon" src="/assets/icons/{{item.iconName}}.svg" mode="aspectFit" aria-label="{{item.label}}"/>
           <view>
             <view class="nm">{{item.label}}</view>
             <view class="vl">{{item.value}}</view>

@@ -1,47 +1,72 @@
+/* 标准贴底 tabBar — 满宽、纯色、自动安全区 */
 .tab-bar-container {
   position: fixed;
-  left: var(--sp-3); right: var(--sp-3);
-  bottom: 10rpx;
-  height: 104rpx;
-  border-radius: var(--r-card);
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: var(--bg-card);
+  border-top: 1rpx solid var(--border);
   display: flex;
-  box-shadow: var(--shadow-float);
-  z-index: 999;
+  align-items: stretch;
   padding-bottom: env(safe-area-inset-bottom);
-  overflow: visible;
+  z-index: 999;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.04);
 }
+
 .tab-bar-item {
   flex: 1;
+  height: 100rpx;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  gap: 6rpx;
   position: relative;
 }
-.icon-box {
-  width: 48rpx; height: 48rpx;
-  margin-bottom: 6rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.tab-icon { width: 100%; height: 100%; object-fit: contain; }
-.tab-text { font-size: var(--fs-caption); color: var(--text-2); }
-.tab-bar-item.selected .tab-text { color: var(--brand); font-weight: var(--fw-bold); }
-.tab-bar-item.selected .tab-icon { transform: scale(1.08); }
 
-/* 中间 AI tab 凸起胶囊（豁免：保留渐变 + stop 用 token）*/
-.tab-bar-item:nth-child(3) .icon-box {
-  width: 98rpx; height: 98rpx;
-  position: absolute;
-  top: -34rpx;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: var(--brand);
-  box-shadow: 0 10rpx 22rpx rgba(50, 77, 67, .32);
+.icon-box {
+  width: 44rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.tab-bar-item:nth-child(3) .tab-icon { width: 54rpx; height: 54rpx; }
-.tab-bar-item:nth-child(3) .tab-text { margin-top: 56rpx; }
-.tab-bar-item:nth-child(3).selected .tab-text { color: var(--brand); }
+.tab-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.tab-text {
+  font-size: 20rpx;
+  color: var(--text-2);
+  line-height: 1;
+  white-space: nowrap;
+}
+.tab-bar-item.selected .tab-text {
+  color: var(--brand);
+  font-weight: var(--fw-semibold);
+}
+
+/* AI 中间 tab · 凸起胶囊作为强调 */
+.tab-bar-item:nth-child(3) .icon-box {
+  position: absolute;
+  top: -30rpx;
+  left: 50%;
+  width: 90rpx;
+  height: 90rpx;
+  transform: translateX(-50%);
+  background: var(--brand);
+  border-radius: 50%;
+  border: 4rpx solid var(--bg-page);
+  box-shadow: 0 8rpx 16rpx rgba(47, 74, 66, 0.3);
+}
+.tab-bar-item:nth-child(3) .tab-icon {
+  width: 44rpx;
+  height: 44rpx;
+}
+.tab-bar-item:nth-child(3) .tab-text {
+  margin-top: 60rpx;
+}
+.tab-bar-item:nth-child(3).selected .tab-text {
+  color: var(--brand);
+}

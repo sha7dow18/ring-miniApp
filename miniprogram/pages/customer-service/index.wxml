@@ -1,6 +1,8 @@
 <view class="page">
   <view class="hero">
-    <view class="hero-icon">💬</view>
+    <view class="hero-icon">
+      <image class="hero-icon-img" src="/assets/icons/inv/message-circle.svg" mode="aspectFit" aria-label="客服"/>
+    </view>
     <view class="hero-title">在线客服</view>
     <view class="hero-sub">{{support.hours}}</view>
   </view>
@@ -8,7 +10,7 @@
   <view class="card">
     <view class="row" bindlongpress="copyWechat">
       <view class="row-l">
-        <text class="row-ico">📱</text>
+        <image class="row-ico" src="/assets/icons/smartphone.svg" mode="aspectFit" aria-label="微信号"/>
         <view class="row-meta">
           <text class="row-label">客服微信</text>
           <text class="row-value selectable" user-select="{{true}}">{{support.wechat}}</text>
@@ -18,7 +20,7 @@
     </view>
     <view class="row" bindlongpress="copyEmail">
       <view class="row-l">
-        <text class="row-ico">✉️</text>
+        <image class="row-ico" src="/assets/icons/mail.svg" mode="aspectFit" aria-label="邮箱"/>
         <view class="row-meta">
           <text class="row-label">客服邮箱</text>
           <text class="row-value selectable" user-select="{{true}}">{{support.email}}</text>

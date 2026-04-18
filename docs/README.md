@@ -13,6 +13,7 @@
 - [2026-04-18-sprint-a.md](plans/2026-04-18-sprint-a.md) — 修断按钮 + 流式蓝牙 mock + 客服页 + 重置应用 + 配置中心
 - [2026-04-18-sprint-b.md](plans/2026-04-18-sprint-b.md) — 电商数据闭环（商品/购物车/订单/结算/mock 支付）
 - [2026-04-18-ui-polish.md](plans/2026-04-18-ui-polish.md) — 设计系统统一（tokens + 公共类 + 14 页迁移）
+- [2026-04-18-svg-icons.md](plans/2026-04-18-svg-icons.md) — emoji → SVG 图标 + 空态插画 + AI 听诊器 tab + tabBar 贴底重构 + 日期条点击居中
 
 ## design-system.md — UI 规范
 

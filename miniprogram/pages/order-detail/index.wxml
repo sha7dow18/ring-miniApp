@@ -1,13 +1,7 @@
 <view class="page" wx:if="{{order}}">
   <!-- 状态 hero -->
   <view class="hero hero-{{order.status}}">
-    <view class="hero-ico">
-      <text wx:if="{{order.status === 'pending'}}">⏳</text>
-      <text wx:elif="{{order.status === 'paid'}}">✓</text>
-      <text wx:elif="{{order.status === 'shipping'}}">🚚</text>
-      <text wx:elif="{{order.status === 'done'}}">✅</text>
-      <text wx:elif="{{order.status === 'canceled'}}">✕</text>
-    </view>
+    <image class="hero-ico" src="/assets/icons/status/{{order.status}}.svg" mode="aspectFit" aria-label="{{statusText}}"/>
     <view class="hero-title">{{statusText}}</view>
     <view class="hero-sub" wx:if="{{order.status === 'pending'}}">请尽快完成支付</view>
     <view class="hero-sub" wx:elif="{{order.status === 'paid'}}">感谢购买，等待发货</view>

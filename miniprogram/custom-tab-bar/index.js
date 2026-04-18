@@ -17,8 +17,8 @@ Component({
       {
         pagePath: "/pages/ai-chat/index",
         text: "AI",
-        iconPath: "/assets/tabbar/ai.png",
-        selectedIconPath: "/assets/tabbar/ai_active.png"
+        iconPath: "/assets/tabbar/ai.svg",
+        selectedIconPath: "/assets/tabbar/ai_active.svg"
       },
       {
         pagePath: "/pages/service/index",

@@ -60,6 +60,23 @@ else
 fi
 
 echo ""
+echo "━━━ 4. emoji 作 UI 图标扫描 ━━━"
+echo "(页面 wxml / js 里硬编码 emoji 不允许。用户输入内容例外 — 只扫 hardcoded)"
+# perl 支持 Unicode 属性类
+EMO=$(perl -nle 'print "$ARGV:$.:$_" if /[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]/' \
+  $(find "$ROOT/pages" "$ROOT/custom-tab-bar" -type f \( -name '*.wxml' -o -name '*.js' \)) 2>/dev/null \
+  | grep -vE "(_pendingPreset|chooseImage|indexOf|_openid)" \
+  || true)
+if [ -n "$EMO" ]; then
+  echo "$EMO"
+  echo ""
+  echo "❌ 以上 emoji 应替换为 /assets/icons/*.svg"
+  EXIT=1
+else
+  echo "✅ 无残留"
+fi
+
+echo ""
 if [ $EXIT -eq 0 ]; then
   echo "═══ 全部通过 ═══"
 else

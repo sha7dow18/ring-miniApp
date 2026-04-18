@@ -11,7 +11,7 @@
 
 /* 地址 */
 .addr-placeholder { display: flex; align-items: center; gap: 18rpx; }
-.addr-ico { font-size: 44rpx; flex-shrink: 0; }
+.addr-ico { width: 44rpx; height: 44rpx; flex-shrink: 0; }
 .addr-meta { flex: 1; display: flex; flex-direction: column; gap: var(--sp-1); }
 .addr-title { font-size: var(--fs-body); color: var(--text-1); font-weight: var(--fw-semibold); }
 .addr-sub { font-size: var(--fs-caption); color: var(--text-2); }

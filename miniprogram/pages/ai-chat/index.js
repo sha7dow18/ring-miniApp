@@ -3,10 +3,10 @@ var sessionService = require("../../services/sessionService.js");
 var healthService = require("../../services/healthService.js");
 
 var QUICK_QUESTIONS = [
-  { icon: "📷", text: "拍舌头，帮我分析" },
-  { icon: "💤", text: "最近总是睡不好" },
-  { icon: "🔋", text: "容易疲劳什么体质" },
-  { icon: "📋", text: "给我一周调理建议" }
+  { iconName: "camera", text: "拍舌头，帮我分析" },
+  { iconName: "moon", text: "最近总是睡不好" },
+  { iconName: "zap", text: "容易疲劳什么体质" },
+  { iconName: "clipboard-list", text: "给我一周调理建议" }
 ];
 
 Page({

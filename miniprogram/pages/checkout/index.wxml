@@ -2,7 +2,7 @@
   <!-- 收货地址 -->
   <view class="card addr-card" bindtap="chooseAddress" hover-class="hover" wx:if="{{!address && !showAddressForm}}">
     <view class="addr-placeholder">
-      <text class="addr-ico">📍</text>
+      <image class="addr-ico" src="/assets/icons/map-pin.svg" mode="aspectFit" aria-label="收货地址"/>
       <view class="addr-meta">
         <text class="addr-title">选择收货地址</text>
         <text class="addr-sub">从微信地址簿选择，或手动填写</text>
