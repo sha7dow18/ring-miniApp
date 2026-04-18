@@ -1,4 +1,11 @@
-page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
-.page{ padding:24rpx; }
-.title{ font-size:34rpx; font-weight:700; color:#1f2d28; margin-bottom:12rpx; }
-.line{ background:#f8f2e8; border-radius:16rpx; padding:18rpx; margin-bottom:10rpx; color:#405048; font-size:24rpx; }
+.page { padding: var(--sp-4); }
+.title { font-size: var(--fs-h2); font-weight: var(--fw-bold); color: var(--text-1); margin-bottom: var(--sp-3); }
+.line {
+  background: var(--bg-card);
+  border-radius: var(--r-card);
+  padding: 18rpx;
+  margin-bottom: 10rpx;
+  color: var(--text-1);
+  font-size: var(--fs-sub);
+  box-shadow: var(--shadow-card);
+}

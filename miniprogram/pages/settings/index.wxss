@@ -1,4 +1,23 @@
-page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
-.page{ padding:24rpx; }
-.row{ background:#f8f2e8; border-radius:18rpx; padding:22rpx 18rpx; margin-bottom:10rpx; display:flex; justify-content:space-between; align-items:center; color:#1f2d28; font-size:26rpx; }
-.logout{ margin-top:20rpx; text-align:center; background:#f1d9cd; color:#8b3f32; border-radius:999rpx; padding:18rpx 0; font-size:25rpx; }
+.page { padding: var(--sp-4); }
+.row {
+  background: var(--bg-card);
+  border-radius: var(--r-card);
+  padding: 22rpx 18rpx;
+  margin-bottom: 10rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-1);
+  font-size: 26rpx;
+  box-shadow: var(--shadow-card);
+}
+.logout {
+  margin-top: var(--sp-4);
+  text-align: center;
+  background: #F1D9CD;
+  color: var(--accent);
+  border-radius: var(--r-pill);
+  padding: 18rpx 0;
+  font-size: 25rpx;
+  font-weight: var(--fw-semibold);
+}

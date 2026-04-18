@@ -12,6 +12,11 @@
 - [2026-04-18-data-loop.md](plans/2026-04-18-data-loop.md) — 健康/会话/用户画像数据闭环 + 测试
 - [2026-04-18-sprint-a.md](plans/2026-04-18-sprint-a.md) — 修断按钮 + 流式蓝牙 mock + 客服页 + 重置应用 + 配置中心
 - [2026-04-18-sprint-b.md](plans/2026-04-18-sprint-b.md) — 电商数据闭环（商品/购物车/订单/结算/mock 支付）
+- [2026-04-18-ui-polish.md](plans/2026-04-18-ui-polish.md) — 设计系统统一（tokens + 公共类 + 14 页迁移）
+
+## design-system.md — UI 规范
+
+- [design-system.md](design-system.md) — 色板 / token / 公共类 / 豁免清单。**改 UI 前必读**。
 
 ## references/ — 技术参考
 微信小程序开发的项目无关知识。

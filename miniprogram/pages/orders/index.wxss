@@ -1,31 +1,30 @@
-page { background: #F4F0EB; }
-.page { padding: 24rpx 24rpx 40rpx; }
+.page { padding: var(--sp-4) var(--sp-4) 40rpx; }
 .hover { opacity: 0.7; }
 
-.tabs { height: 74rpx; margin-bottom: 16rpx; }
+.tabs { height: 74rpx; margin-bottom: var(--sp-3); }
 .tab-list { display: flex; white-space: nowrap; padding: 0 4rpx; }
 .tab {
   padding: 14rpx 28rpx;
-  border-radius: 999rpx;
-  background: #EAE3D6;
+  border-radius: var(--r-pill);
+  background: var(--bg-muted);
   margin-right: 12rpx;
-  color: #57645d;
-  font-size: 24rpx;
-  font-weight: 500;
+  color: var(--text-2);
+  font-size: var(--fs-sub);
+  font-weight: var(--fw-medium);
 }
 .tab.active {
-  background: #3F6B5E;
-  color: #F5F0EA;
-  font-weight: 700;
+  background: var(--brand);
+  color: var(--text-inv);
+  font-weight: var(--fw-bold);
 }
 
-.list { display: flex; flex-direction: column; gap: 16rpx; }
+.list { display: flex; flex-direction: column; gap: var(--sp-3); }
 
 .order-card {
-  background: #FFF;
-  border-radius: 24rpx;
-  padding: 24rpx;
-  box-shadow: 0 4rpx 14rpx rgba(45,56,49,.05);
+  background: var(--bg-card);
+  border-radius: var(--r-card);
+  padding: var(--sp-4);
+  box-shadow: var(--shadow-card);
 }
 .card-header {
   display: flex;
@@ -33,50 +32,49 @@ page { background: #F4F0EB; }
   align-items: center;
   margin-bottom: 14rpx;
 }
-.order-no { font-size: 22rpx; color: #8A9390; font-family: monospace; }
-.status {
-  font-size: 22rpx;
-  padding: 6rpx 14rpx;
-  border-radius: 999rpx;
-  font-weight: 600;
-}
-.status-pending { background: #FFF4E0; color: #8B5A1A; }
-.status-paid { background: #E4FCD6; color: #3A6B1A; }
-.status-shipping { background: #D6E4FC; color: #1A3B8B; }
-.status-done { background: #EAE3D6; color: #5c6761; }
-.status-canceled { background: #F4E0E0; color: #8B3A1A; }
+.order-no { font-size: var(--fs-caption); color: var(--text-2); font-family: monospace; }
 
-.product-name { font-size: 28rpx; color: #1A2B24; font-weight: 700; margin-bottom: 16rpx; }
-.multi { font-size: 22rpx; color: #8A9390; font-weight: 400; }
+/* 订单状态 pill 5 色（状态变体保留）*/
+.status {
+  font-size: var(--fs-caption);
+  padding: 6rpx 14rpx;
+  border-radius: var(--r-pill);
+  font-weight: var(--fw-semibold);
+}
+.status-pending { background: #FFF4E0; color: var(--warning); }
+.status-paid { background: #E4FCD6; color: var(--success); }
+.status-shipping { background: #D6E4FC; color: var(--info); }
+.status-done { background: var(--bg-muted); color: var(--text-2); }
+.status-canceled { background: #F4E0E0; color: var(--accent); }
+
+.product-name { font-size: var(--fs-body); color: var(--text-1); font-weight: var(--fw-bold); margin-bottom: var(--sp-3); }
+.multi { font-size: var(--fs-caption); color: var(--text-2); font-weight: var(--fw-regular); }
 
 .card-footer {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
 }
-.date { font-size: 22rpx; color: #A3ADA7; }
+.date { font-size: var(--fs-caption); color: var(--text-3); }
 .total-wrap { display: flex; align-items: baseline; gap: 12rpx; }
-.count { font-size: 22rpx; color: #8A9390; }
-.total { font-size: 32rpx; color: #8B3A1A; font-weight: 800; }
+.count { font-size: var(--fs-caption); color: var(--text-2); }
+.total { font-size: var(--fs-h2); color: var(--accent); font-weight: var(--fw-bold); }
 
-.empty {
-  text-align: center;
-  padding: 180rpx 40rpx 60rpx;
-}
+.empty { text-align: center; padding: 180rpx 40rpx 60rpx; }
 .empty-icon { font-size: 120rpx; opacity: 0.4; }
 .empty-title {
-  margin-top: 30rpx;
+  margin-top: var(--sp-5);
   font-size: 30rpx;
-  color: #1A2B24;
-  font-weight: 600;
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
 }
 .empty-btn {
   display: inline-block;
-  margin-top: 30rpx;
+  margin-top: var(--sp-5);
   padding: 18rpx 60rpx;
-  background: #3F6B5E;
-  color: #F5F0EA;
-  border-radius: 999rpx;
-  font-size: 26rpx;
-  font-weight: 600;
+  background: var(--brand);
+  color: var(--text-inv);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sub);
+  font-weight: var(--fw-semibold);
 }
