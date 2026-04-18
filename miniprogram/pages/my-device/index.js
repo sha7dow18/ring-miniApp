@@ -1,5 +1,4 @@
 const mockStore = require("../../utils/mockStore.js");
-const mockProfileService = require("../../services/mockProfileService.js");
 
 Page({
   data: {
@@ -33,9 +32,9 @@ Page({
     wx.showModal({
       title: "断开设备",
       content: "确认断开当前设备吗？",
-      success: async (res) => {
+      success: (res) => {
         if (!res.confirm) return;
-        await mockProfileService.disconnectDevice();
+        mockStore.resetConnectionState();
         wx.showToast({ title: "设备已断开", icon: "none" });
       }
     });

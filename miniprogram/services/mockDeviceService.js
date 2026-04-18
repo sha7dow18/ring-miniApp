@@ -51,23 +51,7 @@ async function startSearch() {
   return getMockDevices();
 }
 
-// 生成一份健康指标快照，并写入全局 store
-function generateMockHealthMetrics() {
-  const metrics = {
-    heartRate: randomBetween(62, 96),
-    spo2: randomBetween(95, 99),
-    temperature: Number((36.2 + Math.random() * 0.8).toFixed(1)),
-    stress: randomBetween(22, 78),
-    hrv: randomBetween(28, 82),
-    steps: randomBetween(1600, 9900),
-    updatedAt: nowText()
-  };
-
-  mockStore.setHealthMetrics(metrics);
-  return metrics;
-}
-
-// 假连接流程：connecting -> connected，并写入设备+健康状态
+// 假连接流程：connecting -> connected，写入设备信息
 async function connectMockDevice(deviceId) {
   const selected = getMockDevices().find((item) => item.deviceId === deviceId) || getMockDevices()[0];
 
@@ -86,18 +70,8 @@ async function connectMockDevice(deviceId) {
     lastSyncTime: nowText()
   };
 
-  const healthMetrics = {
-    heartRate: randomBetween(62, 96),
-    spo2: randomBetween(95, 99),
-    temperature: Number((36.2 + Math.random() * 0.8).toFixed(1)),
-    stress: randomBetween(22, 78),
-    hrv: randomBetween(28, 82),
-    steps: randomBetween(1600, 9900),
-    updatedAt: nowText()
-  };
-
-  mockStore.setConnectionSnapshot({ deviceInfo, healthMetrics });
-  return { deviceInfo, healthMetrics };
+  mockStore.setConnectionSnapshot({ deviceInfo });
+  return { deviceInfo };
 }
 
 // 假断连：清空连接状态并恢复未连接
@@ -125,20 +99,14 @@ async function refreshMockDeviceInfo() {
   return mockStore.getState().deviceInfo;
 }
 
-// 模拟设备同步：刷新健康数据与最后同步时间
+// 模拟设备同步：只刷最后同步时间（真实指标数据走 BLE stream + cloud DB）
 async function syncMockDevice() {
   const state = mockStore.getState();
-  if (state.deviceStatus !== "connected") {
-    return null;
-  }
+  if (state.deviceStatus !== "connected") return null;
 
   await wait(randomBetween(700, 1000));
-  const metrics = generateMockHealthMetrics();
   mockStore.setDeviceInfo({ lastSyncTime: nowText() });
-  return {
-    deviceInfo: mockStore.getState().deviceInfo,
-    healthMetrics: metrics
-  };
+  return { deviceInfo: mockStore.getState().deviceInfo };
 }
 
 module.exports = {
@@ -147,6 +115,5 @@ module.exports = {
   connectMockDevice,
   disconnectMockDevice,
   refreshMockDeviceInfo,
-  generateMockHealthMetrics,
   syncMockDevice
 };

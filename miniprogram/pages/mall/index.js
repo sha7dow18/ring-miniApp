@@ -1,10 +1,19 @@
-const mockStore = require("../../utils/mockStore.js");
 const productService = require("../../services/productService.js");
 const cartService = require("../../services/cartService.js");
 
+// 分类是页面元数据，和 products 集合里的 category 字段对齐
+const CATEGORIES = [
+  { id: "all", name: "全部" },
+  { id: "herb", name: "滋补" },
+  { id: "beauty", name: "养颜" },
+  { id: "sleep", name: "助眠" },
+  { id: "digest", name: "脾胃" },
+  { id: "tea", name: "茶饮" }
+];
+
 Page({
   data: {
-    categories: [],
+    categories: CATEGORIES,
     activeCategory: "all",
     products: [],
     filteredProducts: [],
@@ -18,12 +27,7 @@ Page({
     if (typeof this.getTabBar === "function" && this.getTabBar()) {
       this.getTabBar().setData({ selected: 1 });
     }
-
-    // 分类用 mockStore 的（静态展示用），商品改读云
-    const mall = mockStore.getState().mallState || {};
-    const categories = [{ id: "all", name: "全部" }].concat(mall.categories || []);
-    this.setData({ categories, hasCategorySelected: false, activeCategory: "all" });
-
+    this.setData({ hasCategorySelected: false, activeCategory: "all" });
     await this.loadProducts();
     await this.refreshCartCount();
   },
