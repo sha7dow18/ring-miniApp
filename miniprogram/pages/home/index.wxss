@@ -74,7 +74,7 @@
 
 .content-scroll { min-height: 100vh; padding-bottom: calc(150rpx + env(safe-area-inset-bottom)); }
 
-.empty-card, .other-list, .analysis-row {
+.empty-card, .other-list {
   background: var(--bg-card);
   border-radius: var(--r-card);
   box-shadow: var(--shadow-card);
@@ -172,17 +172,6 @@
   font-size: 30rpx; flex-shrink: 0;
 }
 
-.analysis-row { padding: var(--sp-3); }
-.ana { color: var(--text-2); font-size: 23rpx; line-height: 1.7; background: var(--bg-muted); border-radius: var(--r-md); padding: 12rpx; }
-.action-row { margin-top: 10rpx; display: grid; grid-template-columns: 1fr 1fr; gap: 10rpx; }
-.ghost-btn {
-  text-align: center;
-  border-radius: var(--r-pill);
-  background: var(--bg-muted);
-  color: var(--brand);
-  padding: var(--sp-3) 0;
-  font-size: 23rpx;
-}
 
 /* 近 7 日趋势卡片 */
 .weekly-card {

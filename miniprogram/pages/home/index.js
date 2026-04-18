@@ -358,9 +358,5 @@ Page({
     wx.navigateTo({ url: `/pages/metric-detail/index?key=${key}` });
   },
 
-  goConnectDevice() { wx.switchTab({ url: "/pages/service/index" }); },
-  goToAi() { wx.switchTab({ url: "/pages/ai-chat/index" }); },
-  goToDevice() { wx.switchTab({ url: "/pages/service/index" }); },
-  showMetricDetail() { wx.navigateTo({ url: "/pages/device-detail/index" }); },
-  goCustomerService() { wx.navigateTo({ url: "/pages/customer-service/index" }); }
+  goConnectDevice() { wx.switchTab({ url: "/pages/service/index" }); }
 });

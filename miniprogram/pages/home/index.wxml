@@ -108,16 +108,6 @@
       </view>
     </view>
 
-    <view class="analysis-row">
-      <view class="ana">简要分析：指标整体稳定，继续保持规律作息与低强度运动。</view>
-      <view class="action-row">
-        <view class="ghost-btn" bindtap="onRefreshMetrics">刷新数据</view>
-        <view class="ghost-btn" bindtap="goToAi">去 AI 分析</view>
-        <view class="ghost-btn" bindtap="showMetricDetail">查看详情</view>
-        <view class="ghost-btn" bindtap="goToDevice">设备中心</view>
-      </view>
-    </view>
-
     <view style="height: 120rpx;"></view>
   </scroll-view>
 </view>
