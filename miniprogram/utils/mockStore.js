@@ -56,8 +56,11 @@ const defaultState = {
       { id: "b3", title: "调理产品专区", subtitle: "轻养生，重坚持", color: "#fee2e2" }
     ],
     categories: [
-      { id: "herb", name: "草本补益" },
-      { id: "sleep", name: "睡眠安养" }
+      { id: "herb", name: "滋补" },
+      { id: "beauty", name: "养颜" },
+      { id: "sleep", name: "助眠" },
+      { id: "digest", name: "脾胃" },
+      { id: "tea", name: "茶饮" }
     ],
     products: [
       { id: "m1", name: "参萃元气饮", category: "herb", price: "599", image: "", imageName: "mall_product_1.png", desc: "人参草本配方，日常温和调理与体能支持。", tags: ["草本", "日常"], color: "#d7b680" },

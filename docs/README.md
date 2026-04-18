@@ -59,12 +59,6 @@
 - 策略：纯函数（生成器 / 转换器 / tagger）+ 通过 mock `wx.cloud.database` 覆盖云路径
 - 门槛：statements ≥ 70%，functions ≥ 75%
 
-## seed-data/ — 种子数据
-
-一次性导入云库的初始数据，应用运行时不写。
-
-- [seed-data/products.json](seed-data/products.json) + [导入说明](seed-data/README.md)
-
 ## 文档风格
 - 只写"为什么"和"是什么"，不写"怎么做"
 - 实现细节过期快，让源码作为唯一事实
