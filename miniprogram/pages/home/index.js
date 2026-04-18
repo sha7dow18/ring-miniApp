@@ -48,10 +48,10 @@ function sparkSvg(values) {
   const area = PAD + "," + H + " " + line + " " + (W - PAD) + "," + H;
   const last = pts[pts.length - 1].split(",");
   const svg =
-    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + W + " " + H + "' preserveAspectRatio='none'>" +
-    "<polygon points='" + area + "' fill='#4E7E6F' opacity='0.18'/>" +
-    "<polyline points='" + line + "' fill='none' stroke='#2A4A3E' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/>" +
-    "<circle cx='" + last[0] + "' cy='" + last[1] + "' r='1.8' fill='#2A4A3E'/>" +
+    "<svg xmlns='http://www.w3.org/2000/svg' width='" + W + "' height='" + H + "' viewBox='0 0 " + W + " " + H + "' preserveAspectRatio='none'>" +
+    "<polygon points='" + area + "' fill='#4E7E6F' opacity='0.2'/>" +
+    "<polyline points='" + line + "' fill='none' stroke='#2A4A3E' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/>" +
+    "<circle cx='" + last[0] + "' cy='" + last[1] + "' r='2.2' fill='#2A4A3E'/>" +
     "</svg>";
   return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
 }
@@ -151,6 +151,7 @@ Page({
     if (!snap) return;
     const m = this.data.metrics;
     if (!m) return;
+    const steps = (m.baseSteps || 0) + snap.steps;
     this.setData({
       "metrics.heartRate": snap.hr_resting,
       "metrics.hrv": snap.hrv,
@@ -158,7 +159,8 @@ Page({
       "metrics.stress": snap.stress,
       "metrics.stressTag": stressBadge(snap.stress),
       "metrics.temperature": snap.body_temp,
-      "metrics.steps": (m.baseSteps || 0) + snap.steps
+      "metrics.stepsPct": Math.min(100, Math.round(steps / (m.stepGoal || 6000) * 100)),
+      "metrics.steps": steps
     });
   },
 
@@ -221,14 +223,28 @@ Page({
       return;
     }
     const metrics = recordToMetrics(record);
+    const stepGoal = 6000;
+    const grade = sleepGrade(metrics.sleepScore);
+    const sleepHours = Math.floor(metrics.sleepMinutes / 60);
+    const sleepMins = metrics.sleepMinutes % 60;
+    // 粗略估算入睡 / 起床：以 7:00 起床倒推，保留月份日期无关
+    const wakeH = 7, wakeM = 0;
+    const totalStart = (wakeH * 60 + wakeM - metrics.sleepMinutes + 24 * 60) % (24 * 60);
+    const startH = Math.floor(totalStart / 60);
+    const startM = totalStart % 60;
+    const pad2 = (n) => (n < 10 ? `0${n}` : `${n}`);
     this.setData({
       metrics: {
         ...metrics,
         stressTag: stressBadge(metrics.stress),
-        stepGoal: 6000,
-        baseSteps: metrics.steps,     // stream 累计步数会加在此基线之上
-        sleepGrade: sleepGrade(metrics.sleepScore),
-        sleepDisplay: `${Math.floor(metrics.sleepMinutes / 60)} 小时 ${metrics.sleepMinutes % 60} 分钟`
+        stepGoal,
+        stepsPct: Math.min(100, Math.round(metrics.steps / stepGoal * 100)),
+        baseSteps: metrics.steps,
+        sleepGrade: grade,
+        sleepGradeCls: grade === "优" ? "good" : (grade === "良" ? "ok" : "low"),
+        sleepHours,
+        sleepMins,
+        sleepRangeText: `${pad2(startH)}:${pad2(startM)} → ${pad2(wakeH)}:${pad2(wakeM)}`
       },
       bpTrendTime: metrics.bpTrend.map((i) => i.t),
       otherRows: this.buildRows(metrics)

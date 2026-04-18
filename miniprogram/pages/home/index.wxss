@@ -64,13 +64,14 @@
 .week { font-size: 20rpx; margin-top: 4rpx; transition: font-size 0.24s ease; }
 .date-chip.active .day { font-size: 34rpx; }
 .date-chip.active .week { font-size: 21rpx; }
+/* today 标记挪到右上角，不再和"周几"文字打架；选中时 brand 底已经视觉很强，隐藏 dot */
 .today-dot {
   position: absolute;
-  bottom: 10rpx;
-  width: 8rpx; height: 8rpx; border-radius: 50%;
+  top: 6rpx; right: 6rpx;
+  width: 10rpx; height: 10rpx; border-radius: 50%;
   background: var(--brand);
 }
-.date-chip.active .today-dot { background: var(--text-inv); }
+.date-chip.active .today-dot { display: none; }
 
 .content-scroll { min-height: 100vh; padding-bottom: calc(150rpx + env(safe-area-inset-bottom)); }
 
@@ -113,27 +114,62 @@
 .red-dot::before { content: ""; display: inline-block; width: 12rpx; height: 12rpx; border-radius: 50%; background: #8a1d30; margin-right: 6rpx; }
 .dark-dot::before { content: ""; display: inline-block; width: 12rpx; height: 12rpx; border-radius: 50%; background: var(--brand); margin-right: 6rpx; }
 
-.duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12rpx; margin-bottom: 12rpx; }
-.duo-card { padding: 18rpx; background: var(--bg-card); border-radius: var(--r-card); box-shadow: var(--shadow-card); }
-.duo-title { font-size: 30rpx; color: var(--text-1); font-weight: var(--fw-bold); }
-.sport-head { display: flex; align-items: center; justify-content: space-between; }
-.sport-ring-image { width: 74rpx; height: 74rpx; display: block; }
-.sport-row { margin-top: 12rpx; display: flex; align-items: flex-end; gap: var(--sp-2); }
-.sport-main { font-size: 58rpx; color: var(--text-1); font-weight: var(--fw-bold); line-height: 1; }
-.sport-main.small { font-size: 50rpx; color: var(--text-1); }
-.sport-target { font-size: 40rpx; color: var(--text-3); font-weight: var(--fw-semibold); line-height: 1.1; }
-.calories-row { margin-top: 14rpx; }
-.sleep-gauge {
-  width: 150rpx; height: 94rpx;
-  margin: var(--sp-2) auto 0;
-  border-radius: 160rpx 160rpx 0 0;
-  position: relative;
-  box-sizing: border-box;
+/* ═══ 运动 / 睡眠 双卡（重设计） ═══ */
+.duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14rpx; margin-bottom: 12rpx; }
+.duo-card {
+  padding: 22rpx 20rpx 20rpx;
+  background: var(--bg-card);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; gap: 12rpx;
+  min-width: 0;
 }
-.sleep-hero { position: absolute; left: 50%; top: 60%; transform: translate(-50%, -50%); width: 120rpx; height: 120rpx; }
-.sleep-score { margin-top: var(--sp-2); text-align: center; font-size: 42rpx; line-height: 1; color: var(--text-1); font-weight: var(--fw-bold); }
-.sleep-score text { margin-left: var(--sp-2); font-size: 34rpx; color: var(--text-1); }
-.sleep-time { margin-top: var(--sp-2); text-align: center; color: var(--text-1); font-size: 50rpx; font-weight: var(--fw-bold); letter-spacing: 1rpx; }
+.duo-head { display: flex; align-items: center; justify-content: space-between; gap: 8rpx; }
+.duo-title { font-size: 26rpx; color: var(--text-2); font-weight: var(--fw-semibold); }
+.duo-pct {
+  font-size: 22rpx; color: var(--brand);
+  font-weight: var(--fw-bold);
+  background: var(--bg-muted); padding: 2rpx 10rpx; border-radius: var(--r-pill);
+}
+.duo-grade {
+  font-size: 22rpx; font-weight: var(--fw-bold);
+  padding: 2rpx 10rpx; border-radius: var(--r-pill);
+}
+.grade-good  { background: #E4FCD6; color: var(--success); }
+.grade-ok    { background: var(--bg-muted); color: var(--brand); }
+.grade-low   { background: #FCE4D6; color: var(--accent); }
+
+.big-metric {
+  display: flex; align-items: baseline; gap: 4rpx;
+  color: var(--text-1);
+  flex-wrap: nowrap;
+}
+.big-num { font-size: 56rpx; font-weight: var(--fw-bold); line-height: 1; letter-spacing: -1rpx; }
+.big-num-sub { margin-left: 12rpx; font-size: 44rpx; }
+.big-unit { font-size: 24rpx; color: var(--text-3); font-weight: var(--fw-semibold); margin-left: 2rpx; }
+
+.duo-sub {
+  font-size: var(--fs-caption);
+  color: var(--text-2);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 底部进度细条 */
+.duo-bar {
+  height: 8rpx; border-radius: 4rpx;
+  background: var(--bg-muted);
+  overflow: hidden;
+  margin-top: 4rpx;
+}
+.duo-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-mid), var(--brand));
+  border-radius: 4rpx;
+  transition: width 0.3s ease;
+}
 
 .other-title { margin: 14rpx 4rpx 12rpx; color: var(--text-1); font-size: var(--fs-h2); font-weight: var(--fw-bold); }
 .other-list { background: transparent; box-shadow: none; padding: 0; margin-bottom: 12rpx; display: flex; flex-direction: column; gap: 14rpx; }
@@ -186,8 +222,15 @@
 .weekly-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14rpx; }
 .weekly-title { font-size: 30rpx; color: var(--text-1); font-weight: var(--fw-bold); }
 .weekly-hint { font-size: var(--fs-caption); color: var(--text-2); }
-.weekly-bars { display: flex; justify-content: space-between; align-items: flex-end; height: 180rpx; padding: 0 4rpx; }
-.weekly-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6rpx; }
-.weekly-val { font-size: 18rpx; color: var(--text-2); }
-.weekly-bar { width: 18rpx; background: linear-gradient(180deg, var(--brand), var(--brand-dark)); border-radius: 10rpx; }
-.weekly-lbl { font-size: 19rpx; color: var(--text-3); }
+.weekly-bars { display: flex; justify-content: space-between; align-items: flex-end; height: 200rpx; padding: 0 8rpx; gap: 8rpx; }
+.weekly-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8rpx; min-width: 0; }
+.weekly-val { font-size: 20rpx; color: var(--text-2); font-weight: var(--fw-semibold); }
+.weekly-bar {
+  width: 100%;
+  max-width: 48rpx;
+  min-width: 28rpx;
+  background: linear-gradient(180deg, var(--brand-mid), var(--brand-dark));
+  border-radius: 14rpx 14rpx 4rpx 4rpx;
+  box-shadow: 0 2rpx 6rpx rgba(47,74,66,0.15);
+}
+.weekly-lbl { font-size: 20rpx; color: var(--text-3); }

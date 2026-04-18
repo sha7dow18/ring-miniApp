@@ -52,26 +52,35 @@
 
     <view class="duo-grid">
       <view class="card duo-card sport-card">
-        <view class="sport-head">
-          <view class="duo-title">运动</view>
-          <image class="sport-ring-image" src="/assets/health/icon_sport_ring.png" mode="aspectFit" />
+        <view class="duo-head">
+          <text class="duo-title">运动</text>
+          <text class="duo-pct">{{metrics.stepsPct}}%</text>
         </view>
-        <view class="sport-row">
-          <text class="sport-main">{{metrics.steps}}</text>
-          <text class="sport-target">/{{metrics.stepGoal}}步</text>
+        <view class="big-metric">
+          <text class="big-num">{{metrics.steps}}</text>
+          <text class="big-unit">步</text>
         </view>
-        <view class="sport-row calories-row">
-          <text class="sport-main small">{{metrics.calories}}</text>
-          <text class="sport-target">/50千卡</text>
+        <view class="duo-sub">目标 {{metrics.stepGoal}} · {{metrics.calories}} 千卡</view>
+        <view class="duo-bar">
+          <view class="duo-bar-fill" style="width: {{metrics.stepsPct}}%;"></view>
         </view>
       </view>
+
       <view class="card duo-card sleep-card">
-        <view class="duo-title">睡眠</view>
-        <view class="sleep-gauge">
-        <image class="sleep-hero" src="/assets/health/icon_sleep.png" mode="aspectFit" />
-      </view>
-        <view class="sleep-score">{{metrics.sleepScore}}<text>{{metrics.sleepGrade}}</text></view>
-        <view class="sleep-time">{{metrics.sleepDisplay}}</view>
+        <view class="duo-head">
+          <text class="duo-title">睡眠</text>
+          <text class="duo-grade grade-{{metrics.sleepGradeCls}}">{{metrics.sleepScore}} · {{metrics.sleepGrade}}</text>
+        </view>
+        <view class="big-metric">
+          <text class="big-num">{{metrics.sleepHours}}</text>
+          <text class="big-unit">时</text>
+          <text class="big-num big-num-sub">{{metrics.sleepMins}}</text>
+          <text class="big-unit">分</text>
+        </view>
+        <view class="duo-sub">{{metrics.sleepRangeText}}</view>
+        <view class="duo-bar">
+          <view class="duo-bar-fill" style="width: {{metrics.sleepScore}}%;"></view>
+        </view>
       </view>
     </view>
 
