@@ -1,0 +1,31 @@
+{
+  "name": "ring-miniapp",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Aita Ring WeChat miniprogram",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFiles": ["<rootDir>/tests/setup-wx-stub.js"],
+    "testMatch": ["<rootDir>/tests/**/*.test.js"],
+    "collectCoverageFrom": [
+      "miniprogram/services/**/*.js",
+      "!miniprogram/services/mock*.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 70,
+        "branches": 55,
+        "functions": 75,
+        "lines": 70
+      }
+    }
+  }
+}

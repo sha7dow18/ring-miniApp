@@ -1,5 +1,5 @@
 const mockStore = require("../../utils/mockStore.js");
-const mockHealthService = require("../../services/mockHealthService.js");
+const healthService = require("../../services/healthService.js");
 
 function stressLabel(score) {
   if (score <= 35) return "放松";
@@ -37,19 +37,56 @@ function toSpark(values, min, max) {
   return values.map((n) => Math.max(6, Math.min(52, Math.round(((Number(n) - min) / span) * 52 + 6))));
 }
 
+// 把云端 health_record 转成首页 UI metrics 形状
+function recordToMetrics(r) {
+  if (!r) return null;
+  const sleepMinutes = r.sleep_duration || 0;
+  return {
+    systolic: r.systolic || 118,
+    diastolic: r.diastolic || 76,
+    bpTrend: healthService.deriveBpTrend(r),
+    heartRate: r.hr_resting || 72,
+    spo2: r.spo2 || 98,
+    temperature: r.body_temp || 36.6,
+    stress: r.stress || 40,
+    hrv: r.hrv || 48,
+    steps: r.steps || 0,
+    calories: r.calories || 0,
+    sleepMinutes: sleepMinutes,
+    sleepScore: r.sleep_score || 80,
+    date: r.date
+  };
+}
+
+// 纯工具：给 7 天趋势条计算高度（px）
+function buildWeeklyBars(recent, maxPx) {
+  if (!recent || !recent.length) return [];
+  const scores = recent.map((r) => r.sleep_score || 0);
+  const hi = Math.max(...scores, 1);
+  const lo = Math.min(...scores, hi);
+  const span = Math.max(hi - lo, 1);
+  return recent.slice().reverse().map((r) => {
+    const h = Math.max(16, Math.round(((r.sleep_score - lo) / span) * (maxPx - 16) + 16));
+    const label = (r.date || "").slice(5); // MM-DD
+    return { label: label, value: r.sleep_score || 0, h: h };
+  });
+}
+
 Page({
   data: {
-    isConnected: false,
+    isConnected: true,
     isRefreshing: false,
+    isLoading: false,
     greetingText: "早上好，",
     selectedDate: "",
     dateTabs: [],
     monthText: "",
-    summaryText: "连接设备后可查看健康摘要",
+    summaryText: "正在读取今日数据…",
     deviceInfo: null,
     metrics: null,
     bpTrendTime: [],
-    otherRows: []
+    otherRows: [],
+    weeklyBars: []
   },
 
   onLoad() {
@@ -66,24 +103,63 @@ Page({
     if (typeof this.getTabBar === "function" && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
     }
-    this.syncFromState(mockStore.getState());
-    this.unsubscribe = mockStore.subscribe((state) => this.syncFromState(state));
+    this.syncDevice(mockStore.getState());
+    this.unsubscribe = mockStore.subscribe((state) => this.syncDevice(state));
+    this.loadCloud();
   },
 
   onHide() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
   onUnload() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
 
   onPullDownRefresh() {
-    if (!this.data.isConnected) {
-      wx.stopPullDownRefresh();
-      wx.showToast({ title: "设备未连接", icon: "none" });
-      return;
-    }
     this.onRefreshMetrics().finally(() => wx.stopPullDownRefresh());
   },
 
   onPickDate(e) {
     this.setData({ selectedDate: e.currentTarget.dataset.key });
+  },
+
+  syncDevice(state) {
+    const device = state.deviceInfo || {};
+    this.setData({
+      isConnected: state.deviceStatus === "connected",
+      deviceInfo: {
+        deviceName: device.deviceName,
+        battery: device.battery,
+        lastSyncTime: device.lastSyncTime
+      }
+    });
+  },
+
+  async loadCloud() {
+    this.setData({ isLoading: true });
+    const today = await healthService.ensureTodayRecord();
+    const recent = await healthService.getRecent(7);
+    this.applyRecord(today);
+    this.setData({
+      weeklyBars: buildWeeklyBars(recent, 120),
+      isLoading: false,
+      summaryText: today ? "今日数据已就绪，下拉可刷新" : "暂无数据"
+    });
+  },
+
+  applyRecord(record) {
+    if (!record) {
+      this.setData({ metrics: null, otherRows: [], bpTrendTime: [] });
+      return;
+    }
+    const metrics = recordToMetrics(record);
+    this.setData({
+      metrics: {
+        ...metrics,
+        stressTag: stressBadge(metrics.stress),
+        stepGoal: 6000,
+        sleepGrade: sleepGrade(metrics.sleepScore),
+        sleepDisplay: `${Math.floor(metrics.sleepMinutes / 60)} 小时 ${metrics.sleepMinutes % 60} 分钟`
+      },
+      bpTrendTime: metrics.bpTrend.map((i) => i.t),
+      otherRows: this.buildRows(metrics)
+    }, () => this.drawBpChart(metrics.bpTrend));
   },
 
   buildRows(metrics) {
@@ -178,59 +254,26 @@ Page({
     });
   },
 
-  syncFromState(state) {
-    const connected = state.deviceStatus === "connected";
-    if (!connected) {
-      this.setData({
-        isConnected: false,
-        summaryText: "请先去服务页连接设备后查看健康数据",
-        deviceInfo: null,
-        metrics: null,
-        bpTrendTime: [],
-        otherRows: []
-      });
-      return;
-    }
-
-    const metrics = mockHealthService.getCurrentHealthMetrics();
-    const device = state.deviceInfo || {};
-    const bpTrend = metrics.bpTrend || [];
-
-    this.setData({
-      isConnected: true,
-      summaryText: `当前设备：${device.deviceName}，今日状态平稳。`,
-      deviceInfo: {
-        deviceName: device.deviceName,
-        battery: device.battery,
-        lastSyncTime: device.lastSyncTime
-      },
-      metrics: {
-        ...metrics,
-        stressTag: stressBadge(metrics.stress),
-        stepGoal: 6000,
-        sleepGrade: sleepGrade(metrics.sleepScore),
-        sleepDisplay: `${Math.floor((metrics.sleepMinutes || 0) / 60)} 小时 ${(metrics.sleepMinutes || 0) % 60} 分钟`
-      },
-      bpTrendTime: bpTrend.map((i) => i.t),
-      otherRows: this.buildRows(metrics)
-    }, () => this.drawBpChart(bpTrend));
-  },
-
   async onRefreshMetrics() {
-    if (!this.data.isConnected || this.data.isRefreshing) return;
-
+    if (this.data.isRefreshing) return;
     this.setData({ isRefreshing: true });
-    const metrics = await mockHealthService.refreshHealthMetrics();
-    this.setData({ isRefreshing: false });
-
-    if (!metrics) return wx.showToast({ title: "刷新失败", icon: "none" });
-
-    mockStore.setDeviceInfo({ lastSyncTime: metrics.updatedAt });
-    wx.showToast({ title: "数据已更新", icon: "none" });
+    const record = await healthService.refreshToday();
+    const recent = await healthService.getRecent(7);
+    this.applyRecord(record);
+    this.setData({
+      weeklyBars: buildWeeklyBars(recent, 120),
+      isRefreshing: false
+    });
+    if (record) {
+      mockStore.setDeviceInfo({ lastSyncTime: new Date().toLocaleString() });
+      wx.showToast({ title: "数据已更新", icon: "none" });
+    } else {
+      wx.showToast({ title: "刷新失败", icon: "none" });
+    }
   },
 
   goConnectDevice() { wx.switchTab({ url: "/pages/service/index" }); },
-  goToAi() { if (!this.data.isConnected) return wx.showToast({ title: "请先连接设备", icon: "none" }); wx.switchTab({ url: "/pages/ai-lab/index" }); },
+  goToAi() { wx.switchTab({ url: "/pages/ai-chat/index" }); },
   goToDevice() { wx.switchTab({ url: "/pages/service/index" }); },
-  showMetricDetail() { if (!this.data.isConnected) return wx.showToast({ title: "设备未连接", icon: "none" }); wx.navigateTo({ url: "/pages/device-detail/index" }); }
+  showMetricDetail() { wx.navigateTo({ url: "/pages/device-detail/index" }); }
 });

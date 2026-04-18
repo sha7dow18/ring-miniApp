@@ -19,7 +19,8 @@
     </view>
     <scroll-view class="drawer-list" scroll-y="true">
       <view class="drawer-item {{item._id === sessionId ? 'drawer-active' : ''}}" wx:for="{{sessionList}}" wx:key="_id" data-sid="{{item._id}}" bindtap="loadOldSession">
-        <text>{{item.title || '对话'}}</text>
+        <text class="drawer-tag tag-{{item.tagCls}}" wx:if="{{item.tag}}">{{item.tag}}</text>
+        <text class="drawer-item-txt">{{item.title || '对话'}}</text>
       </view>
       <view class="drawer-empty" wx:if="{{!sessionList.length}}">暂无记录</view>
     </scroll-view>

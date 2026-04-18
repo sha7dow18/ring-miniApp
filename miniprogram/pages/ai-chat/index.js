@@ -1,4 +1,6 @@
 var aiService = require("../../services/aiService.js");
+var sessionService = require("../../services/sessionService.js");
+var healthService = require("../../services/healthService.js");
 
 var QUICK_QUESTIONS = [
   { icon: "📷", text: "拍舌头，帮我分析" },
@@ -6,38 +8,6 @@ var QUICK_QUESTIONS = [
   { icon: "🔋", text: "容易疲劳什么体质" },
   { icon: "📋", text: "给我一周调理建议" }
 ];
-
-// ── 云数据库 ──
-function getDB() { return wx.cloud.database(); }
-
-function createSession(firstText) {
-  var title = (firstText || "新对话").slice(0, 20);
-  var now = new Date();
-  return getDB().collection("chat_sessions").add({
-    data: { title: title, messages: [], createdAt: now, updatedAt: now }
-  }).then(function(res) { return res._id; });
-}
-
-function saveMessages(sessionId, messages) {
-  return getDB().collection("chat_sessions").doc(sessionId).update({
-    data: { messages: messages, updatedAt: new Date() }
-  }).catch(function() {});
-}
-
-function loadSessionList() {
-  return getDB().collection("chat_sessions")
-    .orderBy("updatedAt", "desc").limit(20)
-    .field({ _id: true, title: true, updatedAt: true })
-    .get()
-    .then(function(res) { return res.data || []; })
-    .catch(function() { return []; });
-}
-
-function loadSession(sessionId) {
-  return getDB().collection("chat_sessions").doc(sessionId).get()
-    .then(function(res) { return res.data; })
-    .catch(function() { return null; });
-}
 
 Page({
   data: {
@@ -48,10 +18,10 @@ Page({
     isUploading: false,
     scrollToId: "",
     sessionId: "",
+    sessionTag: "",
     showHistory: false,
     sessionList: [],
-    // 待发送的附件图片（选图后、发送前）
-    attachment: null  // { tempPath, fileID, url }
+    attachment: null
   },
 
   onLoad: function(query) {
@@ -84,7 +54,6 @@ Page({
     this.doSend();
   },
 
-  // ── 选择图片 → 只放入 attachment 预览，不发送 ──
   chooseImage: function() {
     if (this.data.isSending) return;
     var self = this;
@@ -96,7 +65,6 @@ Page({
       success: function(res) {
         var file = res.tempFiles && res.tempFiles[0];
         if (!file) return;
-        // 放入附件预览区，等用户点发送
         self.setData({
           attachment: { tempPath: file.tempFilePath, fileID: "", url: "" }
         });
@@ -104,12 +72,10 @@ Page({
     });
   },
 
-  // 移除附件
   removeAttachment: function() {
     this.setData({ attachment: null });
   },
 
-  // ── 发送（文字 + 可选附件图片）──
   doSend: async function() {
     var text = (this.data.inputText || "").trim();
     var att = this.data.attachment;
@@ -120,13 +86,11 @@ Page({
     var self = this;
 
     try {
-      // 确保 session 存在
       if (!self.data.sessionId) {
-        var sid = await createSession(text || "图片分析");
-        self.setData({ sessionId: sid });
+        var created = await sessionService.createSession(text || "", !!att);
+        self.setData({ sessionId: created._id, sessionTag: created.tag });
       }
 
-      // 如果有图片附件，先上传
       var imgPart = null;
       if (att) {
         self.setData({ isUploading: true });
@@ -134,19 +98,22 @@ Page({
           var uploaded = await aiService.uploadImage(att.tempPath);
           imgPart = { type: "image", tempPath: att.tempPath, fileID: uploaded.fileID, url: uploaded.url };
         } catch (uploadErr) {
-          // 上传失败也别卡住，图片用临时路径，AI 那边没 url 会走纯文字
           imgPart = { type: "image", tempPath: att.tempPath, fileID: "", url: "" };
           console.warn("[ai-chat] image upload failed:", uploadErr);
         }
         self.setData({ isUploading: false });
       }
 
-      // 构建用户消息 parts
+      // 最近 3 天健康数据注入 AI system prompt
+      var healthCtx = "";
+      try {
+        var recent = await healthService.getRecent(3);
+        healthCtx = healthService.buildAiContext(recent);
+      } catch (_) {}
+
       var parts = [];
       if (imgPart) parts.push(imgPart);
       if (text) parts.push({ type: "text", content: text });
-
-      // 如果有图片但没文字，自动加舌诊提示
       if (imgPart && !text) {
         parts.push({ type: "text", content: "请帮我分析这张图片" });
       }
@@ -158,7 +125,6 @@ Page({
       var msgs = self.data.messages.concat(userMsg, aiMsg);
       self.setData({ messages: msgs, scrollToId: "msg-" + aiMsgId });
 
-      // 给 AI 的历史（不含当前空的 AI 消息）
       var historyForAI = self.data.messages.filter(function(m) { return m.id !== aiMsgId; });
 
       await aiService.sendMessage(historyForAI, function(chunk) {
@@ -172,9 +138,8 @@ Page({
           return { id: m.id, role: m.role, parts: newParts, ts: m.ts };
         });
         self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
-      });
+      }, healthCtx);
 
-      // 存数据库（剥掉 tempPath）
       var toSave = self.data.messages.map(function(m) {
         return {
           id: m.id, role: m.role, ts: m.ts,
@@ -184,7 +149,7 @@ Page({
           })
         };
       });
-      saveMessages(self.data.sessionId, toSave);
+      sessionService.updateMessages(self.data.sessionId, toSave);
 
     } catch (err) {
       var cur = self.data.messages;
@@ -211,8 +176,11 @@ Page({
 
   toggleHistory: async function() {
     if (!this.data.showHistory) {
-      var list = await loadSessionList();
-      this.setData({ showHistory: true, sessionList: list });
+      var list = await sessionService.listSessions(20);
+      var enriched = list.map(function(s) {
+        return Object.assign({}, s, { tagCls: sessionService.tagClass(s.tag) });
+      });
+      this.setData({ showHistory: true, sessionList: enriched });
     } else {
       this.setData({ showHistory: false });
     }
@@ -223,13 +191,19 @@ Page({
   loadOldSession: async function(e) {
     var sid = e.currentTarget.dataset.sid;
     if (!sid) return;
-    var session = await loadSession(sid);
+    var session = await sessionService.loadSession(sid);
     if (!session) return wx.showToast({ title: "会话不存在", icon: "none" });
-    this.setData({ sessionId: sid, messages: session.messages || [], showHistory: false, attachment: null });
+    this.setData({
+      sessionId: sid,
+      sessionTag: session.tag || "",
+      messages: session.messages || [],
+      showHistory: false,
+      attachment: null
+    });
   },
 
   newChat: function() {
-    this.setData({ sessionId: "", messages: [], showHistory: false, inputText: "", attachment: null });
+    this.setData({ sessionId: "", sessionTag: "", messages: [], showHistory: false, inputText: "", attachment: null });
   },
 
   clearConversation: function() {
@@ -238,7 +212,7 @@ Page({
       title: "清空对话", content: "确认清空当前对话？",
       success: function(res) {
         if (!res.confirm) return;
-        if (self.data.sessionId) saveMessages(self.data.sessionId, []);
+        if (self.data.sessionId) sessionService.updateMessages(self.data.sessionId, []);
         self.setData({ messages: [], attachment: null });
       }
     });

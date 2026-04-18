@@ -275,3 +275,18 @@ page { background: #F4F0EB; }
   margin-top: 10rpx;
   letter-spacing: 1rpx;
 }
+
+/* ── 会话 tag 徽章 ── */
+.drawer-item { display: flex; align-items: center; gap: 12rpx; }
+.drawer-tag {
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+.drawer-item-txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drawer-tag { background: #EAE3D6; color: #6B5E3A; }
+.drawer-tag.tag-tongue { background: #FCE4D6; color: #8B3A1A; }
+.drawer-tag.tag-sleep { background: #D6E4FC; color: #1A3B8B; }
+.drawer-tag.tag-constitution { background: #E4FCD6; color: #3A6B1A; }

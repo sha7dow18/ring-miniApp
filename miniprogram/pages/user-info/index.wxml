@@ -1,20 +1,30 @@
 <view class="user-info-page">
-  <view class="card avatar-card" bindtap="chooseAvatar">
+  <button class="avatar-card" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" hover-class="hover">
     <view class="avatar" wx:if="{{form.avatarUrl}}"><image src="{{form.avatarUrl}}" mode="aspectFill" /></view>
     <view class="avatar placeholder" wx:else>头像</view>
     <view class="hint">点击更换头像</view>
-  </view>
+  </button>
 
   <view class="card form-card">
-    <view class="row"><text>昵称</text><input value="{{form.nickname}}" data-field="nickname" bindinput="onInput"/></view>
-    <view class="row"><text>性别</text><input value="{{form.gender}}" data-field="gender" bindinput="onInput"/></view>
-    <view class="row"><text>生日</text><input value="{{form.birthday}}" data-field="birthday" bindinput="onInput"/></view>
-    <view class="row"><text>身高(cm)</text><input value="{{form.heightCm}}" data-field="heightCm" bindinput="onInput" type="number"/></view>
-    <view class="row"><text>体重(kg)</text><input value="{{form.weightKg}}" data-field="weightKg" bindinput="onInput" type="number"/></view>
-    <view class="row"><text>手机号</text><input value="{{form.phone}}" data-field="phone" bindinput="onInput"/></view>
+    <view class="row">
+      <text>昵称</text>
+      <input
+        class="row-input"
+        type="nickname"
+        value="{{form.nickname}}"
+        placeholder="点击输入昵称"
+        bindinput="onNickname"
+        bindchange="onNickname"
+      />
+    </view>
+    <view class="row"><text>性别</text><input class="row-input" value="{{form.gender}}" data-field="gender" bindinput="onInput"/></view>
+    <view class="row"><text>生日</text><input class="row-input" value="{{form.birthday}}" data-field="birthday" bindinput="onInput"/></view>
+    <view class="row"><text>身高(cm)</text><input class="row-input" value="{{form.heightCm}}" data-field="heightCm" bindinput="onInput" type="number"/></view>
+    <view class="row"><text>体重(kg)</text><input class="row-input" value="{{form.weightKg}}" data-field="weightKg" bindinput="onInput" type="number"/></view>
+    <view class="row"><text>手机号</text><input class="row-input" value="{{form.phone}}" data-field="phone" bindinput="onInput"/></view>
     <view class="row textarea-row"><text>过敏史</text><textarea value="{{form.allergyHistory}}" data-field="allergyHistory" bindinput="onInput"/></view>
     <view class="row textarea-row"><text>既往病史</text><textarea value="{{form.medicalHistory}}" data-field="medicalHistory" bindinput="onInput"/></view>
   </view>
 
-  <view class="save-btn" bindtap="saveProfile">保存资料</view>
+  <button class="save-btn {{isSaving ? 'save-btn-off' : ''}}" bindtap="saveProfile" disabled="{{isSaving}}">{{isSaving ? '保存中...' : '保存资料'}}</button>
 </view>

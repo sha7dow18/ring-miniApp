@@ -63,3 +63,14 @@ page { background: linear-gradient(180deg,#f4efe6 0%,#efe8dd 100%); }
 .ana{ color:#4b5751; font-size:23rpx; line-height:1.7; background:#ece2d4; border-radius:14rpx; padding:12rpx; }
 .action-row{ margin-top:10rpx; display:grid; grid-template-columns:1fr 1fr; gap:10rpx; }
 .ghost-btn{ text-align:center; border-radius:999rpx; background:#e6ddd0; color:#2f4a42; padding:16rpx 0; font-size:23rpx; }
+
+/* 近 7 日趋势卡片 */
+.weekly-card{ padding:20rpx 22rpx; margin-top:12rpx; }
+.weekly-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14rpx; }
+.weekly-title{ font-size:30rpx; color:#1f2d28; font-weight:700; }
+.weekly-hint{ font-size:22rpx; color:#8a8f88; }
+.weekly-bars{ display:flex; justify-content:space-between; align-items:flex-end; height:180rpx; padding:0 4rpx; }
+.weekly-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6rpx; }
+.weekly-val{ font-size:18rpx; color:#6b736d; }
+.weekly-bar{ width:18rpx; background:linear-gradient(180deg,#5f8a7d,#3f6b5e); border-radius:10rpx; }
+.weekly-lbl{ font-size:19rpx; color:#9ba39d; }

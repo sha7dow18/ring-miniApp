@@ -68,6 +68,20 @@
       </view>
     </view>
 
+    <view class="weekly-card card" wx:if="{{weeklyBars.length}}">
+      <view class="weekly-head">
+        <text class="weekly-title">近 7 日睡眠</text>
+        <text class="weekly-hint">评分趋势</text>
+      </view>
+      <view class="weekly-bars">
+        <view class="weekly-col" wx:for="{{weeklyBars}}" wx:key="label">
+          <text class="weekly-val">{{item.value}}</text>
+          <view class="weekly-bar" style="height: {{item.h}}rpx;"></view>
+          <text class="weekly-lbl">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
     <view class="other-title">其他数据</view>
     <view class="other-list">
       <view class="other-item" wx:for="{{otherRows}}" wx:key="key">

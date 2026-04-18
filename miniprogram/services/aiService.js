@@ -7,7 +7,7 @@ var TEXT_MODEL = "deepseek-v3.2";
 var VISION_PROVIDER = "hunyuan-exp";
 var VISION_MODEL = "hunyuan-vision";
 
-var SYSTEM_PROMPT =
+var BASE_SYSTEM_PROMPT =
   "你是一位专业友好的健康助手 Aita。用简洁、可操作的方式回答用户的健康疑问，必要时提醒用户就医，不做医学诊断。回答使用中文。";
 
 var TONGUE_PROMPT =
@@ -33,19 +33,28 @@ function nowISO() {
   return new Date().toISOString();
 }
 
-// ── 判断 parts 中是否有图片 ──
+// ── 纯函数（无 wx 依赖，可测试）──
+
 function hasImage(parts) {
   return (parts || []).some(function(p) { return p.type === "image" && p.url; });
 }
 
-// ── 把 parts-based 历史转成 AI API 格式 ──
-function toApiMessages(messages) {
-  var out = [{ role: "system", content: SYSTEM_PROMPT }];
+function buildSystemPrompt(healthContext) {
+  if (!healthContext) return BASE_SYSTEM_PROMPT;
+  return BASE_SYSTEM_PROMPT + "\n\n" + healthContext;
+}
+
+/**
+ * parts-based 历史 → OpenAI 兼容 messages
+ * @param {Array} messages
+ * @param {string} [healthContext] 注入到 system prompt
+ */
+function toApiMessages(messages, healthContext) {
+  var out = [{ role: "system", content: buildSystemPrompt(healthContext) }];
   (messages || []).forEach(function(m) {
     if (!m.parts || !m.parts.length) return;
     var role = m.role === "assistant" ? "assistant" : "user";
 
-    // 纯文字
     var texts = m.parts.filter(function(p) { return p.type === "text" && p.content; });
     var imgs = m.parts.filter(function(p) { return p.type === "image" && p.url; });
 
@@ -53,7 +62,6 @@ function toApiMessages(messages) {
       var t = texts.map(function(p) { return p.content; }).join("\n");
       if (t) out.push({ role: role, content: t });
     } else {
-      // 多模态：content 是数组
       var contentArr = [];
       texts.forEach(function(p) {
         contentArr.push({ type: "text", text: p.content });
@@ -67,7 +75,7 @@ function toApiMessages(messages) {
   return out;
 }
 
-// ── 流式文字对话 ──
+// ── 流式（依赖 wx.cloud）──
 async function streamText(apiMessages, onChunk) {
   checkAI();
   var model = wx.cloud.extend.AI.createModel(TEXT_PROVIDER);
@@ -84,7 +92,6 @@ async function streamText(apiMessages, onChunk) {
   return full;
 }
 
-// ── 流式图片分析 ──
 async function streamVision(apiMessages, onChunk) {
   checkAI();
   var model = wx.cloud.extend.AI.createModel(VISION_PROVIDER);
@@ -103,16 +110,14 @@ async function streamVision(apiMessages, onChunk) {
 
 /**
  * 发送消息（自动路由文字/图片模型）
- * @param {Array} history — parts-based 消息历史
+ * @param {Array} history parts-based 历史
  * @param {(chunk:string)=>void} onChunk
- * @returns {Promise<string>} 完整回复
+ * @param {string} [healthContext] 注入到 system prompt 的健康摘要
  */
-async function sendMessage(history, onChunk) {
-  var apiMessages = toApiMessages(history);
-  // 检查最后一条用户消息是否含图片
+async function sendMessage(history, onChunk, healthContext) {
+  var apiMessages = toApiMessages(history, healthContext);
   var last = history[history.length - 1];
   if (last && hasImage(last.parts)) {
-    // 如果用户只发了图片没文字，补一个舌诊提示
     var lastApi = apiMessages[apiMessages.length - 1];
     if (lastApi && Array.isArray(lastApi.content)) {
       var hasText = lastApi.content.some(function(c) { return c.type === "text"; });
@@ -125,10 +130,6 @@ async function sendMessage(history, onChunk) {
   return streamText(apiMessages, onChunk);
 }
 
-/**
- * 上传图片到云存储
- * @returns {Promise<{fileID: string, url: string}>}
- */
 async function uploadImage(tempFilePath) {
   var ext = tempFilePath.split(".").pop() || "jpg";
   var cloudPath = "chat-images/" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + "." + ext;
@@ -151,10 +152,15 @@ async function uploadImage(tempFilePath) {
 }
 
 module.exports = {
+  // pure
   msgId: msgId,
   nowISO: nowISO,
   hasImage: hasImage,
+  buildSystemPrompt: buildSystemPrompt,
+  toApiMessages: toApiMessages,
+  BASE_SYSTEM_PROMPT: BASE_SYSTEM_PROMPT,
+  TONGUE_PROMPT: TONGUE_PROMPT,
+  // cloud
   sendMessage: sendMessage,
-  uploadImage: uploadImage,
-  TONGUE_PROMPT: TONGUE_PROMPT
+  uploadImage: uploadImage
 };

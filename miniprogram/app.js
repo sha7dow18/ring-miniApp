@@ -10,9 +10,8 @@ App({
         traceUser: true
       });
 
-      // 用户初始化：首次使用时在 users 集合创建记录
-      // _openid 由云开发自动注入，无需手动获取
       this.ensureUser();
+      this.ensureCloudData();
     }
 
     var mockStore = require("./utils/mockStore.js");
@@ -33,8 +32,14 @@ App({
           });
         }
       })
-      .catch(function() {
-        // 集合不存在或权限问题，静默失败（不影响主流程）
-      });
+      .catch(function() {});
+  },
+
+  // 保证今日健康记录 + user_profile 存在（静默失败，不阻塞启动）
+  ensureCloudData() {
+    var healthService = require("./services/healthService.js");
+    var profileService = require("./services/profileService.js");
+    healthService.ensureTodayRecord().catch(function() {});
+    profileService.ensureProfile().catch(function() {});
   }
 });

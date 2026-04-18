@@ -1,18 +1,34 @@
 const mockStore = require("../../utils/mockStore.js");
+const profileService = require("../../services/profileService.js");
 
 Page({
   data: {
-    profile: {},
+    profile: {
+      nickname: "微信用户",
+      avatarUrl: "",
+      phone: ""
+    },
     deviceStatusText: "未连接"
   },
 
-  onShow() {
+  async onShow() {
     if (typeof this.getTabBar === "function" && this.getTabBar()) {
       this.getTabBar().setData({ selected: 4 });
     }
 
-    this.sync(mockStore.getState());
-    this.unsubscribe = mockStore.subscribe((s) => this.sync(s));
+    this.syncDevice(mockStore.getState());
+    this.unsubscribe = mockStore.subscribe((s) => this.syncDevice(s));
+
+    const profile = await profileService.getProfile();
+    if (profile) {
+      this.setData({
+        profile: {
+          nickname: profile.nickname || "微信用户",
+          avatarUrl: profile.avatarUrl || "",
+          phone: profile.phone || ""
+        }
+      });
+    }
   },
 
   onHide() {
@@ -25,9 +41,8 @@ Page({
     this.unsubscribe = null;
   },
 
-  sync(state) {
+  syncDevice(state) {
     this.setData({
-      profile: state.profileState,
       deviceStatusText: state.deviceStatus === "connected" ? `已连接 ${state.deviceInfo.deviceName}` : "未连接"
     });
   },
