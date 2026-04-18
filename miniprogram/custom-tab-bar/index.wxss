@@ -1,11 +1,14 @@
-/* 标准贴底 tabBar — 满宽、纯色、自动安全区 */
+/* Standard bottom tabBar — 硬编码色值
+   ⚠️ 组件样式隔离：page { --brand: ... } CSS 变量不进组件作用域
+   所以这里只能用硬值。改色请同步 miniprogram/styles/tokens.wxss */
+
 .tab-bar-container {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--bg-card);
-  border-top: 1rpx solid var(--border);
+  background: #FFFFFF;
+  border-top: 1rpx solid #E5DFD4;
   display: flex;
   align-items: stretch;
   padding-bottom: env(safe-area-inset-bottom);
@@ -38,16 +41,16 @@
 
 .tab-text {
   font-size: 20rpx;
-  color: var(--text-2);
+  color: #6B7B73;
   line-height: 1;
   white-space: nowrap;
 }
 .tab-bar-item.selected .tab-text {
-  color: var(--brand);
-  font-weight: var(--fw-semibold);
+  color: #3F6B5E;
+  font-weight: 600;
 }
 
-/* AI 中间 tab · 凸起胶囊作为强调 */
+/* AI 中间 tab · 凸起胶囊 */
 .tab-bar-item:nth-child(3) .icon-box {
   position: absolute;
   top: -30rpx;
@@ -55,9 +58,9 @@
   width: 90rpx;
   height: 90rpx;
   transform: translateX(-50%);
-  background: var(--brand);
+  background: #3F6B5E;
   border-radius: 50%;
-  border: 4rpx solid var(--bg-page);
+  border: 4rpx solid #F4F0EB;
   box-shadow: 0 8rpx 16rpx rgba(47, 74, 66, 0.3);
 }
 .tab-bar-item:nth-child(3) .tab-icon {
@@ -68,5 +71,5 @@
   margin-top: 60rpx;
 }
 .tab-bar-item:nth-child(3).selected .tab-text {
-  color: var(--brand);
+  color: #3F6B5E;
 }
