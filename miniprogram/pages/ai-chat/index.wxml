@@ -41,23 +41,35 @@
       </scroll-view>
     </view>
 
-    <!-- 气泡 -->
+    <!-- 消息流：user = 右对齐 pill 气泡；assistant = 去气泡化 -->
     <block wx:for="{{messages}}" wx:key="id">
-      <view class="row {{item.role === 'user' ? 'row-r' : 'row-l'}}" id="msg-{{item.id}}">
-        <view class="ava" wx:if="{{item.role !== 'user'}}">A</view>
-        <view class="bbl {{item.role === 'user' ? 'bbl-u' : 'bbl-a'}}">
+      <view wx:if="{{item.role === 'user'}}" class="msg msg-u" id="msg-{{item.id}}">
+        <view class="bbl-u">
           <block wx:for="{{item.parts}}" wx:for-item="p" wx:for-index="pi" wx:key="pi">
             <image
               wx:if="{{p.type === 'image'}}"
               src="{{p.url || p.tempPath}}"
               mode="widthFix"
-              class="bbl-img"
+              class="msg-img msg-img-u"
               bindtap="previewImage"
               data-url="{{p.url || p.tempPath}}"
             />
             <text wx:if="{{p.type === 'text' && p.content}}" class="bbl-txt" selectable="true">{{p.content}}</text>
           </block>
         </view>
+      </view>
+      <view wx:else class="msg msg-a" id="msg-{{item.id}}">
+        <block wx:for="{{item.parts}}" wx:for-item="p" wx:for-index="pi" wx:key="pi">
+          <image
+            wx:if="{{p.type === 'image'}}"
+            src="{{p.url || p.tempPath}}"
+            mode="widthFix"
+            class="msg-img msg-img-a"
+            bindtap="previewImage"
+            data-url="{{p.url || p.tempPath}}"
+          />
+          <text wx:if="{{p.type === 'text' && p.content}}" class="ai-txt" selectable="true">{{p.content}}</text>
+        </block>
       </view>
     </block>
 
@@ -66,12 +78,14 @@
 
   <!-- ═══ Composer ═══ -->
   <view class="foot">
-    <!-- 附件预览 -->
-    <view class="att" wx:if="{{attachment}}">
-      <image class="att-img" src="{{attachment.tempPath}}" mode="widthFix" bindtap="previewAttachment"/>
-      <view class="att-x" bindtap="removeAttachment" hover-class="hover">✕</view>
+    <!-- 附件缩略 chip -->
+    <view class="att-row" wx:if="{{attachment || isUploading}}">
+      <view class="att-chip" wx:if="{{attachment}}">
+        <image class="att-chip-img" src="{{attachment.tempPath}}" mode="aspectFill" bindtap="previewAttachment"/>
+        <view class="att-x" bindtap="removeAttachment" hover-class="hover">✕</view>
+      </view>
+      <text class="att-loading" wx:if="{{isUploading}}">正在上传…</text>
     </view>
-    <view class="att-loading" wx:if="{{isUploading}}">正在上传…</view>
 
     <view class="bar">
       <view class="bar-btn" bindtap="toggleHistory" hover-class="hover" aria-label="历史记录">

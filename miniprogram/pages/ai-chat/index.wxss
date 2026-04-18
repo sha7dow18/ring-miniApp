@@ -144,59 +144,45 @@
 .chip-ico image { width: 30rpx; height: 30rpx; }
 .chip-txt { font-size: 26rpx; color: var(--text-1); font-weight: var(--fw-semibold); }
 
-/* ═══ 消息行 ═══ */
-.row {
-  display: flex;
-  align-items: flex-start;
-  gap: 14rpx;
-  margin-bottom: var(--sp-4);
-}
-.row-l { justify-content: flex-start; }
-.row-r { justify-content: flex-end; }
+/* ═══ 消息流（ChatGPT 范式：user 气泡；AI 无气泡） ═══ */
+.msg { margin-bottom: 32rpx; }
 
-.ava {
-  width: 64rpx; height: 64rpx;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--brand-light) 0%, var(--brand-dark) 100%);
-  color: var(--text-inv);
-  font-size: var(--fs-sub); font-weight: var(--fw-bold);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  margin-top: 4rpx;
-}
-
-.bbl {
-  max-width: 74%;
-  border-radius: var(--r-card);
-  padding: 18rpx 22rpx;
-}
-.bbl-a {
-  background: var(--bg-card);
-  color: var(--text-1);
-  border-top-left-radius: 6rpx;
-  border: 1rpx solid var(--divider);
-}
+/* 用户：右对齐紧凑 cream pill */
+.msg-u { display: flex; justify-content: flex-end; }
 .bbl-u {
+  max-width: 70%;
+  padding: 14rpx 22rpx;
+  border-radius: 28rpx;
+  border-top-right-radius: 8rpx;
   background: linear-gradient(135deg, var(--cream-1) 0%, var(--cream-2) 100%);
   color: var(--text-1);
-  border-top-right-radius: 6rpx;
   box-shadow: 0 4rpx 12rpx rgba(139, 103, 50, 0.08);
 }
-
 .bbl-txt {
   font-size: 30rpx;
-  line-height: 1.7;
+  line-height: 1.6;
   word-break: break-word;
   display: block;
 }
-.bbl-img {
-  width: 100%;
-  max-width: 400rpx;
+
+/* AI：无气泡，文本直接在页面 bg 上 */
+.msg-a { padding: 0 4rpx; }
+.ai-txt {
+  display: block;
+  font-size: 30rpx;
+  line-height: 1.8;
+  color: var(--text-1);
+  word-break: break-word;
+}
+
+/* 消息内图片 */
+.msg-img {
+  display: block;
+  max-width: 280rpx;
   border-radius: var(--r-md);
   margin-bottom: 10rpx;
-  display: block;
 }
-.bbl-u .bbl-img { max-width: 320rpx; }
+.msg-img-u { max-width: 260rpx; }
 
 /* ═══ Composer ═══ */
 .foot {
@@ -207,28 +193,35 @@
   flex-shrink: 0;
 }
 
-.att {
+/* 附件缩略 chip：小方块浮在 composer 上方，非全宽 */
+.att-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+.att-chip {
   position: relative;
-  margin-bottom: 14rpx;
-  border-radius: var(--r-lg);
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: var(--r-md);
   overflow: hidden;
   background: var(--bg-card);
   border: 1rpx solid var(--border);
+  flex-shrink: 0;
 }
-.att-img { width: 100%; max-height: 360rpx; display: block; }
+.att-chip-img { width: 100%; height: 100%; display: block; }
 .att-x {
-  position: absolute; top: 14rpx; right: 14rpx;
-  width: 56rpx; height: 56rpx;
+  position: absolute; top: 6rpx; right: 6rpx;
+  width: 40rpx; height: 40rpx;
   border-radius: 50%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.55);
   color: var(--text-inv);
-  font-size: 30rpx;
+  font-size: 22rpx;
   display: flex; align-items: center; justify-content: center;
 }
 .att-loading {
-  text-align: center;
   font-size: var(--fs-sub); color: var(--text-2);
-  padding: 10rpx 0;
 }
 
 .bar {
