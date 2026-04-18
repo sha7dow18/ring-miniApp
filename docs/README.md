@@ -11,6 +11,7 @@
 - [2026-04-10-chat-redesign.md](plans/2026-04-10-chat-redesign.md) — 统一 AI 聊天界面（舌诊+体质+文字）
 - [2026-04-18-data-loop.md](plans/2026-04-18-data-loop.md) — 健康/会话/用户画像数据闭环 + 测试
 - [2026-04-18-sprint-a.md](plans/2026-04-18-sprint-a.md) — 修断按钮 + 流式蓝牙 mock + 客服页 + 重置应用 + 配置中心
+- [2026-04-18-sprint-b.md](plans/2026-04-18-sprint-b.md) — 电商数据闭环（商品/购物车/订单/结算/mock 支付）
 
 ## references/ — 技术参考
 微信小程序开发的项目无关知识。
@@ -27,8 +28,11 @@
 |------|------|------|---------|
 | `users` | 每用户一条 | 仅创建者 | nickname, avatarUrl, createdAt |
 | `user_profile` | 每用户一条 | 仅创建者 | nickname, avatarUrl(cloud fileID), gender, birthday, heightCm, weightKg, phone, allergyHistory, medicalHistory |
-| `health_records` | 每用户每日一条 | 仅创建者 | date (YYYY-MM-DD), sleep_score, sleep_duration, deep_sleep_min, rem_min, hr_resting, hr_max, hrv, steps, calories, spo2, stress, skin_temp_delta, respiratory_rate, readiness_score, systolic, diastolic, body_temp |
+| `health_records` | 每用户每日一条 | 仅创建者 | date, sleep_score, sleep_duration, deep_sleep_min, rem_min, hr_resting, hr_max, hrv, steps, calories, spo2, stress, skin_temp_delta, respiratory_rate, readiness_score, systolic, diastolic, body_temp |
 | `chat_sessions` | 每会话一条 | 仅创建者 | title, tag (舌诊\|睡眠\|体质\|通用), messages[], createdAt, updatedAt |
+| `products` | 每商品一条 | 所有人可读，仅管理员可写 | id, name, category, price, image, imageName, desc, detailPitch, tags[], color, onSale, stock, createdAt |
+| `cart_items` | 每 (用户, 商品) 一条 | 仅创建者 | productId, qty, addedAt, updatedAt |
+| `orders` | 每订单一条 | 仅创建者 | orderNo, items[], total, address, status (pending\|paid\|shipping\|done\|canceled), createdAt, payTime, updatedAt |
 
 ### 服务层
 | 模块 | 职责 |
@@ -37,6 +41,9 @@
 | `services/sessionService.js` | 聊天会话 CRUD + 关键词打标 |
 | `services/profileService.js` | 用户画像 CRUD + 头像上传 |
 | `services/aiService.js` | wx.cloud.extend.AI 封装 + parts → OpenAI 格式转换 |
+| `services/productService.js` | 商品目录读取，云空时回退 mockStore；`filterProducts` 纯函数 |
+| `services/cartService.js` | 购物车 CRUD；addToCart upsert；`cartTotal` / `cartCount` 纯函数 |
+| `services/orderService.js` | 订单 CRUD + 状态机（pending/paid/shipping/done/canceled）；`validateOrder` / `generateOrderNo` 纯函数 |
 
 ### 运行态 / 配置
 
@@ -51,6 +58,12 @@
 - 覆盖率：`npm run test:cov`
 - 策略：纯函数（生成器 / 转换器 / tagger）+ 通过 mock `wx.cloud.database` 覆盖云路径
 - 门槛：statements ≥ 70%，functions ≥ 75%
+
+## seed-data/ — 种子数据
+
+一次性导入云库的初始数据，应用运行时不写。
+
+- [seed-data/products.json](seed-data/products.json) + [导入说明](seed-data/README.md)
 
 ## 文档风格
 - 只写"为什么"和"是什么"，不写"怎么做"

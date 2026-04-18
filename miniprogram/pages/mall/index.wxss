@@ -43,3 +43,29 @@ page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
 .goods-price text{ font-size:22rpx; color:#6b7280; margin-left:4rpx; }
 .buy{ background:#2f4a42; color:#f5f7fa; border-radius:999rpx; padding:10rpx 18rpx; font-size:22rpx; font-weight:700; }
 .empty{ text-align:center; color:#667085; font-size:26rpx; padding:50rpx 0; }
+
+/* 购物车角标按钮 */
+.search-row { display: flex; align-items: center; gap: 16rpx; }
+.cart-btn {
+  width: 76rpx; height: 76rpx;
+  border-radius: 24rpx;
+  background: #FFF;
+  border: 2rpx solid #E5DFD4;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.cart-ico { font-size: 40rpx; }
+.cart-badge {
+  position: absolute;
+  top: -10rpx; right: -10rpx;
+  min-width: 32rpx; height: 32rpx;
+  padding: 0 8rpx;
+  background: #B94A4A;
+  color: #FFF;
+  font-size: 20rpx;
+  font-weight: 700;
+  border-radius: 999rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+.hover { opacity: 0.6; }

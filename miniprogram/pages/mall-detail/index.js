@@ -1,31 +1,40 @@
-const mockMallService = require("../../services/mockMallService.js");
+const productService = require("../../services/productService.js");
+const cartService = require("../../services/cartService.js");
 
 Page({
   data: {
     product: null,
     imagePath: "",
     imageClass: "detail-image-default",
-    glowClass: "detail-glow-default"
+    glowClass: "detail-glow-default",
+    isAdding: false
   },
 
   async onLoad(query) {
     const id = query.id || "";
-    const product = await mockMallService.getProductById(id);
+    const product = await productService.getProduct(id);
     const imagePath = product ? (product.image || `/assets/mall/${product.imageName || ""}`) : "";
     const imageClass = `detail-image-${(product && product.id) || "default"}`;
     const glowClass = `detail-glow-${(product && product.id) || "default"}`;
-
     this.setData({ product, imagePath, imageClass, glowClass });
   },
 
+  async onAddToCart() {
+    if (this.data.isAdding || !this.data.product) return;
+    this.setData({ isAdding: true });
+    const r = await cartService.addToCart(this.data.product.id, 1);
+    this.setData({ isAdding: false });
+    if (r) {
+      wx.showToast({ title: "已加入购物车", icon: "success" });
+    } else {
+      wx.showToast({ title: "加入失败", icon: "none" });
+    }
+  },
+
   onBuyNow() {
-    const p = this.data.product;
-    if (!p) return;
-    wx.showModal({
-      title: "购买方式",
-      content: "下单后将由客服与您确认收货信息与发货时间。",
-      confirmText: "我知道了",
-      showCancel: false
+    if (!this.data.product) return;
+    wx.navigateTo({
+      url: `/pages/checkout/index?mode=single&productId=${this.data.product.id}&qty=1`
     });
   },
 

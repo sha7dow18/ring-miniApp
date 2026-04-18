@@ -1,0 +1,45 @@
+<view class="page">
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!isLoading && isEmpty}}">
+    <view class="empty-icon">🛒</view>
+    <view class="empty-title">购物车是空的</view>
+    <view class="empty-desc">看看有什么想加入的</view>
+    <view class="empty-btn" bindtap="goMall" hover-class="hover">去商城</view>
+  </view>
+
+  <!-- 列表 -->
+  <scroll-view wx:else class="list" scroll-y="true">
+    <view class="item" wx:for="{{items}}" wx:key="_id">
+      <view class="thumb" style="background: {{item.color}};">
+        <image
+          wx:if="{{item.imageName || item.image}}"
+          src="{{item.image || '/assets/mall/' + item.imageName}}"
+          mode="aspectFit"
+        />
+      </view>
+      <view class="meta">
+        <view class="name">{{item.name}}</view>
+        <view class="desc">{{item.desc}}</view>
+        <view class="bottom">
+          <text class="price">¥{{item.price}}</text>
+          <view class="stepper">
+            <view class="step-btn" data-id="{{item._id}}" data-delta="-1" bindtap="onStepper" hover-class="hover">−</view>
+            <text class="step-qty">{{item.qty}}</text>
+            <view class="step-btn" data-id="{{item._id}}" data-delta="1" bindtap="onStepper" hover-class="hover">+</view>
+          </view>
+        </view>
+      </view>
+      <view class="remove" data-id="{{item._id}}" bindtap="onRemove" hover-class="hover">✕</view>
+    </view>
+    <view style="height: 240rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部栏 -->
+  <view class="bar" wx:if="{{!isEmpty}}">
+    <view class="bar-l">
+      <text class="bar-label">合计</text>
+      <text class="bar-total">¥{{total}}</text>
+    </view>
+    <view class="bar-btn" bindtap="goCheckout" hover-class="hover">去结算</view>
+  </view>
+</view>

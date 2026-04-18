@@ -15,8 +15,9 @@
   </view>
 
   <view class="actions">
-    <view class="btn buy" bindtap="onBuyNow">立即购买</view>
-    <view class="btn contact" bindtap="onContact">联系客服</view>
+    <view class="btn contact" bindtap="onContact" hover-class="hover">客服</view>
+    <view class="btn cart {{isAdding ? 'off' : ''}}" bindtap="onAddToCart" hover-class="hover">加入购物车</view>
+    <view class="btn buy" bindtap="onBuyNow" hover-class="hover">立即购买</view>
   </view>
 </view>
 

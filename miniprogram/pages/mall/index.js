@@ -1,4 +1,6 @@
 const mockStore = require("../../utils/mockStore.js");
+const productService = require("../../services/productService.js");
+const cartService = require("../../services/cartService.js");
 
 Page({
   data: {
@@ -8,53 +10,43 @@ Page({
     filteredProducts: [],
     searchKeyword: "",
     bannerImage: "/assets/mall/mall_banner_main.png",
-    hasCategorySelected: false
+    hasCategorySelected: false,
+    cartCount: 0
   },
 
-  onShow() {
+  async onShow() {
     if (typeof this.getTabBar === "function" && this.getTabBar()) {
       this.getTabBar().setData({ selected: 1 });
     }
 
-    this.setData({ hasCategorySelected: false, activeCategory: "all" });
-    this.syncFromState(mockStore.getState());
-    this.unsubscribe = mockStore.subscribe((state) => this.syncFromState(state));
+    // 分类用 mockStore 的（静态展示用），商品改读云
+    const mall = mockStore.getState().mallState || {};
+    const categories = [{ id: "all", name: "全部" }].concat(mall.categories || []);
+    this.setData({ categories, hasCategorySelected: false, activeCategory: "all" });
+
+    await this.loadProducts();
+    await this.refreshCartCount();
   },
 
-  onHide() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
-  onUnload() { if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null; },
+  async loadProducts() {
+    const products = await productService.listProducts();
+    this.setData({ products }, () => this.applyFilters());
+  },
 
-  syncFromState(state) {
-    const mall = state.mallState || {};
-    const categories = mall.categories || [];
-    const categoryTabs = [{ id: "all", name: "全部" }].concat(categories);
-
-    this.setData(
-      {
-        categories: categoryTabs,
-        products: mall.products || []
-      },
-      () => this.applyFilters()
-    );
+  async refreshCartCount() {
+    const items = await cartService.rawList();
+    this.setData({ cartCount: cartService.cartCount(items) });
   },
 
   applyFilters() {
-    const keyword = (this.data.searchKeyword || "").trim().toLowerCase();
+    const keyword = (this.data.searchKeyword || "").trim();
     const category = this.data.activeCategory;
-    let products = this.data.products || [];
+    const effectiveCategory = (this.data.hasCategorySelected && category !== "all") ? category : null;
 
-    if (this.data.hasCategorySelected && category && category !== "all") {
-      products = products.filter((item) => item.category === category);
-    }
-
-    if (keyword) {
-      products = products.filter((item) => {
-        const name = (item.name || "").toLowerCase();
-        const desc = (item.desc || "").toLowerCase();
-        const tags = (item.tags || []).join(" ").toLowerCase();
-        return name.includes(keyword) || desc.includes(keyword) || tags.includes(keyword);
-      });
-    }
+    const products = productService.filterProducts(this.data.products, {
+      keyword: keyword,
+      category: effectiveCategory
+    });
 
     const mapped = products.map((item) => ({
       ...item,
@@ -88,5 +80,9 @@ Page({
     const productId = e.currentTarget.dataset.id;
     if (!productId) return;
     wx.navigateTo({ url: `/pages/mall-detail/index?id=${productId}` });
+  },
+
+  goCart() {
+    wx.navigateTo({ url: "/pages/cart/index" });
   }
 });

@@ -10,6 +10,10 @@
       <input class="search-input" placeholder="搜索" value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm" confirm-type="search" />
       <view class="icon-search" bindtap="onSearchConfirm"></view>
     </view>
+    <view class="cart-btn" bindtap="goCart" hover-class="hover">
+      <text class="cart-ico">🛒</text>
+      <text class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</text>
+    </view>
   </view>
 
   <view class="banner-wrap">

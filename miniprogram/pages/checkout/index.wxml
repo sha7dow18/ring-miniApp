@@ -1,0 +1,72 @@
+<view class="page">
+  <!-- 收货地址 -->
+  <view class="card addr-card" bindtap="chooseAddress" hover-class="hover" wx:if="{{!address && !showAddressForm}}">
+    <view class="addr-placeholder">
+      <text class="addr-ico">📍</text>
+      <view class="addr-meta">
+        <text class="addr-title">选择收货地址</text>
+        <text class="addr-sub">从微信地址簿选择，或手动填写</text>
+      </view>
+      <text class="addr-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="card addr-card" wx:if="{{address}}">
+    <view class="addr-content" bindtap="chooseAddress" hover-class="hover">
+      <view class="addr-line1">
+        <text class="addr-name">{{address.name}}</text>
+        <text class="addr-phone">{{address.phone}}</text>
+      </view>
+      <view class="addr-detail">{{address.detail}}</view>
+      <text class="addr-arrow-inline">›</text>
+    </view>
+  </view>
+
+  <!-- 手填表单 -->
+  <view class="card" wx:if="{{showAddressForm}}">
+    <view class="form-title">填写收货地址</view>
+    <view class="form-row">
+      <text class="form-lbl">收件人</text>
+      <input class="form-input" placeholder="姓名" value="{{addressForm.name}}" data-field="name" bindinput="onAddrInput"/>
+    </view>
+    <view class="form-row">
+      <text class="form-lbl">手机号</text>
+      <input class="form-input" placeholder="11 位手机号" type="number" maxlength="11" value="{{addressForm.phone}}" data-field="phone" bindinput="onAddrInput"/>
+    </view>
+    <view class="form-row textarea-row">
+      <text class="form-lbl">详细地址</text>
+      <textarea class="form-input form-area" placeholder="省市区 + 街道门牌" value="{{addressForm.detail}}" data-field="detail" bindinput="onAddrInput"/>
+    </view>
+    <view class="form-btn" bindtap="saveManualAddress" hover-class="hover">保存</view>
+  </view>
+
+  <!-- 订单摘要 -->
+  <view class="card">
+    <view class="summary-title">商品清单</view>
+    <view class="sum-item" wx:for="{{items}}" wx:key="_id">
+      <view class="sum-thumb" style="background: {{item.color}};">
+        <image wx:if="{{item.imageName || item.image}}" src="{{item.image || '/assets/mall/' + item.imageName}}" mode="aspectFit" />
+      </view>
+      <view class="sum-meta">
+        <view class="sum-name">{{item.name}}</view>
+        <view class="sum-row">
+          <text class="sum-price">¥{{item.price}}</text>
+          <text class="sum-qty">× {{item.qty}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 合计 + 支付 -->
+  <view class="bar">
+    <view class="bar-l">
+      <text class="bar-label">实付</text>
+      <text class="bar-total">¥{{total}}</text>
+    </view>
+    <view class="bar-btn {{isSubmitting ? 'bar-btn-off' : ''}}" bindtap="onPay" hover-class="hover">
+      {{isSubmitting ? '支付中...' : '模拟支付'}}
+    </view>
+  </view>
+
+  <view class="foot">本 demo 不接入真实支付，点"模拟支付"会直接生成已付款订单。</view>
+</view>

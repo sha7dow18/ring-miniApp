@@ -1,56 +1,51 @@
-const mockStore = require("../../utils/mockStore.js");
+const orderService = require("../../services/orderService.js");
 
 Page({
   data: {
     activeTab: "all",
     tabs: [
       { id: "all", name: "全部" },
-      { id: "pending_pay", name: "待付款" },
-      { id: "pending_ship", name: "待发货" },
-      { id: "completed", name: "已完成" }
+      { id: "pending", name: "待付款" },
+      { id: "paid", name: "已付款" },
+      { id: "done", name: "已完成" },
+      { id: "canceled", name: "已取消" }
     ],
     orders: [],
-    shownOrders: []
+    shownOrders: [],
+    isLoading: true
   },
 
   onShow() {
-    this.syncOrders();
-    this.unsubscribe = mockStore.subscribe(() => this.syncOrders());
+    this.load();
   },
 
-  onHide() {
-    if (this.unsubscribe) this.unsubscribe();
-    this.unsubscribe = null;
+  async load() {
+    this.setData({ isLoading: true });
+    const orders = await orderService.listOrders();
+    const mapped = orders.map((o) => this.decorate(o));
+    this.setData({ orders: mapped, isLoading: false }, () => this.applyFilter());
   },
 
-  onUnload() {
-    if (this.unsubscribe) this.unsubscribe();
-    this.unsubscribe = null;
+  decorate(o) {
+    return Object.assign({}, o, {
+      statusText: orderService.statusLabel(o.status),
+      itemCount: (o.items || []).reduce((acc, i) => acc + (Number(i.qty) || 0), 0),
+      firstItemName: (o.items && o.items[0] && o.items[0].name) || "",
+      createdText: this.formatDate(o.createdAt)
+    });
   },
 
-  syncOrders() {
-    const state = mockStore.getState();
-    const products = state.mallState.products || [];
-    
-    const mockOrders = products.map((p, idx) => ({
-      id: `ORD${Date.now() - idx * 1000}`,
-      productId: p.id,
-      productName: p.name,
-      productImage: p.imageName,
-      price: p.price,
-      quantity: 1,
-      status: ["pending_pay", "pending_ship", "completed"][idx % 3],
-      statusText: ["待付款", "待发货", "已完成"][idx % 3],
-      createdAt: new Date(Date.now() - idx * 86400000).toLocaleDateString("zh-CN")
-    }));
-
-    this.setData({ orders: mockOrders });
-    this.applyFilter();
+  formatDate(d) {
+    if (!d) return "";
+    try {
+      const date = d instanceof Date ? d : new Date(d);
+      const p = (n) => (n < 10 ? "0" + n : "" + n);
+      return `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())} ${p(date.getHours())}:${p(date.getMinutes())}`;
+    } catch (e) { return ""; }
   },
 
   switchTab(e) {
-    this.setData({ activeTab: e.currentTarget.dataset.id });
-    this.applyFilter();
+    this.setData({ activeTab: e.currentTarget.dataset.id }, () => this.applyFilter());
   },
 
   applyFilter() {
@@ -59,26 +54,12 @@ Page({
     this.setData({ shownOrders: rows });
   },
 
-  deleteOrder(e) {
-    e.stopPropagation();
-    const id = e.currentTarget.dataset.id;
-    
-    wx.showModal({
-      title: "删除订单",
-      content: "确认删除该订单吗？",
-      success: (res) => {
-        if (!res.confirm) return;
-        
-        const updated = this.data.orders.filter((o) => o.id !== id);
-        this.setData({ orders: updated });
-        this.applyFilter();
-        wx.showToast({ title: "已删除", icon: "success" });
-      }
-    });
-  },
-
   showDetail(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/order-detail/index?id=${id}` });
+  },
+
+  goMall() {
+    wx.switchTab({ url: "/pages/mall/index" });
   }
 });

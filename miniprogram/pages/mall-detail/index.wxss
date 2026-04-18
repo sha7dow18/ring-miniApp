@@ -20,7 +20,10 @@ page{ background:linear-gradient(180deg,#f3ede2 0%,#ece2d3 100%); }
 .pitch{ margin-top:12rpx; color:#4d5a54; line-height:1.9; font-size:24rpx; background:#f8f2e8; border-radius:20rpx; padding:16rpx; }
 .tag-row{ margin-top:14rpx; display:flex; gap:8rpx; flex-wrap:wrap; }
 .tag{ padding:8rpx 12rpx; border-radius:999rpx; background:#eadfcf; color:#7d5c34; font-size:22rpx; }
-.actions{ margin-top:28rpx; display:flex; gap:12rpx; }
-.btn{ flex:1; text-align:center; padding:18rpx 0; border-radius:999rpx; font-size:25rpx; }
-.buy{ background:#2f4a42; color:#f5eee3; }
-.contact{ background:#ece2d4; color:#2f4a42; }
+.actions{ margin-top:28rpx; display:flex; gap:12rpx; align-items: center; }
+.btn{ text-align:center; padding:20rpx 0; border-radius:999rpx; font-size:26rpx; font-weight: 600; }
+.btn.contact{ flex: 0 0 120rpx; background:#ece2d4; color:#2f4a42; }
+.btn.cart{ flex: 1; background:#FFF; color:#2f4a42; border: 2rpx solid #2f4a42; }
+.btn.buy{ flex: 1; background:#2f4a42; color:#f5eee3; }
+.btn.off{ opacity: 0.5; }
+.hover { opacity: 0.65; }
