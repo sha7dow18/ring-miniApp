@@ -100,11 +100,9 @@
           <view class="vl">{{item.value}}</view>
         </view>
         <view class="spark-wrap">
-          <view class="spark">
-            <view wx:for="{{item.trend}}" wx:for-item="bar" wx:key="index" class="bar" style="height: {{bar}}rpx;"></view>
-          </view>
+          <image class="spark-img" src="{{item.sparkSvg}}" mode="aspectFit" aria-hidden="true"/>
         </view>
-        <view class="jump">›</view>
+        <text class="chev">›</text>
       </view>
     </view>
 

@@ -29,9 +29,31 @@ function sleepGrade(score) {
 
 // 窗口以 selectedDate 为中心。任何选中变化都应该重建 tabs。
 
-function toSpark(values, min, max) {
+// 把一组数值渲染成小折线图 data-URI SVG
+// 返回值可直接塞进 <image src> 使用；在 WXML 里渲染为 124×54rpx 迷你 sparkline
+function sparkSvg(values) {
+  const W = 120, H = 40, PAD = 3;
+  const n = values.length;
+  if (!n) return "";
+  const nums = values.map(Number);
+  const min = Math.min.apply(null, nums);
+  const max = Math.max.apply(null, nums);
   const span = Math.max(max - min, 1);
-  return values.map((n) => Math.max(6, Math.min(52, Math.round(((Number(n) - min) / span) * 52 + 6))));
+  const pts = nums.map(function(v, i) {
+    const x = PAD + (W - 2 * PAD) * (n === 1 ? 0.5 : i / (n - 1));
+    const y = H - PAD - (H - 2 * PAD) * (v - min) / span;
+    return x.toFixed(1) + "," + y.toFixed(1);
+  });
+  const line = pts.join(" ");
+  const area = PAD + "," + H + " " + line + " " + (W - PAD) + "," + H;
+  const last = pts[pts.length - 1].split(",");
+  const svg =
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + W + " " + H + "' preserveAspectRatio='none'>" +
+    "<polygon points='" + area + "' fill='%234E7E6F' opacity='0.16'/>" +
+    "<polyline points='" + line + "' fill='none' stroke='%232A4A3E' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/>" +
+    "<circle cx='" + last[0] + "' cy='" + last[1] + "' r='1.8' fill='%232A4A3E'/>" +
+    "</svg>";
+  return "data:image/svg+xml;utf8," + svg;
 }
 
 // 把云端 health_record 转成首页 UI metrics 形状
@@ -214,18 +236,12 @@ Page({
   },
 
   buildRows(metrics) {
-    const hrTrend = toSpark([72, 83, 76, metrics.heartRate - 1, metrics.heartRate], 64, 98);
-    const tempTrend = toSpark([36.5, 36.6, 36.7, 36.6, metrics.temperature], 36.2, 37.1);
-    const hrvTrend = toSpark([42, 48, 44, 51, metrics.hrv], 28, 75);
-    const spo2Trend = toSpark([97, 96, 98, 97, metrics.spo2], 93, 100);
-    const stressTrend = toSpark([45, 41, 38, 44, metrics.stress], 20, 75);
-
     return [
-      { key: "temp", iconName: "thermometer", label: "体温", value: `${metrics.temperature} ℃`, sub: "平稳", trend: tempTrend },
-      { key: "hr", iconName: "heart-pulse", label: "心率", value: `${metrics.heartRate} 次/分`, sub: "安静心率", trend: hrTrend },
-      { key: "hrv", iconName: "activity", label: "心率变异性", value: `${metrics.hrv} ms`, sub: "恢复参考", trend: hrvTrend },
-      { key: "spo2", iconName: "droplet", label: "血氧", value: `${metrics.spo2} %`, sub: "供氧状态", trend: spo2Trend },
-      { key: "stress", iconName: "wind", label: "压力", value: `${metrics.stress} ${stressLabel(metrics.stress)}`, sub: "放松指数", trend: stressTrend }
+      { key: "temp",   iconName: "thermometer", label: "体温",       value: `${metrics.temperature} ℃`,                             sparkSvg: sparkSvg([36.5, 36.6, 36.7, 36.6, metrics.temperature]) },
+      { key: "hr",     iconName: "heart-pulse", label: "心率",       value: `${metrics.heartRate} 次/分`,                            sparkSvg: sparkSvg([72, 83, 76, metrics.heartRate - 1, metrics.heartRate]) },
+      { key: "hrv",    iconName: "activity",    label: "心率变异性", value: `${metrics.hrv} ms`,                                     sparkSvg: sparkSvg([42, 48, 44, 51, metrics.hrv]) },
+      { key: "spo2",   iconName: "droplet",     label: "血氧",       value: `${metrics.spo2} %`,                                     sparkSvg: sparkSvg([97, 96, 98, 97, metrics.spo2]) },
+      { key: "stress", iconName: "wind",        label: "压力",       value: `${metrics.stress} ${stressLabel(metrics.stress)}`,      sparkSvg: sparkSvg([45, 41, 38, 44, metrics.stress]) }
     ];
   },
 
