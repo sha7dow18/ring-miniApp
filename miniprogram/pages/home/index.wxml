@@ -5,16 +5,23 @@
   </view>
 
   <view class="month-row">
-    <text class="arrow">‹</text>
-    <text class="month">{{monthText}}</text>
-    <text class="arrow">›</text>
+    <view class="arrow" bindtap="onPrevDay" hover-class="hover">‹</view>
+    <picker mode="date" value="{{selectedDate}}" bindchange="onPickerChange">
+      <view class="month hover-chip" hover-class="hover">{{monthText}}</view>
+    </picker>
+    <view class="arrow" bindtap="onNextDay" hover-class="hover">›</view>
   </view>
 
-  <scroll-view class="date-scroll" scroll-x="true" scroll-left="{{dateScrollLeft}}" scroll-with-animation show-scrollbar="false">
+  <scroll-view class="date-scroll" scroll-x="true" scroll-left="{{dateScrollLeft}}" scroll-with-animation show-scrollbar="false" enhanced>
     <view class="date-list">
-      <view class="date-chip {{selectedDate===item.key?'active':''}}" wx:for="{{dateTabs}}" wx:key="key" data-key="{{item.key}}" bindtap="onPickDate">
+      <view
+        class="date-chip {{selectedDate===item.key?'active':''}} {{item.isToday?'is-today':''}}"
+        wx:for="{{dateTabs}}" wx:key="key"
+        data-key="{{item.key}}" bindtap="onPickDate" hover-class="chip-hover"
+      >
         <text class="day">{{item.day}}</text>
         <text class="week">{{item.week}}</text>
+        <view class="today-dot" wx:if="{{item.isToday}}"></view>
       </view>
     </view>
   </scroll-view>

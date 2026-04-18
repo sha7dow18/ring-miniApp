@@ -1,6 +1,13 @@
 const mockStore = require("../../utils/mockStore.js");
 const mockBleStream = require("../../utils/mockBleStream.js");
 const healthService = require("../../services/healthService.js");
+const dateStrip = require("../../utils/dateStripUtils.js");
+
+const STRIP_WINDOW = 30;     // 窗口总天数
+const STRIP_CENTER = Math.floor(STRIP_WINDOW / 2);
+const CHIP_RPX = 84;
+const GAP_RPX = 12;
+const PAD_RPX = 48;          // .home-page 左右 padding 24*2
 
 function stressLabel(score) {
   if (score <= 35) return "放松";
@@ -20,17 +27,7 @@ function sleepGrade(score) {
   return "一般";
 }
 
-function getDateTabs() {
-  const weeks = ["日", "一", "二", "三", "四", "五", "六"];
-  const list = [];
-  const now = new Date();
-  for (let i = -3; i <= 3; i++) {
-    const d = new Date(now);
-    d.setDate(now.getDate() + i);
-    list.push({ key: healthService.dateKey(d), week: `周${weeks[d.getDay()]}`, day: d.getDate() });
-  }
-  return list;
-}
+// 窗口以 selectedDate 为中心。任何选中变化都应该重建 tabs。
 
 function toSpark(values, min, max) {
   const span = Math.max(max - min, 1);
@@ -91,25 +88,20 @@ Page({
   },
 
   onLoad() {
-    const tabs = getDateTabs();
-    const now = new Date();
-    this.setData({
-      dateTabs: tabs,
-      selectedDate: tabs[3] ? tabs[3].key : "",
-      monthText: `${now.getFullYear()}年${now.getMonth() + 1}月`
-    });
-    this.centerDateChip(3);
+    const todayKey = healthService.dateKey(new Date());
+    this._rebuildStrip(todayKey);
   },
 
-  // 把第 idx 个 chip 滚到 viewport 中央
-  centerDateChip(idx) {
-    const CHIP = 84, GAP = 12, SLOT = CHIP + GAP;   // rpx
-    const HOME_PAD = 48;                             // .home-page padding 24*2
-    const viewRpx = 750 - HOME_PAD;
-    const chipCenter = idx * SLOT + CHIP / 2;
-    const targetRpx = Math.max(0, chipCenter - viewRpx / 2);
+  // 以 centerKey 为中心重建窗口 + 同步居中滚动 + monthText
+  _rebuildStrip(centerKey) {
+    const tabs = dateStrip.generateTabs(centerKey, STRIP_WINDOW);
+    this.setData({
+      dateTabs: tabs,
+      selectedDate: centerKey,
+      monthText: dateStrip.monthText(centerKey)
+    });
     const winWidth = wx.getWindowInfo().windowWidth;
-    const scrollLeft = targetRpx * winWidth / 750;
+    const scrollLeft = dateStrip.centerScrollLeft(STRIP_CENTER, winWidth, CHIP_RPX, GAP_RPX, PAD_RPX);
     this.setData({ dateScrollLeft: scrollLeft });
   },
 
@@ -154,10 +146,21 @@ Page({
 
   onPickDate(e) {
     const key = e.currentTarget.dataset.key;
-    const idx = this.data.dateTabs.findIndex((t) => t.key === key);
-    if (key === this.data.selectedDate) return;
-    this.setData({ selectedDate: key });
-    if (idx >= 0) this.centerDateChip(idx);
+    if (!key || key === this.data.selectedDate) return;
+    this._selectDate(key);
+  },
+
+  onPrevDay() { this._selectDate(dateStrip.shiftDay(this.data.selectedDate, -1)); },
+  onNextDay() { this._selectDate(dateStrip.shiftDay(this.data.selectedDate, 1)); },
+
+  onPickerChange(e) {
+    const key = e.detail.value;  // "yyyy-mm-dd"
+    if (!key || key === this.data.selectedDate) return;
+    this._selectDate(key);
+  },
+
+  _selectDate(key) {
+    this._rebuildStrip(key);
     this.loadDate(key);
   },
 
