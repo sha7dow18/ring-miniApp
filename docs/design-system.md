@@ -16,6 +16,16 @@
 |------|------|------|
 | `--brand` | #3F6B5E | 唯一主色：CTA、选中态、主按钮、链接 |
 | `--brand-dark` | #2A4A3E | 仅作渐变 stop / 按下态 |
+| `--brand-mid` | #6B8F7E | 柱状/曲线渐变中段 |
+| `--brand-light` | #4E7E6F | 圆形图标容器径向高光 |
+
+### 国风暖米调（pill / hero 渐变）
+
+| Token | Hex | 用途 |
+|------|------|------|
+| `--cream-1` | #F5EDDA | 其他数据 pill 渐变起始、详情 hero 起始 |
+| `--cream-2` | #EADFC3 | pill 渐变结束 |
+| `--cream-3` | #E6D6B3 | 详情 hero 渐变结束（更深一档） |
 
 ### 背景
 | Token | Hex | 用途 |

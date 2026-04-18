@@ -12,6 +12,7 @@
     "pages/customer-service/index",
     "pages/my-device/index",
     "pages/device-detail/index",
+    "pages/metric-detail/index",
     "pages/orders/index",
     "pages/order-detail/index",
     "pages/settings/index",

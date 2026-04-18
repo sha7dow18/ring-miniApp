@@ -97,9 +97,12 @@ function buildAiContext(records) {
 function getDB() { return wx.cloud.database(); }
 
 function getTodayRecord() {
-  var today = dateKey();
+  return getRecordByDate(dateKey());
+}
+
+function getRecordByDate(d) {
   return getDB().collection(COLLECTION)
-    .where({ _openid: "{openid}", date: today })
+    .where({ _openid: "{openid}", date: d })
     .limit(1).get()
     .then(function(res) { return (res.data && res.data[0]) || null; })
     .catch(function() { return null; });
@@ -139,9 +142,14 @@ function updateRecord(id, patch) {
  * 失败静默返回 null，主流程不阻塞。
  */
 function ensureTodayRecord() {
-  return getTodayRecord().then(function(existing) {
+  return ensureRecordForDate(dateKey());
+}
+
+function ensureRecordForDate(d) {
+  return getRecordByDate(d).then(function(existing) {
     if (existing) return existing;
-    return addRecord(generateDailyMock()).catch(function() { return null; });
+    return addRecord(Object.assign({}, generateDailyMock(), { date: d }))
+      .catch(function() { return null; });
   });
 }
 
@@ -187,8 +195,10 @@ module.exports = {
   dateKey: dateKey,
   // cloud
   getTodayRecord: getTodayRecord,
+  getRecordByDate: getRecordByDate,
   getRecent: getRecent,
   mergeTodayMetrics: mergeTodayMetrics,
   ensureTodayRecord: ensureTodayRecord,
+  ensureRecordForDate: ensureRecordForDate,
   refreshToday: refreshToday
 };

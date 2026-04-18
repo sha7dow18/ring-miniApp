@@ -9,6 +9,13 @@ page {
   /* 品牌 */
   --brand:         #3F6B5E;   /* 唯一主色 */
   --brand-dark:    #2A4A3E;   /* 仅用于渐变 stop / 按下态 */
+  --brand-mid:     #6B8F7E;   /* 曲线/柱状渐变中段 */
+  --brand-light:   #4E7E6F;   /* 径向图标高光 */
+
+  /* 国风暖米调色（pill / hero 渐变用） */
+  --cream-1:       #F5EDDA;
+  --cream-2:       #EADFC3;
+  --cream-3:       #E6D6B3;
 
   /* 背景 */
   --bg-page:       #F4F0EB;   /* 页面底色（唯一） */

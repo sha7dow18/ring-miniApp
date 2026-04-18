@@ -1,0 +1,30 @@
+<view class="page" wx:if="{{meta}}">
+  <view class="hero-card">
+    <view class="hero-icon">
+      <image class="icon" src="/assets/icons/inv/{{meta.iconName}}.svg" mode="aspectFit" aria-label="{{meta.label}}"/>
+    </view>
+    <view class="hero-label">{{meta.label}}</view>
+    <view class="hero-value">
+      <text class="num">{{currentValue}}</text>
+      <text class="unit">{{meta.unit}}</text>
+    </view>
+    <view class="hero-range">正常范围 · {{meta.range}}</view>
+  </view>
+
+  <view class="card trend-card">
+    <view class="card-title">近 7 日趋势</view>
+    <view class="trend-bars" wx:if="{{weekly.length}}">
+      <view class="trend-col" wx:for="{{weekly}}" wx:key="label">
+        <text class="trend-val">{{item.value}}</text>
+        <view class="trend-bar" style="height: {{item.h}}rpx;"></view>
+        <text class="trend-lbl">{{item.label}}</text>
+      </view>
+    </view>
+    <view class="trend-empty" wx:else>暂无趋势数据</view>
+  </view>
+
+  <view class="card hint-card">
+    <view class="card-title">参考说明</view>
+    <view class="hint-text">{{meta.hint}}</view>
+  </view>
+</view>

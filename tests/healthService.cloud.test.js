@@ -203,6 +203,54 @@ describe("healthService cloud functions", () => {
     expect(await hs.mergeTodayMetrics(null)).toBeNull();
   });
 
+  test("getRecordByDate queries given date", async () => {
+    const captured = [];
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: (q) => { captured.push(q); return Promise.resolve({ data: [{ _id: "rp", date: "2026-04-15" }] }); }
+        })
+      }
+    };
+    const hs = require("../miniprogram/services/healthService.js");
+    const r = await hs.getRecordByDate("2026-04-15");
+    expect(r._id).toBe("rp");
+    expect(captured[0]._where).toMatchObject({ date: "2026-04-15" });
+  });
+
+  test("ensureRecordForDate inserts with requested date when missing", async () => {
+    let addedData = null;
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: () => Promise.resolve({ data: [] }),
+          add: (x) => { addedData = x.data; return Promise.resolve({ _id: "past1" }); }
+        })
+      }
+    };
+    const hs = require("../miniprogram/services/healthService.js");
+    const r = await hs.ensureRecordForDate("2026-04-10");
+    expect(r._id).toBe("past1");
+    expect(addedData.date).toBe("2026-04-10");
+    expect(typeof addedData.sleep_score).toBe("number");
+  });
+
+  test("ensureRecordForDate returns existing without add", async () => {
+    let addCount = 0;
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: () => Promise.resolve({ data: [{ _id: "keep", date: "2026-04-12" }] }),
+          add: () => { addCount++; return Promise.resolve({ _id: "nope" }); }
+        })
+      }
+    };
+    const hs = require("../miniprogram/services/healthService.js");
+    const r = await hs.ensureRecordForDate("2026-04-12");
+    expect(r._id).toBe("keep");
+    expect(addCount).toBe(0);
+  });
+
   test("mergeTodayMetrics keeps stream steps when larger than existing", async () => {
     const updates = [];
     global.wx = {

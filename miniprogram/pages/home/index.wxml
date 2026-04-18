@@ -84,20 +84,20 @@
 
     <view class="other-title">其他数据</view>
     <view class="other-list">
-      <view class="other-item" wx:for="{{otherRows}}" wx:key="key">
-        <view class="left">
-          <image class="icon" src="/assets/icons/{{item.iconName}}.svg" mode="aspectFit" aria-label="{{item.label}}"/>
-          <view>
-            <view class="nm">{{item.label}}</view>
-            <view class="vl">{{item.value}}</view>
-          </view>
+      <view class="other-item" wx:for="{{otherRows}}" wx:key="key" data-key="{{item.key}}" bindtap="onMetricTap" hover-class="hover">
+        <view class="icon-holder">
+          <image class="icon" src="/assets/icons/inv/{{item.iconName}}.svg" mode="aspectFit" aria-label="{{item.label}}"/>
         </view>
-        <view class="right">
+        <view class="middle">
+          <view class="nm">{{item.label}}</view>
+          <view class="vl">{{item.value}}</view>
+        </view>
+        <view class="spark-wrap">
           <view class="spark">
-            <view wx:for="{{item.trend}}" wx:key="index" class="bar" style="height: {{item}}rpx;"></view>
+            <view wx:for="{{item.trend}}" wx:for-item="bar" wx:key="index" class="bar" style="height: {{bar}}rpx;"></view>
           </view>
-          <view class="jump">›</view>
         </view>
+        <view class="jump">›</view>
       </view>
     </view>
 

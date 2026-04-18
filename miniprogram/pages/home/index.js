@@ -27,8 +27,7 @@ function getDateTabs() {
   for (let i = -3; i <= 3; i++) {
     const d = new Date(now);
     d.setDate(now.getDate() + i);
-    const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-    list.push({ key, week: `周${weeks[d.getDay()]}`, day: d.getDate() });
+    list.push({ key: healthService.dateKey(d), week: `周${weeks[d.getDay()]}`, day: d.getDate() });
   }
   return list;
 }
@@ -156,8 +155,15 @@ Page({
   onPickDate(e) {
     const key = e.currentTarget.dataset.key;
     const idx = this.data.dateTabs.findIndex((t) => t.key === key);
+    if (key === this.data.selectedDate) return;
     this.setData({ selectedDate: key });
     if (idx >= 0) this.centerDateChip(idx);
+    this.loadDate(key);
+  },
+
+  async loadDate(dateKey) {
+    const record = await healthService.ensureRecordForDate(dateKey);
+    this.applyRecord(record);
   },
 
   syncDevice(state) {
@@ -238,15 +244,12 @@ Page({
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.scale(dpr, dpr);
-
       ctx.clearRect(0, 0, width, height);
 
-      const padL = 16;
-      const padR = 16;
-      const padT = 10;
-      const padB = 16;
+      const padL = 8, padR = 8, padT = 14, padB = 18;
       const chartW = width - padL - padR;
       const chartH = height - padT - padB;
+      const baseY = padT + chartH;
 
       const values = trend.reduce((arr, i) => arr.concat([i.s, i.d]), []);
       const min = Math.min(...values) - 8;
@@ -256,43 +259,75 @@ Page({
       const getX = (idx) => padL + (chartW * idx) / Math.max(trend.length - 1, 1);
       const getY = (v) => padT + chartH - ((v - min) / span) * chartH;
 
-      ctx.strokeStyle = "rgba(140,130,112,.25)";
+      // 淡网格线
+      ctx.strokeStyle = "rgba(139, 103, 50, 0.12)";
       ctx.lineWidth = 1;
-      for (let i = 0; i < 3; i++) {
-        const y = padT + (chartH * i) / 2;
+      [0, 0.5, 1].forEach((t) => {
+        const y = padT + chartH * t;
         ctx.beginPath();
         ctx.moveTo(padL, y);
         ctx.lineTo(width - padR, y);
         ctx.stroke();
-      }
+      });
 
-      const drawLine = (key, color) => {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
+      // Catmull-Rom → cubic bezier smoothing
+      const smoothPath = (pts, closeToBase) => {
+        if (pts.length < 2) return;
+        ctx.moveTo(pts[0].x, closeToBase ? baseY : pts[0].y);
+        if (closeToBase) ctx.lineTo(pts[0].x, pts[0].y);
+        for (let i = 0; i < pts.length - 1; i++) {
+          const p0 = pts[i - 1] || pts[i];
+          const p1 = pts[i];
+          const p2 = pts[i + 1];
+          const p3 = pts[i + 2] || pts[i + 1];
+          const c1x = p1.x + (p2.x - p0.x) / 6;
+          const c1y = p1.y + (p2.y - p0.y) / 6;
+          const c2x = p2.x - (p3.x - p1.x) / 6;
+          const c2y = p2.y - (p3.y - p1.y) / 6;
+          ctx.bezierCurveTo(c1x, c1y, c2x, c2y, p2.x, p2.y);
+        }
+        if (closeToBase) {
+          const last = pts[pts.length - 1];
+          ctx.lineTo(last.x, baseY);
+          ctx.closePath();
+        }
+      };
+
+      const drawSeries = (key, lineColor, fillTop) => {
+        const pts = trend.map((item, idx) => ({ x: getX(idx), y: getY(item[key]) }));
+
+        // area fill
+        const grad = ctx.createLinearGradient(0, padT, 0, baseY);
+        grad.addColorStop(0, fillTop);
+        grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        trend.forEach((item, idx) => {
-          const x = getX(idx);
-          const y = getY(item[key]);
-          if (idx === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        });
+        smoothPath(pts, true);
+        ctx.fill();
+
+        // line
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+        smoothPath(pts, false);
         ctx.stroke();
 
-        trend.forEach((item, idx) => {
-          const x = getX(idx);
-          const y = getY(item[key]);
+        // points
+        pts.forEach((p) => {
           ctx.fillStyle = "#fff";
           ctx.beginPath();
-          ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
           ctx.fill();
-          ctx.strokeStyle = color;
-          ctx.lineWidth = 1.4;
+          ctx.strokeStyle = lineColor;
+          ctx.lineWidth = 1.8;
           ctx.stroke();
         });
       };
 
-      drawLine("s", "#8a1d30");
-      drawLine("d", "#2f4a42");
+      drawSeries("s", "#8A1D30", "rgba(138, 29, 48, 0.22)");
+      drawSeries("d", "#2A4A3E", "rgba(42, 74, 62, 0.20)");
     });
   },
 
@@ -312,6 +347,12 @@ Page({
     } else {
       wx.showToast({ title: "刷新失败", icon: "none" });
     }
+  },
+
+  onMetricTap(e) {
+    const key = e.currentTarget.dataset.key;
+    if (!key) return;
+    wx.navigateTo({ url: `/pages/metric-detail/index?key=${key}` });
   },
 
   goConnectDevice() { wx.switchTab({ url: "/pages/service/index" }); },
