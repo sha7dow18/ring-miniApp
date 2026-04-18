@@ -126,13 +126,14 @@
   padding: 120rpx 40rpx;
   text-align: center;
 }
-.empty-h {
+.drawer-empty .empty-h {
   font-size: var(--fs-body);
   color: var(--text-2);
   font-weight: var(--fw-semibold);
   margin-bottom: 8rpx;
+  margin-top: 0;
 }
-.empty-sub {
+.drawer-empty .empty-sub {
   font-size: var(--fs-caption);
   color: var(--text-3);
 }
