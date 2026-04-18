@@ -10,7 +10,8 @@ function makeDbMock(impl) {
         get: function() { return impl.get(q); },
         add: function(x) { return impl.add(x); },
         doc: function(id) { q._docId = id; return chain; },
-        update: function(x) { return impl.update(q._docId, x); }
+        update: function(x) { return impl.update(q._docId, x); },
+        remove: function() { return impl.remove ? impl.remove(q._docId) : Promise.resolve({}); }
       };
       return chain;
     })
@@ -88,6 +89,61 @@ describe("sessionService cloud functions", () => {
     const s = await ss.loadSession("x");
     expect(s._id).toBe("x");
     expect(s.messages).toHaveLength(1);
+  });
+
+  test("updateMessages stores msgCount", async () => {
+    const updates = [];
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          update: (id, patch) => { updates.push({ id, patch }); return Promise.resolve({}); }
+        })
+      }
+    };
+    const ss = require("../miniprogram/services/sessionService.js");
+    await ss.updateMessages("sid", [{ id: "a" }, { id: "b" }, { id: "c" }]);
+    expect(updates[0].patch.data.msgCount).toBe(3);
+  });
+
+  test("listSessions whitelist includes msgCount", async () => {
+    const captured = [];
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: (q) => { captured.push(q); return Promise.resolve({ data: [] }); }
+        })
+      }
+    };
+    const ss = require("../miniprogram/services/sessionService.js");
+    await ss.listSessions(10);
+    expect(captured[0]._field).toMatchObject({ msgCount: true });
+  });
+
+  test("deleteSession calls remove", async () => {
+    const removed = [];
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          remove: (id) => { removed.push(id); return Promise.resolve({}); }
+        })
+      }
+    };
+    const ss = require("../miniprogram/services/sessionService.js");
+    const ok = await ss.deleteSession("zap");
+    expect(ok).toBe(true);
+    expect(removed[0]).toBe("zap");
+  });
+
+  test("deleteSession returns false on failure", async () => {
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          remove: () => Promise.reject(new Error("boom"))
+        })
+      }
+    };
+    const ss = require("../miniprogram/services/sessionService.js");
+    expect(await ss.deleteSession("x")).toBe(false);
   });
 
   test("updateMessages does not throw on failure", async () => {

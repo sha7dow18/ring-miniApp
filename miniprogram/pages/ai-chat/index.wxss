@@ -14,74 +14,137 @@
 /* ═══ 历史抽屉 ═══ */
 .mask {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.5);
   z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
 }
+.mask-on { opacity: 1; pointer-events: auto; }
+
 .drawer {
   position: fixed; top: 0; bottom: 0;
-  left: -82vw;
-  width: 82vw;
+  left: -86vw;
+  width: 86vw;
   background: var(--bg-page);
   z-index: 101;
   transition: left 0.28s cubic-bezier(0.4,0,0.2,1);
   display: flex;
   flex-direction: column;
-  box-shadow: 4rpx 0 24rpx rgba(0,0,0,0.12);
+  box-shadow: 4rpx 0 32rpx rgba(0,0,0,0.18);
 }
 .drawer-open { left: 0; }
+
 .drawer-head {
-  padding: 120rpx 28rpx 20rpx;
+  padding: 120rpx 32rpx 20rpx;
   display: flex;
-  flex-direction: column;
-  gap: 20rpx;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  flex-shrink: 0;
 }
-.drawer-title { font-size: var(--fs-h1); font-weight: var(--fw-bold); color: var(--text-1); }
+.drawer-title { font-size: var(--fs-h1); font-weight: var(--fw-bold); color: var(--text-1); line-height: 1; }
 .drawer-new {
-  align-self: flex-start;
+  display: flex; align-items: center; gap: 6rpx;
   font-size: var(--fs-sub);
   color: var(--text-inv);
   font-weight: var(--fw-semibold);
-  padding: 14rpx 28rpx;
+  padding: 14rpx 24rpx;
   background: var(--brand);
   border-radius: var(--r-pill);
+  box-shadow: 0 4rpx 12rpx rgba(47,74,66,0.25);
 }
-.drawer-list { flex: 1; padding: 0 28rpx 20rpx; }
-.drawer-item {
-  padding: var(--sp-4) 18rpx;
+.drawer-new-ico { font-size: 28rpx; font-weight: var(--fw-bold); line-height: 1; }
+
+.drawer-list {
+  flex: 1;
+  min-height: 0;
+  padding: 8rpx 16rpx;
+}
+
+/* 分组标签 */
+.grp-label {
+  padding: 20rpx 16rpx 10rpx;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--text-3);
+  letter-spacing: 1rpx;
+}
+
+/* 会话行 */
+.sess {
+  display: flex;
+  align-items: stretch;
+  gap: 14rpx;
+  padding: 16rpx 16rpx 16rpx 0;
   border-radius: var(--r-md);
-  margin-bottom: var(--sp-2);
+  margin-bottom: 4rpx;
+  background: transparent;
+  position: relative;
+}
+.sess-hover { background: var(--bg-muted); }
+.sess-active {
+  background: var(--bg-muted);
+  box-shadow: inset 0 0 0 1rpx var(--border);
+}
+
+.sess-band {
+  width: 6rpx;
+  border-radius: 0 4rpx 4rpx 0;
+  flex-shrink: 0;
+  background: var(--text-3);
+  align-self: stretch;
+}
+.band-tongue { background: var(--accent); }
+.band-sleep { background: var(--info); }
+.band-constitution { background: var(--success); }
+.band-default { background: var(--brand); }
+
+.sess-body { flex: 1; min-width: 0; padding: 2rpx 0; }
+.sess-title {
   font-size: var(--fs-body);
   color: var(--text-1);
+  font-weight: var(--fw-semibold);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sess-meta {
+  margin-top: 8rpx;
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  background: var(--bg-card);
+  gap: 8rpx;
+  font-size: var(--fs-caption);
+  color: var(--text-3);
+  line-height: 1;
 }
-.drawer-active { background: var(--bg-muted); }
-.drawer-empty { font-size: 26rpx; color: var(--text-3); text-align: center; margin-top: 80rpx; }
+.sess-dot { color: var(--text-3); }
+.sess-ago { color: var(--text-2); }
 
-/* 会话 tag 徽章 */
-.drawer-tag {
-  font-size: 20rpx;
-  padding: 4rpx 12rpx;
-  border-radius: var(--r-pill);
-  flex-shrink: 0;
-  font-weight: var(--fw-semibold);
-  background: var(--bg-muted);
-  color: var(--text-2);
+.drawer-empty {
+  padding: 120rpx 40rpx;
+  text-align: center;
 }
-.drawer-tag.tag-tongue { background: #FCE4D6; color: var(--accent); }
-.drawer-tag.tag-sleep { background: #D6E4FC; color: var(--info); }
-.drawer-tag.tag-constitution { background: #E4FCD6; color: var(--success); }
-.drawer-item-txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.empty-h {
+  font-size: var(--fs-body);
+  color: var(--text-2);
+  font-weight: var(--fw-semibold);
+  margin-bottom: 8rpx;
+}
+.empty-sub {
+  font-size: var(--fs-caption);
+  color: var(--text-3);
+}
 
 .drawer-foot {
-  padding: 24rpx 28rpx calc(32rpx + env(safe-area-inset-bottom));
+  padding: 20rpx 32rpx calc(28rpx + env(safe-area-inset-bottom));
   text-align: center;
   font-size: 20rpx;
   color: var(--text-3);
   border-top: 1rpx solid var(--divider);
   letter-spacing: 1rpx;
+  flex-shrink: 0;
 }
 
 /* ═══ 消息区 ═══ */

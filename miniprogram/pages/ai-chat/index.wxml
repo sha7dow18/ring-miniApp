@@ -1,19 +1,41 @@
 <view class="page">
   <!-- ═══ 历史侧边栏 ═══ -->
-  <view class="mask" wx:if="{{showHistory}}" bindtap="closeHistory" catchtouchmove="{{true}}"></view>
+  <view class="mask {{showHistory ? 'mask-on' : ''}}" bindtap="closeHistory" catchtouchmove="{{true}}"></view>
   <view class="drawer {{showHistory ? 'drawer-open' : ''}}">
     <view class="drawer-head">
-      <text class="drawer-title">聊天记录</text>
-      <view class="drawer-new" bindtap="newChat" hover-class="hover">+ 新对话</view>
-    </view>
-    <scroll-view class="drawer-list" scroll-y="true">
-      <view class="drawer-item {{item._id === sessionId ? 'drawer-active' : ''}}" wx:for="{{sessionList}}" wx:key="_id" data-sid="{{item._id}}" bindtap="loadOldSession">
-        <text class="drawer-tag tag-{{item.tagCls}}" wx:if="{{item.tag}}">{{item.tag}}</text>
-        <text class="drawer-item-txt">{{item.title || '对话'}}</text>
+      <view class="drawer-title">聊天记录</view>
+      <view class="drawer-new" bindtap="newChat" hover-class="hover">
+        <text class="drawer-new-ico">+</text>
+        <text>新对话</text>
       </view>
-      <view class="drawer-empty" wx:if="{{!sessionList.length}}">暂无记录</view>
+    </view>
+
+    <scroll-view class="drawer-list" scroll-y="true" enhanced show-scrollbar="{{false}}">
+      <block wx:for="{{sessionGroups}}" wx:for-item="grp" wx:key="key">
+        <view class="grp-label">{{grp.label}}</view>
+        <view class="sess {{item._id === sessionId ? 'sess-active' : ''}}"
+              wx:for="{{grp.items}}" wx:for-item="item" wx:key="_id"
+              data-sid="{{item._id}}" data-title="{{item.title}}"
+              bindtap="loadOldSession" bindlongpress="onSessionLongPress"
+              hover-class="sess-hover">
+          <view class="sess-band band-{{item.tagCls}}"></view>
+          <view class="sess-body">
+            <view class="sess-title">{{item.title || '对话'}}</view>
+            <view class="sess-meta">
+              <text class="sess-ago">{{item.ago}}</text>
+              <text class="sess-dot" wx:if="{{item.count}}">·</text>
+              <text class="sess-count" wx:if="{{item.count}}">{{item.count}} 条</text>
+            </view>
+          </view>
+        </view>
+      </block>
+      <view class="drawer-empty" wx:if="{{!sessionList.length}}">
+        <view class="empty-h">还没有对话</view>
+        <view class="empty-sub">聊天会自动存档到这里</view>
+      </view>
     </scroll-view>
-    <view class="drawer-foot">仅供健康参考 · 不替代医疗诊断</view>
+
+    <view class="drawer-foot">长按对话可删除 · 仅供健康参考</view>
   </view>
 
   <!-- ═══ 消息区 ═══ -->

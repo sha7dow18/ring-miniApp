@@ -3,6 +3,28 @@ var agentService = require("../../services/agentService.js");
 var sessionService = require("../../services/sessionService.js");
 var healthService = require("../../services/healthService.js");
 var markdown = require("../../utils/markdown.js");
+var timeago = require("../../utils/timeago.js");
+
+// 把扁平 sessionList 丰富后按时间分组为 [{label, items:[...]}] 形状
+function groupSessions(list) {
+  if (!list || !list.length) return [];
+  var now = new Date();
+  var buckets = { today: [], yesterday: [], week: [], older: [] };
+  list.forEach(function(s) {
+    var enriched = Object.assign({}, s, {
+      tagCls: require("../../services/sessionService.js").tagClass(s.tag),
+      ago: timeago.relative(s.updatedAt, now),
+      count: s.msgCount || 0
+    });
+    buckets[timeago.bucket(s.updatedAt, now)].push(enriched);
+  });
+  var order = ["today", "yesterday", "week", "older"];
+  var groups = [];
+  order.forEach(function(k) {
+    if (buckets[k].length) groups.push({ key: k, label: timeago.BUCKET_LABELS[k], items: buckets[k] });
+  });
+  return groups;
+}
 
 // assistant 消息每个 text part 预解析 markdown blocks（ephemeral，不持久化）
 function withBlocks(msg) {
@@ -35,6 +57,7 @@ Page({
     sessionTag: "",
     showHistory: false,
     sessionList: [],
+    sessionGroups: [],
     attachment: null,
     canSend: false
   },
@@ -217,14 +240,52 @@ Page({
 
   toggleHistory: async function() {
     if (!this.data.showHistory) {
-      var list = await sessionService.listSessions(20);
-      var enriched = list.map(function(s) {
-        return Object.assign({}, s, { tagCls: sessionService.tagClass(s.tag) });
-      });
-      this.setData({ showHistory: true, sessionList: enriched });
+      var list = await sessionService.listSessions(50);
+      this.setData({ showHistory: true, sessionList: list, sessionGroups: groupSessions(list) });
     } else {
       this.setData({ showHistory: false });
     }
+  },
+
+  onSessionLongPress: function(e) {
+    var self = this;
+    var sid = e.currentTarget.dataset.sid;
+    var title = e.currentTarget.dataset.title || "该对话";
+    if (!sid) return;
+    wx.showActionSheet({
+      itemList: ["删除对话"],
+      itemColor: "#B94A4A",
+      success: function(res) {
+        if (res.tapIndex === 0) self.confirmDelete(sid, title);
+      }
+    });
+  },
+
+  confirmDelete: function(sid, title) {
+    var self = this;
+    wx.showModal({
+      title: "删除对话",
+      content: "确认删除「" + title + "」？",
+      confirmColor: "#B94A4A",
+      success: function(res) {
+        if (!res.confirm) return;
+        sessionService.deleteSession(sid).then(function(ok) {
+          if (!ok) return wx.showToast({ title: "删除失败", icon: "none" });
+          var list = self.data.sessionList.filter(function(s) { return s._id !== sid; });
+          var update = {
+            sessionList: list,
+            sessionGroups: groupSessions(list)
+          };
+          if (self.data.sessionId === sid) {
+            update.sessionId = "";
+            update.sessionTag = "";
+            update.messages = [];
+          }
+          self.setData(update);
+          wx.showToast({ title: "已删除", icon: "success" });
+        });
+      }
+    });
   },
 
   closeHistory: function() { this.setData({ showHistory: false }); },

@@ -42,6 +42,7 @@ function createSession(firstText, hasImage) {
       title: title,
       tag: tag,
       messages: [],
+      msgCount: 0,
       createdAt: now,
       updatedAt: now
     }
@@ -50,7 +51,7 @@ function createSession(firstText, hasImage) {
 
 function updateMessages(sessionId, messages) {
   return getDB().collection(COLLECTION).doc(sessionId).update({
-    data: { messages: messages, updatedAt: new Date() }
+    data: { messages: messages, msgCount: (messages || []).length, updatedAt: new Date() }
   }).catch(function() {});
 }
 
@@ -58,7 +59,7 @@ function listSessions(limit) {
   var n = limit || 20;
   return getDB().collection(COLLECTION)
     .orderBy("updatedAt", "desc").limit(n)
-    .field({ _id: true, title: true, tag: true, updatedAt: true })
+    .field({ _id: true, title: true, tag: true, msgCount: true, updatedAt: true })
     .get()
     .then(function(res) { return res.data || []; })
     .catch(function() { return []; });
@@ -70,6 +71,12 @@ function loadSession(sessionId) {
     .catch(function() { return null; });
 }
 
+function deleteSession(sessionId) {
+  return getDB().collection(COLLECTION).doc(sessionId).remove()
+    .then(function() { return true; })
+    .catch(function() { return false; });
+}
+
 module.exports = {
   tagFromText: tagFromText,
   tagClass: tagClass,
@@ -77,5 +84,6 @@ module.exports = {
   createSession: createSession,
   updateMessages: updateMessages,
   listSessions: listSessions,
-  loadSession: loadSession
+  loadSession: loadSession,
+  deleteSession: deleteSession
 };
