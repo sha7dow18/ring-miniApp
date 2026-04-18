@@ -1,8 +1,6 @@
 var config = require("./config/index.js");
-var towxml = require("towxml");
 
 App({
-  towxml: towxml,
   globalData: {
     env: config.cloud.env,
     version: config.app.versionName

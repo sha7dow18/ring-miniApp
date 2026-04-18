@@ -3,20 +3,15 @@
   "miniprogramRoot": "miniprogram/",
   "compileType": "miniprogram",
   "setting": {
-    "packNpmManually": true,
-    "packNpmRelationList": [
-      {
-        "packageJsonPath": "./miniprogram/package.json",
-        "miniprogramNpmDistDir": "./miniprogram/"
-      }
-    ],
+    "packNpmManually": false,
+    "packNpmRelationList": [],
     "es6": true,
     "enhance": true,
     "minifyWXSS": true,
     "minifyWXML": true,
     "coverView": false,
     "postcss": false,
-    "minified": false,
+    "minified": true,
     "showShadowRootInWxmlPanel": false,
     "ignoreUploadUnusedFiles": true,
     "compileHotReLoad": false,

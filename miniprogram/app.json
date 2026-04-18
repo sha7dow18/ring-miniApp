@@ -31,5 +31,6 @@
       { "pagePath": "pages/service/index", "text": "服务" },
       { "pagePath": "pages/profile/index", "text": "我的" }
     ]
-  }
+  },
+  "lazyCodeLoading": "requiredComponents"
 }

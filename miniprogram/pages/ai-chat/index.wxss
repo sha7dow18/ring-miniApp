@@ -175,52 +175,31 @@
   word-break: break-word;
 }
 
-/* towxml markdown 渲染区，主题 override 到养生土色系 */
-.ai-md { font-size: 30rpx; color: var(--text-1); }
-.ai-md .h2w-light { background: transparent !important; color: var(--text-1) !important; }
-.ai-md .h2w__p {
-  font-size: 30rpx !important;
-  line-height: 1.8 !important;
-  color: var(--text-1) !important;
-  margin: 0 0 16rpx !important;
+/* 自写 markdown 渲染块 */
+.md { font-size: 30rpx; color: var(--text-1); line-height: 1.75; }
+.md-p { margin: 0 0 16rpx; }
+.md-p:last-child { margin-bottom: 0; }
+.md-h { font-weight: var(--fw-bold); color: var(--text-1); margin: 20rpx 0 12rpx; line-height: 1.4; }
+.md-h1 { font-size: 38rpx; }
+.md-h2 { font-size: 34rpx; }
+.md-h3 { font-size: 30rpx; }
+.md-ul, .md-ol { margin: 10rpx 0; padding: 0; }
+.md-li { display: flex; gap: 10rpx; align-items: flex-start; margin: 6rpx 0; padding-left: 8rpx; }
+.md-bullet { color: var(--brand); font-weight: var(--fw-bold); min-width: 20rpx; line-height: 1.75; }
+.md-num { color: var(--brand); font-weight: var(--fw-semibold); min-width: 44rpx; line-height: 1.75; }
+.md-li-body { flex: 1; line-height: 1.75; }
+
+/* 行内 run 样式 */
+.md-n { /* normal 无样式 */ }
+.md-b { font-weight: var(--fw-bold); color: var(--brand-dark); }
+.md-c {
+  background: var(--bg-muted);
+  color: var(--accent);
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-size: 28rpx;
+  font-family: Menlo, Consolas, monospace;
 }
-.ai-md .h2w__h1, .ai-md .h2w__h2, .ai-md .h2w__h3 {
-  color: var(--text-1) !important;
-  font-weight: var(--fw-bold) !important;
-  margin: 20rpx 0 12rpx !important;
-  border: none !important;
-}
-.ai-md .h2w__h1 { font-size: 38rpx !important; }
-.ai-md .h2w__h2 { font-size: 34rpx !important; }
-.ai-md .h2w__h3 { font-size: 30rpx !important; }
-.ai-md .h2w__strong { color: var(--brand-dark) !important; font-weight: var(--fw-bold) !important; }
-.ai-md .h2w__em { color: var(--text-1) !important; font-style: italic !important; }
-.ai-md .h2w__code {
-  background: var(--bg-muted) !important;
-  color: var(--accent) !important;
-  padding: 2rpx 10rpx !important;
-  border-radius: 6rpx !important;
-  font-size: 28rpx !important;
-}
-.ai-md .h2w__pre {
-  background: var(--bg-muted) !important;
-  border-radius: var(--r-md) !important;
-  padding: 16rpx !important;
-  margin: 12rpx 0 !important;
-}
-.ai-md .h2w__ul, .ai-md .h2w__ol { padding-left: 36rpx !important; margin: 10rpx 0 !important; }
-.ai-md .h2w__li { margin: 6rpx 0 !important; line-height: 1.75 !important; color: var(--text-1) !important; }
-.ai-md .h2w__blockquote {
-  border-left: 6rpx solid var(--brand) !important;
-  background: var(--bg-muted) !important;
-  padding: 12rpx 18rpx !important;
-  margin: 12rpx 0 !important;
-  color: var(--text-2) !important;
-}
-.ai-md .h2w__a { color: var(--brand) !important; text-decoration: underline; }
-.ai-md .h2w__table { margin: 12rpx 0 !important; }
-.ai-md .h2w__thead .h2w__tr { background: var(--bg-muted) !important; }
-.ai-md .h2w__th, .ai-md .h2w__td { border-color: var(--divider) !important; color: var(--text-1) !important; }
 
 /* 消息内图片 */
 .msg-img {

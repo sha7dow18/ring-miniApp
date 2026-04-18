@@ -2,7 +2,5 @@
   "navigationBarTitleText": "AI 健康助手",
   "navigationBarBackgroundColor": "#F4F0EB",
   "navigationBarTextStyle": "black",
-  "usingComponents": {
-    "towxml": "/miniprogram_npm/towxml/towxml"
-  }
+  "usingComponents": {}
 }

@@ -68,9 +68,32 @@
             bindtap="previewImage"
             data-url="{{p.url || p.tempPath}}"
           />
-          <!-- 有 nodes 走 towxml（markdown 渲染）；构建 npm 未跑或流式首块没追上时降级纯文本 -->
-          <view wx:if="{{p.type === 'text' && p.nodes}}" class="ai-md">
-            <towxml nodes="{{p.nodes}}"/>
+          <!-- markdown 渲染：blocks → 嵌套 wx:for；无 blocks（初始空）降级纯文本 -->
+          <view wx:if="{{p.type === 'text' && p.blocks && p.blocks.length}}" class="md">
+            <block wx:for="{{p.blocks}}" wx:for-item="blk" wx:for-index="bi" wx:key="bi">
+              <view wx:if="{{blk.type === 'p'}}" class="md-p">
+                <text wx:for="{{blk.runs}}" wx:for-item="r" wx:for-index="ri" wx:key="ri" class="md-{{r.t}}" selectable="true">{{r.c}}</text>
+              </view>
+              <view wx:elif="{{blk.type === 'h'}}" class="md-h md-h{{blk.level}}">
+                <text wx:for="{{blk.runs}}" wx:for-item="r" wx:for-index="ri" wx:key="ri" class="md-{{r.t}}" selectable="true">{{r.c}}</text>
+              </view>
+              <view wx:elif="{{blk.type === 'ul'}}" class="md-ul">
+                <view class="md-li" wx:for="{{blk.items}}" wx:for-item="it" wx:for-index="ii" wx:key="ii">
+                  <text class="md-bullet">•</text>
+                  <view class="md-li-body">
+                    <text wx:for="{{it.runs}}" wx:for-item="r" wx:for-index="ri" wx:key="ri" class="md-{{r.t}}" selectable="true">{{r.c}}</text>
+                  </view>
+                </view>
+              </view>
+              <view wx:elif="{{blk.type === 'ol'}}" class="md-ol">
+                <view class="md-li" wx:for="{{blk.items}}" wx:for-item="it" wx:for-index="ii" wx:key="ii">
+                  <text class="md-num">{{ii + 1}}.</text>
+                  <view class="md-li-body">
+                    <text wx:for="{{it.runs}}" wx:for-item="r" wx:for-index="ri" wx:key="ri" class="md-{{r.t}}" selectable="true">{{r.c}}</text>
+                  </view>
+                </view>
+              </view>
+            </block>
           </view>
           <text wx:elif="{{p.type === 'text' && p.content}}" class="ai-txt" selectable="true">{{p.content}}</text>
         </block>
