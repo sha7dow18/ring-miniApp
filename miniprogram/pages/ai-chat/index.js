@@ -1,4 +1,5 @@
 var aiService = require("../../services/aiService.js");
+var agentService = require("../../services/agentService.js");
 var sessionService = require("../../services/sessionService.js");
 var healthService = require("../../services/healthService.js");
 
@@ -162,9 +163,7 @@ Page({
       var msgs = self.data.messages.concat(userMsg, aiMsg);
       self.setData({ messages: msgs, scrollToId: "msg-" + aiMsgId });
 
-      var historyForAI = self.data.messages.filter(function(m) { return m.id !== aiMsgId; });
-
-      await aiService.sendMessage(historyForAI, function(chunk) {
+      var onChunk = function(chunk) {
         var cur = self.data.messages;
         var updated = cur.map(function(m) {
           if (m.id !== aiMsgId) return m;
@@ -175,7 +174,24 @@ Page({
           return withNodes({ id: m.id, role: m.role, parts: appended, ts: m.ts });
         });
         self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
-      }, healthCtx);
+      };
+
+      // 带图 → 视觉模型（不走 bot，因为 bot 目前配置为文字 agent）
+      // 纯文字 → 官方 bot.sendMessage，由 Tencent hosted Agent 跑 ReAct + 工具
+      if (imgPart) {
+        var historyForAI = self.data.messages.filter(function(m) { return m.id !== aiMsgId; });
+        await aiService.sendMessage(historyForAI, onChunk, healthCtx);
+      } else {
+        await agentService.sendToBot({
+          msg: text,
+          threadId: self.data.sessionId,   // 用我们自己的 sessionId 作为 bot 的 thread
+          callbacks: {
+            onContent: onChunk,
+            onThink: function(think) { console.log("[bot-think]", think); },
+            onUnknown: function(evt) { console.warn("[bot-unknown]", evt); }
+          }
+        });
+      }
 
       var toSave = self.data.messages.map(function(m) {
         return {

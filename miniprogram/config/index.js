@@ -10,7 +10,8 @@ module.exports = {
   },
 
   ai: {
-    textProvider: "deepseek",
+    botId: "ibot-aita-uku7y1",    // 腾讯云开发 Agent（Aita 健康助手）
+    textProvider: "deepseek",     // bot 不可用时的降级直连
     textModel: "deepseek-v3.2",
     visionProvider: "hunyuan-exp",
     visionModel: "hunyuan-vision",
