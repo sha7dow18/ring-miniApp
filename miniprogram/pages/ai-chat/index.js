@@ -41,6 +41,7 @@ function withBlocks(msg) {
 
 function serializePart(part) {
   if (part.type === "text") return { type: "text", content: part.content || "" };
+  if (part.type === "thinking") return { type: "thinking", content: part.content || "" };
   if (part.type === "image") return { type: "image", fileID: part.fileID || "", url: part.url || "" };
   if (part.type === "tool") return {
     type: "tool",
@@ -92,6 +93,30 @@ function makeToolPart(payload) {
     label: toolLabel(payload.name),
     result: payload.result
   };
+}
+
+function appendThinkingPart(parts, chunk) {
+  var list = (parts || []).slice();
+  var last = list[list.length - 1];
+  if (last && last.type === "thinking") {
+    last = Object.assign({}, last, { content: (last.content || "") + chunk });
+    list[list.length - 1] = last;
+    return list;
+  }
+  list.push({ type: "thinking", content: chunk || "" });
+  return list;
+}
+
+function appendTextPart(parts, chunk) {
+  var list = (parts || []).slice();
+  var last = list[list.length - 1];
+  if (last && last.type === "text") {
+    last = Object.assign({}, last, { content: (last.content || "") + chunk });
+    list[list.length - 1] = last;
+    return list;
+  }
+  list.push({ type: "text", content: chunk || "" });
+  return list;
 }
 
 function upsertToolPart(parts, payload) {
@@ -249,7 +274,7 @@ Page({
 
       var userMsg = { id: aiService.msgId(), role: "user", parts: parts, ts: aiService.nowISO() };
       var aiMsgId = aiService.msgId();
-      var aiMsg = { id: aiMsgId, role: "assistant", parts: [{ type: "text", content: "" }], ts: aiService.nowISO() };
+      var aiMsg = { id: aiMsgId, role: "assistant", parts: [], ts: aiService.nowISO() };
 
       var msgs = self.data.messages.concat(userMsg, aiMsg);
       self.setData({ messages: msgs, scrollToId: "msg-" + aiMsgId });
@@ -258,11 +283,16 @@ Page({
         var cur = self.data.messages;
         var updated = cur.map(function(m) {
           if (m.id !== aiMsgId) return m;
-          var appended = m.parts.map(function(p) {
-            if (p.type === "text") return { type: "text", content: (p.content || "") + chunk };
-            return p;
-          });
+          var appended = appendTextPart(m.parts, chunk);
           return withBlocks({ id: m.id, role: m.role, parts: appended, ts: m.ts });
+        });
+        self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
+      };
+
+      var onThink = function(chunk) {
+        var updated = self.data.messages.map(function(m) {
+          if (m.id !== aiMsgId) return m;
+          return withBlocks({ id: m.id, role: m.role, ts: m.ts, parts: appendThinkingPart(m.parts, chunk) });
         });
         self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
       };
@@ -289,7 +319,7 @@ Page({
         history: toBotHistory(self.data.messages.filter(function(m) { return m.id !== aiMsgId; })),
         callbacks: {
           onContent: onChunk,
-          onThink: function() {},
+          onThink: onThink,
           onToolCall: onToolCall,
           onToolResult: onToolResult,
           onUnknown: function(evt) { console.log("[agent-event]", evt); }
@@ -311,7 +341,7 @@ Page({
       var cur = self.data.messages;
       var updated = cur.map(function(m) {
         if (m.role !== "assistant") return m;
-        if (m.parts && m.parts[0] && m.parts[0].content) return m;
+        if (m.parts && m.parts.some(function(part) { return part.type === "text" && part.content; })) return m;
         return { id: m.id, role: m.role, ts: m.ts, parts: [{ type: "text", content: "AI 暂时无法回复：" + ((err && err.message) || "未知错误") }] };
       });
       self.setData({ messages: updated });

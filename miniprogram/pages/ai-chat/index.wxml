@@ -91,6 +91,10 @@
             data-url="{{p.url || p.tempPath}}"
           />
           <!-- markdown 渲染：blocks → 嵌套 wx:for；无 blocks（初始空）降级纯文本 -->
+          <view wx:elif="{{p.type === 'thinking'}}" class="thinking-step">
+            <view class="thinking-step-head">思考中</view>
+            <view class="thinking-step-body">{{p.content}}</view>
+          </view>
           <view wx:elif="{{p.type === 'tool'}}" class="tool-step tool-{{p.status}}">
             <view class="tool-step-head">
               <view class="tool-step-label">{{p.label || p.name}}</view>

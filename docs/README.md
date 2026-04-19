@@ -22,6 +22,7 @@
 - [2026-04-19-mall-detail-polish.md](plans/2026-04-19-mall-detail-polish.md) — 商品详情页精致化、动作区强化与局部冗余清理
 - [2026-04-19-multimodal-front-agent.md](plans/2026-04-19-multimodal-front-agent.md) — 删除腾讯 hosted bot，改成微信小程序前端多模态 Agent + tools + 结构化卡片
 - [2026-04-20-cloudbase-agent-replatform.md](plans/2026-04-20-cloudbase-agent-replatform.md) — 回归 CloudBase 云端 Aita Agent，补齐 server-side tools 与前端可见 tool trace
+- [2026-04-20-ai-loop-order.md](plans/2026-04-20-ai-loop-order.md) — 修正 AI 聊天中 thinking / tool / text 的展示顺序，避免正文假装工具调用
 
 ## design-system.md — UI 规范
 
@@ -73,6 +74,7 @@
 - AI 对话重新回到 CloudBase 云端 `Aita` Agent；小程序前端负责自定义 chat UI、tool trace 和卡片动作。
 - 云端 Agent 源码位于 `cloudrun/`，当前通过 server-side tools 读取 `health_records`、`products`、`user_profile`。
 - 小程序通过 `services/agentService.js` 消费 `bot.sendMessage` 事件流，将真实 `tool-call` / `tool-result` 显示成可见步骤，并由 `services/agentCards.js` 根据真实结果渲染卡片。
+- AI 聊天消息内部按真实事件顺序追加：`thinking -> tool -> thinking -> text -> card`，不再预置空文本块打乱顺序。
 
 ### 测试
 - 运行：`npm install && npm test`

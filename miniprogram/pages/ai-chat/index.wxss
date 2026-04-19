@@ -316,6 +316,27 @@
   border: 1rpx solid rgba(47, 74, 66, 0.08);
 }
 
+.thinking-step {
+  margin-top: 18rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 20rpx;
+  background: rgba(47, 74, 66, 0.05);
+  border-left: 6rpx solid rgba(47, 74, 66, 0.22);
+}
+
+.thinking-step-head {
+  font-size: 22rpx;
+  color: var(--text-3);
+  font-weight: var(--fw-semibold);
+}
+
+.thinking-step-body {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+
 .tool-step-head {
   display: flex;
   align-items: center;

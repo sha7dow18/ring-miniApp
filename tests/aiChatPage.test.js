@@ -33,6 +33,7 @@ beforeEach(() => {
   pageDef = null;
   agentServiceMock = {
     sendToBot: jest.fn(function(opts) {
+      opts.callbacks.onThink('先判断是否需要查真实数据。')
       opts.callbacks.onToolCall({
         toolCallId: 'tool_1',
         name: 'get_health_summary',
@@ -54,6 +55,7 @@ beforeEach(() => {
           highlights: []
         }
       })
+      opts.callbacks.onThink('已拿到摘要，继续筛商品。')
       opts.callbacks.onToolCall({
         toolCallId: 'tool_2',
         name: 'recommend_products',
@@ -131,7 +133,11 @@ describe("ai-chat page", () => {
 
     expect(agentServiceMock.sendToBot).toHaveBeenCalled();
     expect(page.data.messages).toHaveLength(2);
-    expect(page.data.messages[1].parts.some((part) => part.type === 'tool')).toBe(true)
+    expect(page.data.messages[1].parts[0]).toMatchObject({ type: 'thinking' })
+    expect(page.data.messages[1].parts[1]).toMatchObject({ type: 'tool', name: 'get_health_summary' })
+    expect(page.data.messages[1].parts[2]).toMatchObject({ type: 'thinking' })
+    expect(page.data.messages[1].parts[3]).toMatchObject({ type: 'tool', name: 'recommend_products' })
+    expect(page.data.messages[1].parts[4]).toMatchObject({ type: 'text' })
     expect(page.data.messages[1].parts.some((part) => part.type === 'card' && part.cardType === 'product-recommend')).toBe(true)
     expect(sessionServiceMock.updateMessages).toHaveBeenCalledWith(
       "sess_1",
