@@ -103,15 +103,8 @@
 
 ### 卡片
 - `.card` — 白底 + `--r-card` + `--shadow-card` + padding `--sp-4`
-- `.card-tight` — 同上但 padding `--sp-3`
-- `.card-flat` — 无阴影版本
 
 ### 按钮
-- `.btn-primary` — 品牌色胶囊
-- `.btn-ghost` — 边框按钮
-- `.btn-danger` — 红色（销毁操作）
-- `.btn-block` — width 100%
-- `.btn-off` — `opacity: 0.5`（禁用态）
 
 ### 标签 / 胶囊
 - `.pill` — 默认 muted 灰

@@ -11,63 +11,6 @@
   box-shadow: var(--shadow-card);
   margin-bottom: var(--sp-3);
 }
-.card-tight {
-  background: var(--bg-card);
-  border-radius: var(--r-card);
-  padding: var(--sp-3);
-  box-shadow: var(--shadow-card);
-  margin-bottom: var(--sp-3);
-}
-.card-flat {
-  background: var(--bg-card);
-  border-radius: var(--r-card);
-  padding: var(--sp-4);
-  margin-bottom: var(--sp-3);
-}
-
-/* ═══ 按钮 ═══ */
-.btn-primary {
-  background: var(--brand);
-  color: var(--text-inv);
-  border-radius: var(--r-pill);
-  padding: 22rpx var(--sp-5);
-  font-size: var(--fs-body);
-  font-weight: var(--fw-semibold);
-  text-align: center;
-  display: inline-block;
-  line-height: 1.4;
-}
-.btn-ghost {
-  background: var(--bg-card);
-  color: var(--brand);
-  border: 2rpx solid var(--border);
-  border-radius: var(--r-pill);
-  padding: 20rpx var(--sp-5);
-  font-size: var(--fs-body);
-  font-weight: var(--fw-semibold);
-  text-align: center;
-  display: inline-block;
-  line-height: 1.4;
-}
-.btn-danger {
-  background: var(--danger);
-  color: var(--text-inv);
-  border-radius: var(--r-pill);
-  padding: 22rpx var(--sp-5);
-  font-size: var(--fs-body);
-  font-weight: var(--fw-semibold);
-  text-align: center;
-  display: inline-block;
-  line-height: 1.4;
-}
-.btn-block {
-  display: block;
-  width: 100%;
-}
-.btn-off {
-  opacity: 0.5;
-}
-
 /* ═══ 胶囊标签 pill ═══ */
 .pill {
   display: inline-block;

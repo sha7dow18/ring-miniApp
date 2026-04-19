@@ -16,6 +16,9 @@ function makePage(data) {
     setData(patch, cb) {
       this.data = Object.assign({}, this.data, patch);
       if (typeof cb === "function") cb();
+    },
+    applyFilters() {
+      return pageDef.applyFilters.call(this);
     }
   };
 }
@@ -70,5 +73,17 @@ describe("mall page", () => {
 
     expect(page.data.filteredProducts).toEqual([]);
     expect(page.data.emptyStateText).toBe("暂无匹配商品，试试其他关键词");
+  });
+
+  test("filters immediately while typing", () => {
+    productServiceMock.filterProducts.mockReturnValue([]);
+    const page = makePage({
+      products: [{ id: "m1", name: "参萃元气饮", category: "herb", tags: [], desc: "草本", imageName: "mall_product_1.png" }]
+    });
+
+    pageDef.onSearchInput.call(page, { detail: { value: "阿胶" } });
+
+    expect(page.data.searchKeyword).toBe("阿胶");
+    expect(productServiceMock.filterProducts).toHaveBeenCalled();
   });
 });

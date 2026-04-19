@@ -1,51 +1,72 @@
 <view class="mall-page">
-  <view class="hero-text">
-    <view class="t1">获取您的专属</view>
-    <view class="t2">健康补剂</view>
-    <view class="t3">守护您的健康</view>
+  <view class="hero-card">
+    <view class="hero-kicker">Aita 养生商城</view>
+    <view class="hero-title">为当下状态挑选更合适的健康补剂</view>
+    <view class="hero-sub">搜索、筛选和购物入口保持就近可达，让浏览商品更顺手。</view>
+    <view class="hero-meta">
+      <view class="hero-chip">五类轻养方向</view>
+      <view class="hero-chip soft">云端在售商品</view>
+    </view>
   </view>
 
-  <view class="search-row">
-    <view class="search-box">
-      <input class="search-input" placeholder="搜索" value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm" confirm-type="search" />
-      <view class="icon-search" bindtap="onSearchConfirm"></view>
+  <view class="sticky-shell">
+    <view class="search-row">
+      <view class="search-box">
+        <input class="search-input" placeholder="搜索补剂、功效或成分" value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm" confirm-type="search" />
+        <view class="icon-search" bindtap="onSearchConfirm"></view>
+      </view>
+      <view class="cart-btn" bindtap="goCart" hover-class="hover">
+        <image class="cart-ico" src="/assets/icons/shopping-cart.svg" mode="aspectFit" aria-label="购物车"/>
+        <text class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</text>
+      </view>
     </view>
-    <view class="cart-btn" bindtap="goCart" hover-class="hover">
-      <image class="cart-ico" src="/assets/icons/shopping-cart.svg" mode="aspectFit" aria-label="购物车"/>
-      <text class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</text>
+
+    <view class="results-row">
+      <view class="results-title">{{searchKeyword ? '搜索结果' : '精选商品'}}</view>
+      <view class="results-meta" wx:if="{{!catalogLoadFailed}}">{{filteredProducts.length}} 款{{searchKeyword ? '匹配商品' : '在售商品'}}</view>
     </view>
+
+    <scroll-view class="cat-scroll" scroll-x="true" show-scrollbar="false" enhanced="true">
+      <view class="cat-row">
+        <view wx:for="{{categories}}" wx:key="id" class="cat {{activeCategory===item.id?'active':''}}" data-id="{{item.id}}" bindtap="onSwitchCategory">{{item.name}}</view>
+      </view>
+    </scroll-view>
   </view>
 
   <view class="banner-wrap">
-    <image class="banner" src="{{bannerImage}}" mode="aspectFill" />
-  </view>
-
-  <view class="cat-row">
-    <view wx:for="{{categories}}" wx:key="id" class="cat {{activeCategory===item.id?'active':''}}" data-id="{{item.id}}" bindtap="onSwitchCategory">{{item.name}}</view>
+    <image class="banner" src="/assets/mall/mall_banner_main.png" mode="aspectFill" />
+    <view class="banner-overlay">
+      <view class="banner-title">本草轻养推荐</view>
+      <view class="banner-sub">从日常滋补到睡眠调理，一次看全</view>
+    </view>
   </view>
 
   <view class="goods-grid" wx:if="{{filteredProducts.length}}">
     <view class="goods-card" wx:for="{{filteredProducts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
       <view class="goods-image-wrap">
-        <image wx:if="{{item.imageName}}" class="goods-image {{item.imageClass}}" src="{{item.imagePath}}" mode="aspectFit" />
+        <image wx:if="{{item.imageName}}" class="goods-image" src="{{item.imagePath}}" mode="aspectFit" />
         <view wx:else class="goods-image ph" style="background: {{item.color}}"></view>
       </view>
 
       <view class="goods-body">
+        <view class="goods-kicker">{{item.categoryText}}</view>
         <view class="goods-name">{{item.name}}</view>
         <view class="goods-desc">{{item.desc}}</view>
 
         <view class="goods-tags">
-          <text class="goods-tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+          <text class="goods-tag" wx:for="{{item.tagPreview}}" wx:key="*this">{{item}}</text>
         </view>
 
         <view class="goods-foot">
           <view class="goods-price">¥{{item.price}}<text>起</text></view>
-          <view class="buy">立即购买</view>
+          <view class="buy">去看看</view>
         </view>
       </view>
     </view>
   </view>
 
-  <view class="empty" wx:else>{{emptyStateText}}</view>
+  <view class="empty-card" wx:else>
+    <view class="empty-title">{{emptyStateText}}</view>
+    <view class="empty-sub" wx:if="{{!catalogLoadFailed}}">换个关键词或切换分类试试，商品入口会一直保留在顶部。</view>
+  </view>
 </view>

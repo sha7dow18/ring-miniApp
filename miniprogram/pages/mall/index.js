@@ -11,6 +11,20 @@ const CATEGORIES = [
   { id: "tea", name: "茶饮" }
 ];
 
+const CATEGORY_LABELS = CATEGORIES.reduce((acc, item) => {
+  if (item.id !== "all") acc[item.id] = item.name;
+  return acc;
+}, {});
+
+function decorateProducts(products) {
+  return (products || []).map((item) => ({
+    ...item,
+    imagePath: item.image || `/assets/mall/${item.imageName || ""}`,
+    categoryText: CATEGORY_LABELS[item.category] || "精选",
+    tagPreview: (item.tags || []).slice(0, 3)
+  }));
+}
+
 Page({
   data: {
     categories: CATEGORIES,
@@ -20,7 +34,6 @@ Page({
     catalogLoadFailed: false,
     searchKeyword: "",
     emptyStateText: "暂无上架商品",
-    bannerImage: "/assets/mall/mall_banner_main.png",
     hasCategorySelected: false,
     cartCount: 0
   },
@@ -71,11 +84,7 @@ Page({
       category: effectiveCategory
     });
 
-    const mapped = products.map((item) => ({
-      ...item,
-      imagePath: item.image || `/assets/mall/${item.imageName || ""}`,
-      imageClass: `product-image-${item.id || "default"}`
-    }));
+    const mapped = decorateProducts(products);
 
     this.setData({
       filteredProducts: mapped,
@@ -95,7 +104,7 @@ Page({
   },
 
   onSearchInput(e) {
-    this.setData({ searchKeyword: e.detail.value || "" });
+    this.setData({ searchKeyword: e.detail.value || "" }, () => this.applyFilters());
   },
 
   onSearchConfirm() {
