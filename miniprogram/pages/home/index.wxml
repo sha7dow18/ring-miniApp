@@ -98,7 +98,10 @@
       </view>
     </view>
 
-    <view class="other-title">其他数据</view>
+    <view class="section-head">
+      <view class="other-title">其他体征</view>
+      <view class="other-hint">近 5 次波动</view>
+    </view>
     <view class="other-list">
       <view class="other-item" wx:for="{{otherRows}}" wx:key="key" data-key="{{item.key}}" bindtap="onMetricTap" hover-class="hover">
         <view class="icon-holder">
@@ -109,7 +112,9 @@
           <view class="vl">{{item.value}}</view>
         </view>
         <view class="spark-wrap">
-          <image class="spark-img" src="{{item.sparkSvg}}" mode="aspectFit" aria-hidden="true"/>
+          <view class="spark-bars" aria-hidden="true">
+            <view class="spark-bar {{bar.isLast ? 'active' : ''}}" wx:for="{{item.sparkBars}}" wx:for-item="bar" wx:for-index="barIndex" wx:key="barIndex" style="height: {{bar.h}}rpx;"></view>
+          </view>
         </view>
         <text class="chev">›</text>
       </view>

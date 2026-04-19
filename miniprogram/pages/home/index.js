@@ -2,18 +2,13 @@ const mockStore = require("../../utils/mockStore.js");
 const mockBleStream = require("../../utils/mockBleStream.js");
 const healthService = require("../../services/healthService.js");
 const dateStrip = require("../../utils/dateStripUtils.js");
+const homeMetricRows = require("../../utils/homeMetricRows.js");
 
 const STRIP_WINDOW = 30;     // 窗口总天数
 const STRIP_CENTER = Math.floor(STRIP_WINDOW / 2);
 const CHIP_RPX = 84;
 const GAP_RPX = 12;
 const PAD_RPX = 48;          // .home-page 左右 padding 24*2
-
-function stressLabel(score) {
-  if (score <= 35) return "放松";
-  if (score <= 60) return "一般";
-  return "偏高";
-}
 
 function stressBadge(score) {
   if (score <= 35) return "低";
@@ -28,33 +23,6 @@ function sleepGrade(score) {
 }
 
 // 窗口以 selectedDate 为中心。任何选中变化都应该重建 tabs。
-
-// 把一组数值渲染成小折线图 data-URI SVG
-// 返回值可直接塞进 <image src> 使用；在 WXML 里渲染为 124×54rpx 迷你 sparkline
-function sparkSvg(values) {
-  const W = 120, H = 40, PAD = 3;
-  const n = values.length;
-  if (!n) return "";
-  const nums = values.map(Number);
-  const min = Math.min.apply(null, nums);
-  const max = Math.max.apply(null, nums);
-  const span = Math.max(max - min, 1);
-  const pts = nums.map(function(v, i) {
-    const x = PAD + (W - 2 * PAD) * (n === 1 ? 0.5 : i / (n - 1));
-    const y = H - PAD - (H - 2 * PAD) * (v - min) / span;
-    return x.toFixed(1) + "," + y.toFixed(1);
-  });
-  const line = pts.join(" ");
-  const area = PAD + "," + H + " " + line + " " + (W - PAD) + "," + H;
-  const last = pts[pts.length - 1].split(",");
-  const svg =
-    "<svg xmlns='http://www.w3.org/2000/svg' width='" + W + "' height='" + H + "' viewBox='0 0 " + W + " " + H + "' preserveAspectRatio='none'>" +
-    "<polygon points='" + area + "' fill='#4E7E6F' opacity='0.2'/>" +
-    "<polyline points='" + line + "' fill='none' stroke='#2A4A3E' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/>" +
-    "<circle cx='" + last[0] + "' cy='" + last[1] + "' r='2.2' fill='#2A4A3E'/>" +
-    "</svg>";
-  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
-}
 
 // 把云端 health_record 转成首页 UI metrics 形状
 function recordToMetrics(r) {
@@ -146,21 +114,16 @@ Page({
     if (this.unsubscribeBle) this.unsubscribeBle(); this.unsubscribeBle = null;
   },
 
-  // BLE stream 每 3 秒推一次，只更新"活的"数字部分，不重绘整页
+  // BLE stream 每 3 秒推一次，更新数字和右侧微趋势
   applyLiveSnapshot(snap) {
     if (!snap) return;
     const m = this.data.metrics;
     if (!m) return;
-    const steps = (m.baseSteps || 0) + snap.steps;
+    const nextMetrics = homeMetricRows.mergeLiveMetrics(m, snap);
+    nextMetrics.stressTag = stressBadge(nextMetrics.stress);
     this.setData({
-      "metrics.heartRate": snap.hr_resting,
-      "metrics.hrv": snap.hrv,
-      "metrics.spo2": snap.spo2,
-      "metrics.stress": snap.stress,
-      "metrics.stressTag": stressBadge(snap.stress),
-      "metrics.temperature": snap.body_temp,
-      "metrics.stepsPct": Math.min(100, Math.round(steps / (m.stepGoal || 6000) * 100)),
-      "metrics.steps": steps
+      metrics: nextMetrics,
+      otherRows: homeMetricRows.buildOtherRows(nextMetrics)
     });
   },
 
@@ -233,32 +196,23 @@ Page({
     const startH = Math.floor(totalStart / 60);
     const startM = totalStart % 60;
     const pad2 = (n) => (n < 10 ? `0${n}` : `${n}`);
+    const nextMetrics = {
+      ...metrics,
+      stressTag: stressBadge(metrics.stress),
+      stepGoal,
+      stepsPct: Math.min(100, Math.round(metrics.steps / stepGoal * 100)),
+      baseSteps: metrics.steps,
+      sleepGrade: grade,
+      sleepGradeCls: grade === "优" ? "good" : (grade === "良" ? "ok" : "low"),
+      sleepHours,
+      sleepMins,
+      sleepRangeText: `${pad2(startH)}:${pad2(startM)} → ${pad2(wakeH)}:${pad2(wakeM)}`
+    };
     this.setData({
-      metrics: {
-        ...metrics,
-        stressTag: stressBadge(metrics.stress),
-        stepGoal,
-        stepsPct: Math.min(100, Math.round(metrics.steps / stepGoal * 100)),
-        baseSteps: metrics.steps,
-        sleepGrade: grade,
-        sleepGradeCls: grade === "优" ? "good" : (grade === "良" ? "ok" : "low"),
-        sleepHours,
-        sleepMins,
-        sleepRangeText: `${pad2(startH)}:${pad2(startM)} → ${pad2(wakeH)}:${pad2(wakeM)}`
-      },
+      metrics: nextMetrics,
       bpTrendTime: metrics.bpTrend.map((i) => i.t),
-      otherRows: this.buildRows(metrics)
+      otherRows: homeMetricRows.buildOtherRows(nextMetrics)
     }, () => this.drawBpChart(metrics.bpTrend));
-  },
-
-  buildRows(metrics) {
-    return [
-      { key: "temp",   iconName: "thermometer", label: "体温",       value: `${metrics.temperature} ℃`,                             sparkSvg: sparkSvg([36.5, 36.6, 36.7, 36.6, metrics.temperature]) },
-      { key: "hr",     iconName: "heart-pulse", label: "心率",       value: `${metrics.heartRate} 次/分`,                            sparkSvg: sparkSvg([72, 83, 76, metrics.heartRate - 1, metrics.heartRate]) },
-      { key: "hrv",    iconName: "activity",    label: "心率变异性", value: `${metrics.hrv} ms`,                                     sparkSvg: sparkSvg([42, 48, 44, 51, metrics.hrv]) },
-      { key: "spo2",   iconName: "droplet",     label: "血氧",       value: `${metrics.spo2} %`,                                     sparkSvg: sparkSvg([97, 96, 98, 97, metrics.spo2]) },
-      { key: "stress", iconName: "wind",        label: "压力",       value: `${metrics.stress} ${stressLabel(metrics.stress)}`,      sparkSvg: sparkSvg([45, 41, 38, 44, metrics.stress]) }
-    ];
   },
 
   drawBpChart(bpTrend) {

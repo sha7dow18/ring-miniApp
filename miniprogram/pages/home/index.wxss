@@ -171,7 +171,15 @@
   transition: width 0.3s ease;
 }
 
-.other-title { margin: 14rpx 4rpx 12rpx; color: var(--text-1); font-size: var(--fs-h2); font-weight: var(--fw-bold); }
+.section-head {
+  margin: 14rpx 4rpx 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+.other-title { color: var(--text-1); font-size: var(--fs-h2); font-weight: var(--fw-bold); }
+.other-hint { color: var(--text-2); font-size: var(--fs-caption); }
 .other-list { background: transparent; box-shadow: none; padding: 0; margin-bottom: 12rpx; display: flex; flex-direction: column; gap: 14rpx; }
 
 /* 国风 pill — 暖米渐变底 + 深绿实心圆图标 */
@@ -193,12 +201,29 @@
 }
 .icon-holder .icon { width: 44rpx; height: 44rpx; }
 
-.middle { flex: 0 0 auto; min-width: 150rpx; }
+.middle { flex: 0 0 auto; min-width: 164rpx; }
 .nm { color: var(--text-2); font-size: var(--fs-caption); }
 .vl { color: var(--text-1); font-size: var(--fs-body); font-weight: var(--fw-bold); margin-top: 2rpx; }
 
 .spark-wrap { flex: 1; display: flex; justify-content: flex-end; align-items: center; }
-.spark-img { width: 140rpx; height: 54rpx; display: block; }
+.spark-bars {
+  height: 58rpx;
+  min-width: 150rpx;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 8rpx;
+}
+.spark-bar {
+  width: 12rpx;
+  border-radius: 999rpx;
+  background: rgba(63, 107, 94, 0.22);
+}
+.spark-bar.active {
+  width: 14rpx;
+  background: linear-gradient(180deg, var(--brand-light), var(--brand-dark));
+  box-shadow: 0 3rpx 8rpx rgba(42, 74, 62, 0.16);
+}
 
 /* iOS 式 chevron，替代原深色实心圆按钮 */
 .chev {
