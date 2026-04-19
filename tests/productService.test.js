@@ -3,9 +3,11 @@ function makeDbMock(impl) {
     collection: jest.fn(function() {
       var q = { _where: null, _limit: null };
       var chain = {
+        count: function() { return impl.count ? impl.count(q) : Promise.resolve({ total: 0 }); },
         where: function(w) { q._where = w; return chain; },
         limit: function(n) { q._limit = n; return chain; },
-        get: function() { return impl.get(q); }
+        get: function() { return impl.get ? impl.get(q) : Promise.resolve({ data: [] }); },
+        add: function(payload) { return impl.add ? impl.add(payload) : Promise.resolve({ _id: "seed" }); }
       };
       return chain;
     })
@@ -73,6 +75,48 @@ describe("productService.listProducts (cloud only, no fallback)", () => {
     const list = await ps.listProducts({ category: "sleep" });
     expect(list.every((p) => p.category === "sleep")).toBe(true);
   });
+
+  test("self-heals empty catalog by seeding and requerying", async () => {
+    var seeded = [];
+    const callFunction = jest.fn(function() {
+      seeded = [
+        { id: "m1", name: "参萃元气饮", category: "herb", tags: [], desc: "草本" }
+      ];
+      return Promise.resolve({ result: { seeded: seeded.length } });
+    });
+    global.wx = { cloud: { database: () => makeDbMock({
+      get: function(q) {
+        if (q._where && q._where.id) {
+          return Promise.resolve({ data: seeded.filter(function(item) { return item.id === q._where.id; }) });
+        }
+        return Promise.resolve({ data: seeded.slice() });
+      }
+    }), callFunction: callFunction } };
+    const ps = require("../miniprogram/services/productService.js");
+    const list = await ps.listProducts();
+    expect(list.length).toBeGreaterThan(0);
+    expect(callFunction).toHaveBeenCalledWith({ name: "ensureProducts" });
+  });
+});
+
+describe("productService.ensureProducts", () => {
+  test("seeds products when catalog is empty", async () => {
+    const callFunction = jest.fn(function() { return Promise.resolve({ result: { seeded: 4 } }); });
+    global.wx = { cloud: { database: () => makeDbMock({}), callFunction: callFunction } };
+    const ps = require("../miniprogram/services/productService.js");
+    const seeded = await ps.ensureProducts();
+
+    expect(seeded).toBe(4);
+    expect(callFunction).toHaveBeenCalledWith({ name: "ensureProducts" });
+  });
+
+  test("returns zero when cloud function is unavailable", async () => {
+    global.wx = { cloud: { database: () => makeDbMock({}) } };
+    const ps = require("../miniprogram/services/productService.js");
+    const seeded = await ps.ensureProducts();
+
+    expect(seeded).toBe(0);
+  });
 });
 
 describe("productService.getProduct (cloud only)", () => {
@@ -93,6 +137,26 @@ describe("productService.getProduct (cloud only)", () => {
     global.wx = { cloud: { database: () => makeDbMock({ get: () => Promise.reject(new Error("net")) }) } };
     const ps = require("../miniprogram/services/productService.js");
     expect(await ps.getProduct("m1")).toBeNull();
+  });
+
+  test("self-heals missing catalog before reading single product", async () => {
+    var seeded = [];
+    const callFunction = jest.fn(function() {
+      seeded = [{ id: "m1", name: "参萃元气饮" }];
+      return Promise.resolve({ result: { seeded: 1 } });
+    });
+    global.wx = { cloud: { database: () => makeDbMock({
+      get: function(q) {
+        if (q._where && q._where.id) {
+          return Promise.resolve({ data: seeded.filter(function(item) { return item.id === q._where.id; }) });
+        }
+        return Promise.resolve({ data: seeded.slice() });
+      }
+    }), callFunction: callFunction } };
+    const ps = require("../miniprogram/services/productService.js");
+    const product = await ps.getProduct("m1");
+    expect(product && product.id).toBe("m1");
+    expect(callFunction).toHaveBeenCalledWith({ name: "ensureProducts" });
   });
 
   test("empty id returns null", async () => {

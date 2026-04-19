@@ -47,5 +47,5 @@
     </view>
   </view>
 
-  <view class="empty" wx:else>暂无匹配商品，试试其他关键词</view>
+  <view class="empty" wx:else>{{emptyStateText}}</view>
 </view>

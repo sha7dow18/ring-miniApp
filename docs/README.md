@@ -15,6 +15,7 @@
 - [2026-04-18-ui-polish.md](plans/2026-04-18-ui-polish.md) — 设计系统统一（tokens + 公共类 + 14 页迁移）
 - [2026-04-18-svg-icons.md](plans/2026-04-18-svg-icons.md) — emoji → SVG 图标 + 空态插画 + AI 听诊器 tab + tabBar 贴底重构 + 日期条点击居中
 - [2026-04-19-home-other-data-polish.md](plans/2026-04-19-home-other-data-polish.md) — 首页其他数据趋势改成原生渲染，并做一轮小幅交互润色
+- [2026-04-19-mall-closure.md](plans/2026-04-19-mall-closure.md) — 商城默认补种云商品、修正空态语义，并清理首页趋势迁移遗留死代码
 
 ## design-system.md — UI 规范
 
@@ -48,7 +49,7 @@
 | `services/sessionService.js` | 聊天会话 CRUD + 关键词打标 |
 | `services/profileService.js` | 用户画像 CRUD + 头像上传 |
 | `services/aiService.js` | wx.cloud.extend.AI 封装 + parts → OpenAI 格式转换 |
-| `services/productService.js` | 商品目录读取，云空时回退 mockStore；`filterProducts` 纯函数 |
+| `services/productService.js` | 商品目录读取与空库补种；客户端通过云函数触发 `products` 补种，商品列表/详情始终走云集合；`filterProducts` 纯函数 |
 | `services/cartService.js` | 购物车 CRUD；addToCart upsert；`cartTotal` / `cartCount` 纯函数 |
 | `services/orderService.js` | 订单 CRUD + 状态机（pending/paid/shipping/done/canceled）；`validateOrder` / `generateOrderNo` 纯函数 |
 

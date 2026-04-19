@@ -45,7 +45,9 @@ App({
   ensureCloudData() {
     var healthService = require("./services/healthService.js");
     var profileService = require("./services/profileService.js");
+    var productService = require("./services/productService.js");
     healthService.ensureTodayRecord().catch(function() {});
     profileService.ensureProfile().catch(function() {});
+    productService.ensureProducts().catch(function() {});
   }
 });

@@ -17,7 +17,9 @@ Page({
     activeCategory: "all",
     products: [],
     filteredProducts: [],
+    catalogReady: true,
     searchKeyword: "",
+    emptyStateText: "暂无上架商品",
     bannerImage: "/assets/mall/mall_banner_main.png",
     hasCategorySelected: false,
     cartCount: 0
@@ -34,7 +36,7 @@ Page({
 
   async loadProducts() {
     const products = await productService.listProducts();
-    this.setData({ products }, () => this.applyFilters());
+    this.setData({ products, catalogReady: products.length > 0 }, () => this.applyFilters());
   },
 
   async refreshCartCount() {
@@ -58,7 +60,12 @@ Page({
       imageClass: `product-image-${item.id || "default"}`
     }));
 
-    this.setData({ filteredProducts: mapped });
+    this.setData({
+      filteredProducts: mapped,
+      emptyStateText: !this.data.catalogReady
+        ? "商品目录初始化失败，请稍后再试"
+        : (keyword ? "暂无匹配商品，试试其他关键词" : "暂无上架商品")
+    });
   },
 
   onSwitchCategory(e) {
