@@ -165,12 +165,12 @@ describe("ai-chat page", () => {
     await Promise.resolve();
 
     pageDef.onMsgsTouchStart.call(page);
-    pageDef.onMsgsScroll.call(page);
+    pageDef.onMsgsTouchMove.call(page);
     capturedCallbacks.onContent('第一段');
     await sending;
 
     expect(page.data.followStream).toBe(false);
-    expect(page.data.scrollToId).toBe('msg-assistant_1');
+    expect(page.data.scrollToId).toBe('');
   });
 
   test("onCardAction navigates to mall detail for product cards", () => {

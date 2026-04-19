@@ -43,9 +43,10 @@
     class="msgs"
     scroll-y="true"
     scroll-into-view="{{scrollToId}}"
-    scroll-with-animation
+    scroll-anchoring="{{true}}"
     bindscroll="onMsgsScroll"
     bindtouchstart="onMsgsTouchStart"
+    bindtouchmove="onMsgsTouchMove"
     bindtouchend="onMsgsTouchEnd"
     bindtouchcancel="onMsgsTouchEnd"
     enhanced

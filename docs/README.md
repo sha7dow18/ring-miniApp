@@ -77,6 +77,7 @@
 - 小程序通过 `services/agentService.js` 消费 `bot.sendMessage` 事件流，将真实 `tool-call` / `tool-result` 显示成可见步骤，并由 `services/agentCards.js` 根据真实结果渲染卡片。
 - AI 聊天消息内部按真实事件顺序追加：`thinking -> tool -> thinking -> text -> card`，不再预置空文本块打乱顺序。
 - 流式输出默认自动跟随到底部；如果用户在生成过程中手动滚动消息区，后续 chunk 不再强制把视图拉回底部。
+- 手动滑动时会立即关闭自动跟随并清空 `scrollToId`，避免 `scroll-into-view` 在流式更新期间持续抢占滚动位置。
 
 ### 测试
 - 运行：`npm install && npm test`

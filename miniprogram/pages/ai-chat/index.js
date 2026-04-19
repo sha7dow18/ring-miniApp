@@ -217,13 +217,19 @@ Page({
     this._messageTouching = true;
   },
 
+  onMsgsTouchMove: function() {
+    if (this.data.isSending && this.data.followStream) {
+      this.setData({ followStream: false, scrollToId: "" });
+    }
+  },
+
   onMsgsTouchEnd: function() {
     this._messageTouching = false;
   },
 
   onMsgsScroll: function() {
     if (this.data.isSending && this._messageTouching && this.data.followStream) {
-      this.setData({ followStream: false });
+      this.setData({ followStream: false, scrollToId: "" });
     }
   },
 
