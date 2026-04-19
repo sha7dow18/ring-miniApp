@@ -1,0 +1,31 @@
+import 'dotenv/config';
+import { BotCore, CreateConversationOutput, DeleteConversationInput, DeleteConversationOutput, GetBotInfoOutput, GetChatRecordInput, GetChatRecordOutput, GetConversationInput, GetConversationOutput, GetRecommendQuestionsInput, GetTextToSpeechResultInput, GetTextToSpeechResultOutput, IBot, SendMessageInput, SpeechToTextInput, SpeechToTextOutput, TextToSpeechInput, TextToSpeechOutput, UpdateConversationInput, UpdateConversationOutput, WeChatTextOutput, WxSendMessageInput } from '@cloudbase/aiagent-framework';
+import { IBotConfig } from './bot_config';
+import { ChatHistoryService } from './chat_history.service';
+import { MainChatService } from './chat_main.service';
+import { RecommendQuestionsService } from './chat_recommend_questions.service';
+import { ChatToolService } from './chat_tool.service';
+import { WxChatService } from './chat_wx.service';
+import { ConversationRelationService } from './conversation_relation.service';
+import { TcbContext } from './tcb';
+export declare class MyBot extends BotCore implements IBot {
+    tcbAgentService: MainChatService;
+    recommendQuestionsService: RecommendQuestionsService;
+    chatHistoryService: ChatHistoryService;
+    chatToolService: ChatToolService;
+    conversationRelationService: ConversationRelationService;
+    wxAgentService: WxChatService;
+    constructor(context: TcbContext, botConfig: IBotConfig);
+    sendMessage(input: SendMessageInput): Promise<void>;
+    wxSendMessage(input: WxSendMessageInput): Promise<WeChatTextOutput>;
+    getRecommendQuestions({ msg, history }: GetRecommendQuestionsInput): Promise<void>;
+    getChatRecords(input: GetChatRecordInput): Promise<GetChatRecordOutput>;
+    getBotInfo(): Promise<GetBotInfoOutput>;
+    speechToText(input: SpeechToTextInput): Promise<SpeechToTextOutput>;
+    textToSpeech(input: TextToSpeechInput): Promise<TextToSpeechOutput>;
+    getTextToSpeechResult(input: GetTextToSpeechResultInput): Promise<GetTextToSpeechResultOutput>;
+    createConversation(): Promise<CreateConversationOutput>;
+    getConversation(input: GetConversationInput): Promise<GetConversationOutput>;
+    updateConversation(input: UpdateConversationInput): Promise<UpdateConversationOutput>;
+    deleteConversation(input: DeleteConversationInput): Promise<DeleteConversationOutput>;
+}

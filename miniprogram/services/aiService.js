@@ -50,8 +50,8 @@ function buildSystemPrompt(healthContext) {
  * @param {Array} messages
  * @param {string} [healthContext] 注入到 system prompt
  */
-function toApiMessages(messages, healthContext) {
-  var out = [{ role: "system", content: buildSystemPrompt(healthContext) }];
+function toApiMessages(messages, healthContext, systemPrompt) {
+  var out = [{ role: "system", content: systemPrompt || buildSystemPrompt(healthContext) }];
   (messages || []).forEach(function(m) {
     if (!m.parts || !m.parts.length) return;
     var role = m.role === "assistant" ? "assistant" : "user";
@@ -109,6 +109,27 @@ async function streamVision(apiMessages, onChunk) {
   return full;
 }
 
+async function streamConversation(opts) {
+  checkAI();
+  var model = wx.cloud.extend.AI.createModel(opts.provider);
+  var req = {
+    data: {
+      model: opts.model,
+      messages: opts.messages
+    }
+  };
+  if (opts.tools) req.tools = opts.tools;
+  var res = await model.streamText(req);
+  var full = "";
+  for await (var chunk of res.textStream) {
+    var piece = typeof chunk === "string" ? chunk : "";
+    if (!piece) continue;
+    full += piece;
+    if (typeof opts.onChunk === "function") opts.onChunk(piece);
+  }
+  return full;
+}
+
 /**
  * 发送消息（自动路由文字/图片模型）
  * @param {Array} history parts-based 历史
@@ -162,6 +183,7 @@ module.exports = {
   BASE_SYSTEM_PROMPT: BASE_SYSTEM_PROMPT,
   TONGUE_PROMPT: TONGUE_PROMPT,
   // cloud
+  streamConversation: streamConversation,
   sendMessage: sendMessage,
   uploadImage: uploadImage
 };

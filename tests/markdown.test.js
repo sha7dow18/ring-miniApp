@@ -93,4 +93,23 @@ describe("parseBlocks", () => {
     const hasNewline = blocks[0].runs.some(r => r.c === "\n");
     expect(hasNewline).toBe(true);
   });
+
+  test("horizontal rule --- becomes hr block", () => {
+    const blocks = md.parseBlocks("before\n\n---\n\nafter");
+    expect(blocks.map(b => b.type)).toEqual(["p", "hr", "p"]);
+  });
+
+  test("markdown table parses header and rows", () => {
+    const blocks = md.parseBlocks([
+      "| 商品 | 价格 |",
+      "| --- | --- |",
+      "| 枸杞 | 128 |",
+      "| 白茶 | 168 |"
+    ].join("\n"));
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].type).toBe("table");
+    expect(blocks[0].headers.map(cell => cell.raw)).toEqual(["商品", "价格"]);
+    expect(blocks[0].rows).toHaveLength(2);
+    expect(blocks[0].rows[0][0].raw).toBe("枸杞");
+  });
 });

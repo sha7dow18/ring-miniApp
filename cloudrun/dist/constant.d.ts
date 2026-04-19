@@ -1,0 +1,14 @@
+export declare const TRIGGER_SRC_TCB = "TCB";
+export declare const BOT_TYPE_TEXT = "text";
+export declare const BOT_ROLE_USER = "user";
+export declare const BOT_ROLE_ASSISTANT = "assistant";
+export declare const HISTORY_PAGE_SIZE = 10;
+export declare const CHAT_HISTORY_DATA_SOURCE = "ai_bot_chat_history_5hobd2b";
+export declare const CONVERSATION_RELATION_DATA_SOURCE = "conversation_relation_5hobd2b";
+export declare const DEFAULT_CONVERSATION_TITLE = "\u65B0\u4F1A\u8BDD";
+export declare const TRIGGER_SRC_WX_SUBSCRIPTION = "WXSubscription";
+export declare const TRIGGER_SRC_WX_SERVICE = "WXService";
+export declare const TRIGGER_SRC_WX_MINI_APP = "WXMiniapp";
+export declare const TRIGGER_SRC_WX_CUSTOM_SERVICE = "WXCustomerService";
+export declare const MSG_TYPE_TEXT = "text";
+export declare const MSG_TYPE_VOICE = "voice";

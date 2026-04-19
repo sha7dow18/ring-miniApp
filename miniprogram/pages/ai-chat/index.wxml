@@ -91,7 +91,52 @@
             data-url="{{p.url || p.tempPath}}"
           />
           <!-- markdown 渲染：blocks → 嵌套 wx:for；无 blocks（初始空）降级纯文本 -->
-          <view wx:if="{{p.type === 'text' && p.blocks && p.blocks.length}}" class="md">
+          <view wx:elif="{{p.type === 'tool'}}" class="tool-step tool-{{p.status}}">
+            <view class="tool-step-head">
+              <view class="tool-step-label">{{p.label || p.name}}</view>
+              <view class="tool-step-state">{{p.status === 'completed' ? '已完成' : '执行中'}}</view>
+            </view>
+            <view class="tool-step-summary">{{p.summary || '工具执行中…'}}</view>
+          </view>
+          <view wx:elif="{{p.type === 'card' && p.cardType === 'health-summary'}}" class="agent-card health-card">
+            <view class="card-head">
+              <view class="card-title">{{p.title}}</view>
+              <view class="card-sub">{{p.subtitle}}</view>
+            </view>
+            <view class="health-metrics">
+              <view class="health-metric" wx:for="{{p.metrics}}" wx:key="label">
+                <view class="health-label">{{item.label}}</view>
+                <view class="health-value tone-{{item.tone}}">{{item.value}}</view>
+              </view>
+            </view>
+          </view>
+          <view wx:elif="{{p.type === 'card' && p.cardType === 'product-recommend'}}" class="agent-card product-card">
+            <view class="card-head">
+              <view class="card-title">{{p.title}}</view>
+              <view class="card-sub">{{p.subtitle}}</view>
+            </view>
+            <view class="product-list">
+              <view class="product-item" wx:for="{{p.items}}" wx:key="productId" bindtap="onCardAction" data-type="{{item.primaryAction.type}}" data-product-id="{{item.primaryAction.productId}}" hover-class="hover">
+                <image class="product-cover" src="{{item.imagePath}}" mode="aspectFill"/>
+                <view class="product-body">
+                  <view class="product-top">
+                    <text class="product-name">{{item.name}}</text>
+                    <text class="product-price">￥{{item.price}}</text>
+                  </view>
+                  <view class="product-meta">
+                    <text class="product-category">{{item.categoryText}}</text>
+                    <text class="product-reason">{{item.reason}}</text>
+                  </view>
+                  <view class="product-actions">
+                    <view class="product-action action-ghost" bindtap="onCardAction" catchtap="onCardAction" data-type="{{item.primaryAction.type}}" data-product-id="{{item.primaryAction.productId}}">查看详情</view>
+                    <view class="product-action action-solid" bindtap="onCardAction" catchtap="onCardAction" data-type="{{item.secondaryAction.type}}" data-product-id="{{item.secondaryAction.productId}}">加入购物车</view>
+                  </view>
+                </view>
+              </view>
+              <view class="product-footer-action" bindtap="onCardAction" data-type="{{p.footerAction.type}}" hover-class="hover">去商城查看更多</view>
+            </view>
+          </view>
+          <view wx:elif="{{p.type === 'text' && p.blocks && p.blocks.length}}" class="md">
             <block wx:for="{{p.blocks}}" wx:for-item="blk" wx:for-index="bi" wx:key="bi">
               <view wx:if="{{blk.type === 'p'}}" class="md-p">
                 <text wx:for="{{blk.runs}}" wx:for-item="r" wx:for-index="ri" wx:key="ri" class="md-{{r.t}}" selectable="true">{{r.c}}</text>
@@ -115,6 +160,21 @@
                   </view>
                 </view>
               </view>
+              <view wx:elif="{{blk.type === 'hr'}}" class="md-hr"></view>
+              <scroll-view wx:elif="{{blk.type === 'table'}}" class="md-table-wrap" scroll-x="true" show-scrollbar="false">
+                <view class="md-table">
+                  <view class="md-tr md-tr-head">
+                    <view class="md-th" wx:for="{{blk.headers}}" wx:for-item="cell" wx:key="raw">
+                      <text wx:for="{{cell.runs}}" wx:for-item="r" wx:for-index="ri" wx:key="ri" class="md-{{r.t}}">{{r.c}}</text>
+                    </view>
+                  </view>
+                  <view class="md-tr" wx:for="{{blk.rows}}" wx:for-item="row" wx:for-index="ri" wx:key="ri">
+                    <view class="md-td" wx:for="{{row}}" wx:for-item="cell" wx:key="raw">
+                      <text wx:for="{{cell.runs}}" wx:for-item="r" wx:for-index="rj" wx:key="rj" class="md-{{r.t}}">{{r.c}}</text>
+                    </view>
+                  </view>
+                </view>
+              </scroll-view>
             </block>
           </view>
           <text wx:elif="{{p.type === 'text' && p.content}}" class="ai-txt" selectable="true">{{p.content}}</text>

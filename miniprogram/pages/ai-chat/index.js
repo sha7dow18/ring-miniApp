@@ -1,7 +1,8 @@
 var aiService = require("../../services/aiService.js");
 var agentService = require("../../services/agentService.js");
+var cartService = require("../../services/cartService.js");
+var agentCards = require("../../services/agentCards.js");
 var sessionService = require("../../services/sessionService.js");
-var healthService = require("../../services/healthService.js");
 var markdown = require("../../utils/markdown.js");
 var timeago = require("../../utils/timeago.js");
 
@@ -36,6 +37,92 @@ function withBlocks(msg) {
     return p;
   });
   return { id: msg.id, role: msg.role, ts: msg.ts, parts: parts };
+}
+
+function serializePart(part) {
+  if (part.type === "text") return { type: "text", content: part.content || "" };
+  if (part.type === "image") return { type: "image", fileID: part.fileID || "", url: part.url || "" };
+  if (part.type === "tool") return {
+    type: "tool",
+    toolCallId: part.toolCallId || "",
+    name: part.name || "",
+    args: part.args || {},
+    status: part.status || "pending",
+    result: part.result,
+    summary: part.summary || ""
+  };
+  if (part.type === "card") return Object.assign({}, part);
+  return null;
+}
+
+function toBotHistory(messages) {
+  return (messages || []).map(function(msg) {
+    var text = (msg.parts || []).filter(function(part) {
+      return part.type === "text" && part.content;
+    }).map(function(part) {
+      return part.content;
+    }).join("\n").trim();
+    if (!text) return null;
+    return {
+      role: msg.role === "assistant" ? "assistant" : "user",
+      content: text
+    };
+  }).filter(Boolean).slice(-12);
+}
+
+function toolLabel(name) {
+  var map = {
+    get_health_summary: "健康摘要",
+    get_user_profile: "用户画像",
+    search_products: "商品检索",
+    get_product_detail: "商品详情",
+    recommend_products: "商品推荐"
+  };
+  return map[name] || name || "工具调用";
+}
+
+function makeToolPart(payload) {
+  return {
+    type: "tool",
+    toolCallId: payload.toolCallId,
+    name: payload.name,
+    args: payload.args || {},
+    status: payload.status || "executing",
+    summary: payload.summary || "正在执行…",
+    label: toolLabel(payload.name),
+    result: payload.result
+  };
+}
+
+function upsertToolPart(parts, payload) {
+  var updated = (parts || []).map(function(part) {
+    if (part.type !== "tool" || part.toolCallId !== payload.toolCallId) return part;
+    return Object.assign({}, part, makeToolPart(payload));
+  });
+  var exists = updated.some(function(part) {
+    return part.type === "tool" && part.toolCallId === payload.toolCallId;
+  });
+  return exists ? updated : updated.concat(makeToolPart(payload));
+}
+
+function buildCardsFromParts(parts) {
+  var runs = (parts || []).filter(function(part) {
+    return part.type === "tool" && part.status === "completed" && part.result;
+  }).map(function(part) {
+    return { name: part.name, result: part.result };
+  });
+  return agentCards.cardsFromToolRuns(runs, { maxProductCards: 3 });
+}
+
+function serializeMessages(messages) {
+  return (messages || []).map(function(msg) {
+    return {
+      id: msg.id,
+      role: msg.role,
+      ts: msg.ts,
+      parts: (msg.parts || []).map(serializePart).filter(Boolean)
+    };
+  });
 }
 
 var QUICK_QUESTIONS = [
@@ -153,13 +240,6 @@ Page({
         self.setData({ isUploading: false });
       }
 
-      // 最近 3 天健康数据注入 AI system prompt
-      var healthCtx = "";
-      try {
-        var recent = await healthService.getRecent(3);
-        healthCtx = healthService.buildAiContext(recent);
-      } catch (_) {}
-
       var parts = [];
       if (imgPart) parts.push(imgPart);
       if (text) parts.push({ type: "text", content: text });
@@ -187,32 +267,44 @@ Page({
         self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
       };
 
-      // 带图 → 视觉模型（不走 bot，因为 bot 目前配置为文字 agent）
-      // 纯文字 → 官方 bot.sendMessage，由 Tencent hosted Agent 跑 ReAct + 工具
-      if (imgPart) {
-        var historyForAI = self.data.messages.filter(function(m) { return m.id !== aiMsgId; });
-        await aiService.sendMessage(historyForAI, onChunk, healthCtx);
-      } else {
-        await agentService.sendToBot({
-          msg: text,
-          threadId: self.data.sessionId,   // 用我们自己的 sessionId 作为 bot 的 thread
-          callbacks: {
-            onContent: onChunk,
-            onThink: function(think) { console.log("[bot-think]", think); },
-            onUnknown: function(evt) { console.warn("[bot-unknown]", evt); }
-          }
+      var onToolCall = function(toolCall) {
+        var updated = self.data.messages.map(function(m) {
+          if (m.id !== aiMsgId) return m;
+          return withBlocks({ id: m.id, role: m.role, ts: m.ts, parts: upsertToolPart(m.parts, toolCall) });
         });
-      }
+        self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
+      };
 
-      var toSave = self.data.messages.map(function(m) {
-        return {
-          id: m.id, role: m.role, ts: m.ts,
-          parts: m.parts.map(function(p) {
-            if (p.type === "image") return { type: "image", fileID: p.fileID || "", url: p.url || "" };
-            return { type: "text", content: p.content || "" };
-          })
-        };
+      var onToolResult = function(toolResult) {
+        var updated = self.data.messages.map(function(m) {
+          if (m.id !== aiMsgId) return m;
+          return withBlocks({ id: m.id, role: m.role, ts: m.ts, parts: upsertToolPart(m.parts, toolResult) });
+        });
+        self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
+      };
+
+      var result = await agentService.sendToBot({
+        msg: text || "请帮我分析这张图片",
+        files: imgPart && imgPart.fileID ? [imgPart.fileID] : [],
+        history: toBotHistory(self.data.messages.filter(function(m) { return m.id !== aiMsgId; })),
+        callbacks: {
+          onContent: onChunk,
+          onThink: function() {},
+          onToolCall: onToolCall,
+          onToolResult: onToolResult,
+          onUnknown: function(evt) { console.log("[agent-event]", evt); }
+        }
       });
+
+      var finalized = self.data.messages.map(function(m) {
+        if (m.id !== aiMsgId) return m;
+        var withoutCards = (m.parts || []).filter(function(part) { return part.type !== "card"; });
+        var cards = buildCardsFromParts(withoutCards);
+        return withBlocks({ id: m.id, role: m.role, ts: m.ts, parts: withoutCards.concat(cards) });
+      });
+      self.setData({ messages: finalized, scrollToId: "msg-" + aiMsgId });
+
+      var toSave = serializeMessages(self.data.messages);
       sessionService.updateMessages(self.data.sessionId, toSave);
 
     } catch (err) {
@@ -236,6 +328,24 @@ Page({
   previewAttachment: function() {
     var att = this.data.attachment;
     if (att && att.tempPath) wx.previewImage({ current: att.tempPath, urls: [att.tempPath] });
+  },
+
+  onCardAction: function(e) {
+    var type = e.currentTarget.dataset.type;
+    var productId = e.currentTarget.dataset.productId;
+    if (type === "open-product" && productId) {
+      wx.navigateTo({ url: "/pages/mall-detail/index?id=" + productId });
+      return;
+    }
+    if (type === "open-mall") {
+      wx.switchTab({ url: "/pages/mall/index" });
+      return;
+    }
+    if (type === "add-cart" && productId) {
+      return cartService.addToCart(productId, 1).then(function(res) {
+        wx.showToast({ title: res ? "已加入购物车" : "加入失败", icon: res ? "success" : "none" });
+      });
+    }
   },
 
   toggleHistory: async function() {

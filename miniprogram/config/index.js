@@ -10,12 +10,20 @@ module.exports = {
   },
 
   ai: {
-    botId: "ibot-aita-uku7y1",    // 腾讯云开发 Agent（Aita 健康助手）
-    textProvider: "deepseek",     // bot 不可用时的降级直连
-    textModel: "deepseek-v3.2",
+    botId: 'ibot-aita-uku7y1',
+    textProvider: "hunyuan-exp",
+    textModel: "hunyuan-2.0-instruct-20251111",
     visionProvider: "hunyuan-exp",
     visionModel: "hunyuan-vision",
-    historyRecentDays: 3
+    historyRecentDays: 7,
+    maxToolSteps: 4,
+    maxRecommendItems: 3,
+    rankingWeights: {
+      category: 4,
+      concern: 2,
+      affordable: 1,
+      inStock: 1
+    }
   },
 
   // 流式蓝牙 mock

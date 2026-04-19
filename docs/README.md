@@ -20,6 +20,8 @@
 - [2026-04-19-direct-products-read.md](plans/2026-04-19-direct-products-read.md) — 删除商品目录云函数，改成前端直读 `products` 集合
 - [2026-04-19-mall-ui-polish.md](plans/2026-04-19-mall-ui-polish.md) — 商城首屏重排、sticky 搜索筛选和商品卡片润色
 - [2026-04-19-mall-detail-polish.md](plans/2026-04-19-mall-detail-polish.md) — 商品详情页精致化、动作区强化与局部冗余清理
+- [2026-04-19-multimodal-front-agent.md](plans/2026-04-19-multimodal-front-agent.md) — 删除腾讯 hosted bot，改成微信小程序前端多模态 Agent + tools + 结构化卡片
+- [2026-04-20-cloudbase-agent-replatform.md](plans/2026-04-20-cloudbase-agent-replatform.md) — 回归 CloudBase 云端 Aita Agent，补齐 server-side tools 与前端可见 tool trace
 
 ## design-system.md — UI 规范
 
@@ -52,7 +54,9 @@
 | `services/healthService.js` | 云持久 + 每日 mock 生成 + BLE 聚合合并 + AI 上下文组装 |
 | `services/sessionService.js` | 聊天会话 CRUD + 关键词打标 |
 | `services/profileService.js` | 用户画像 CRUD + 头像上传 |
-| `services/aiService.js` | wx.cloud.extend.AI 封装 + parts → OpenAI 格式转换 |
+| `services/aiService.js` | AI 基础能力封装（当前保留图片上传等能力） |
+| `services/agentService.js` | CloudBase Agent 客户端；消费 `bot.sendMessage` 事件流并解析 `tool-call` / `tool-result` |
+| `services/agentCards.js` | tool 结果 → 结构化 chat card parts（健康摘要 / 商品推荐） |
 | `services/productService.js` | 商品目录读取；商品列表/详情前端直读 `products` 集合；`filterProducts` 纯函数 |
 | `services/cartService.js` | 购物车 CRUD；addToCart upsert；`cartTotal` / `cartCount` 纯函数 |
 | `services/orderService.js` | 订单 CRUD + 状态机（pending/paid/shipping/done/canceled）；`validateOrder` / `generateOrderNo` 纯函数 |
@@ -64,6 +68,11 @@
 | `config/index.js` | 云环境、AI 模型名、BLE 游走参数、客服联系方式集中管理 |
 | `utils/mockBleStream.js` | 流式蓝牙 mock：每 3s 产出新快照，每 5min 聚合写云。纯函数 `tick` / `aggregate` + 运行态 `start/stop/subscribe` |
 | `utils/mockStore.js` | 本地状态（设备/商城等，localStorage 持久） |
+
+### AI 架构（2026-04-20 起）
+- AI 对话重新回到 CloudBase 云端 `Aita` Agent；小程序前端负责自定义 chat UI、tool trace 和卡片动作。
+- 云端 Agent 源码位于 `cloudrun/`，当前通过 server-side tools 读取 `health_records`、`products`、`user_profile`。
+- 小程序通过 `services/agentService.js` 消费 `bot.sendMessage` 事件流，将真实 `tool-call` / `tool-result` 显示成可见步骤，并由 `services/agentCards.js` 根据真实结果渲染卡片。
 
 ### 测试
 - 运行：`npm install && npm test`

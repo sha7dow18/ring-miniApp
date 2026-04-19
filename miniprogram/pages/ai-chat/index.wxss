@@ -254,6 +254,47 @@
 .md-bullet { color: var(--brand); font-weight: var(--fw-bold); min-width: 20rpx; line-height: 1.75; }
 .md-num { color: var(--brand); font-weight: var(--fw-semibold); min-width: 44rpx; line-height: 1.75; }
 .md-li-body { flex: 1; line-height: 1.75; }
+.md-hr {
+  height: 2rpx;
+  margin: 22rpx 0;
+  background: linear-gradient(90deg, rgba(47,74,66,0) 0%, rgba(47,74,66,0.22) 18%, rgba(47,74,66,0.22) 82%, rgba(47,74,66,0) 100%);
+}
+.md-table-wrap {
+  width: 100%;
+  margin: 14rpx 0 18rpx;
+}
+.md-table {
+  min-width: 100%;
+  border: 1rpx solid rgba(47, 74, 66, 0.12);
+  border-radius: 18rpx;
+  overflow: hidden;
+  background: rgba(255,255,255,0.72);
+}
+.md-tr {
+  display: flex;
+}
+.md-tr + .md-tr {
+  border-top: 1rpx solid rgba(47, 74, 66, 0.1);
+}
+.md-tr-head {
+  background: rgba(47, 74, 66, 0.07);
+}
+.md-th,
+.md-td {
+  min-width: 180rpx;
+  flex: 1;
+  padding: 16rpx 18rpx;
+  box-sizing: border-box;
+  color: var(--text-1);
+  line-height: 1.6;
+}
+.md-th + .md-th,
+.md-td + .md-td {
+  border-left: 1rpx solid rgba(47, 74, 66, 0.1);
+}
+.md-th {
+  font-weight: var(--fw-bold);
+}
 
 /* 行内 run 样式 */
 .md-n { /* normal 无样式 */ }
@@ -265,6 +306,201 @@
   border-radius: 6rpx;
   font-size: 28rpx;
   font-family: Menlo, Consolas, monospace;
+}
+
+.tool-step {
+  margin-top: 18rpx;
+  padding: 18rpx 22rpx;
+  border-radius: 22rpx;
+  background: rgba(255,255,255,0.82);
+  border: 1rpx solid rgba(47, 74, 66, 0.08);
+}
+
+.tool-step-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.tool-step-label {
+  font-size: 26rpx;
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+}
+
+.tool-step-state {
+  font-size: 22rpx;
+  color: var(--brand-dark);
+  font-weight: var(--fw-semibold);
+}
+
+.tool-step-summary {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.tool-executing .tool-step-state { color: var(--accent); }
+.tool-completed .tool-step-state { color: var(--brand-dark); }
+
+.agent-card {
+  margin-top: 20rpx;
+  padding: 24rpx;
+  border-radius: 28rpx;
+  background: linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(245,241,233,0.96) 100%);
+  box-shadow: 0 12rpx 32rpx rgba(42, 74, 62, 0.08);
+  border: 1rpx solid rgba(47, 74, 66, 0.08);
+}
+
+.card-head { margin-bottom: 18rpx; }
+.card-title {
+  font-size: 30rpx;
+  color: var(--text-1);
+  font-weight: var(--fw-bold);
+}
+.card-sub {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.health-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12rpx;
+}
+
+.health-metric {
+  padding: 18rpx 16rpx;
+  border-radius: 20rpx;
+  background: rgba(255,255,255,0.75);
+}
+
+.health-label {
+  font-size: 22rpx;
+  color: var(--text-3);
+}
+
+.health-value {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+}
+
+.tone-good { color: var(--brand-dark); }
+.tone-warn { color: var(--accent); }
+
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.product-item {
+  display: flex;
+  gap: 16rpx;
+  padding: 14rpx;
+  border-radius: 22rpx;
+  background: rgba(255,255,255,0.82);
+}
+
+.product-cover {
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 18rpx;
+  flex-shrink: 0;
+  background: var(--bg-card);
+}
+
+.product-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.product-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 28rpx;
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+  line-height: 1.5;
+}
+
+.product-price {
+  font-size: 26rpx;
+  color: var(--brand-dark);
+  font-weight: var(--fw-bold);
+}
+
+.product-meta {
+  margin-top: 10rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.product-actions {
+  margin-top: 14rpx;
+  display: flex;
+  gap: 10rpx;
+}
+.product-footer-action {
+  margin-top: 12rpx;
+  padding: 16rpx 18rpx;
+  border-radius: 18rpx;
+  text-align: center;
+  font-size: 24rpx;
+  font-weight: var(--fw-semibold);
+  color: var(--brand-dark);
+  background: rgba(47, 74, 66, 0.08);
+}
+
+.product-action {
+  padding: 10rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+}
+
+.action-ghost {
+  color: var(--brand-dark);
+  background: rgba(47, 74, 66, 0.08);
+}
+
+.action-solid {
+  color: var(--text-inv);
+  background: var(--brand-dark);
+}
+
+.product-category {
+  align-self: flex-start;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  background: rgba(47, 74, 66, 0.08);
+  color: var(--brand-dark);
+  font-size: 22rpx;
+  font-weight: var(--fw-semibold);
+}
+
+.product-reason {
+  font-size: 24rpx;
+  color: var(--text-2);
+  line-height: 1.6;
 }
 
 /* 消息内图片 */

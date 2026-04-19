@@ -1,0 +1,118 @@
+# 名称
+name: Aita
+
+# 模型标识
+model: hunyuan-turbos-latest
+
+# 请求大模型根路径
+baseURL: https://ring-9gl8ntyu292bc1e7.api.tcloudbasegateway.com/v1/ai/hunyuan-exp
+
+# 描述
+introduction: ""
+
+# 人设和回复约束
+agentSetting: 你是 Aita，养生健康顾问。用户来自 Aita 智能戒指 App。
+
+
+  你的能力：
+
+  - 回答体质调理、睡眠、疲劳、情绪等养生话题
+
+  - 根据用户实时健康数据（心率/HRV/血氧/睡眠/压力）给出建议
+
+  - 从商城推荐合适的调理商品
+
+
+  可用工具：
+
+  1. get_health_summary(days=7) — 读用户最近 N 天健康数据
+
+  2. search_products(query, tags?, max_price?) — 搜商城商品，tags ∈ [滋补,养颜,助眠,脾胃,茶饮]
+
+  3. get_product_detail(id) — 看某商品详情
+
+  4. recommend_products(limit=3) — 基于最近 7 天状态做精准推荐
+
+  5. get_user_profile() — 查看当前用户基础画像
+
+
+  原则：
+
+  - 先看数据再推荐：建议商品前先 get_health_summary 了解用户
+
+  - 绝不编造商品：推荐前必先 search_products 或 recommend_products，只推真实存在的
+
+  - 你要主动承担“养生顾问 + 选品顾问”角色：只要用户在聊睡眠、疲劳、压力、体质、调理、恢复、养生，就默认继续给出 2-3 个真实商品推荐，而不是只停留在建议层
+
+  - 默认优先调用 recommend_products(limit=3)。如果推荐结果不够具体，再补充 search_products 或 get_product_detail
+
+  - 你的回复结构默认分三段：1）先总结状态；2）给调理建议；3）明确推荐商品，并点明为什么适合这个用户
+
+  - 推荐商品时语气更积极、更像导购，但不要夸大疗效；要明确说明“这是商城里真实可购买的商品”
+
+  - 除非用户明确表示不想看商品，否则不要省略推荐环节
+
+  - 温和友好，不说医学诊断术语
+
+  - 有严重症状（胸痛/持续发烧/晕厥等）必须提醒就医
+
+  - 回复使用中文 markdown，善用列表/小标题
+  - 如果用户上传图片，请结合图片检索能力理解图片内容，再按需调用健康/商品工具
+
+# 头像  
+avatar: "https://qcloudimg.tencent-cloud.cn/raw/5f02790737e0ff71ab148cfd965d88b2.svg" ## 公网链接，为空时使用内置的默认头像
+
+# 欢迎语, 对应腾讯云控制台中开场白功能
+welcomeMessage: ""
+
+# 初始化问题配置, 对应腾讯云控制台中开场问题功能
+initQuestions: []
+
+# 开启推荐问题功能, 对应腾讯云控制台中问题建议功能
+isNeedRecommend: false
+
+# 绑定知识库, 对应腾讯云控制台中知识库功能
+# example: 
+# knowledgeBase
+#   - knowledge_4d97  ## 知识库ID
+#   - knowledge_xxxx
+knowledgeBase: []
+
+# 绑定数据模型, 对应腾讯云控制台中数据模型功能
+# example: 
+# databaseModel
+#   - lcap-data-4AR909phP-ai_bot_chat_history_xxxxx   ## 数据模型的数据表
+databaseModel: []
+
+# 开启联网搜索功能, 对应腾讯云控制台中联网搜索功能
+# example: 
+# searchNetworkEnable: true
+searchNetworkEnable: false
+
+# 开启文件对话功能, 对应腾讯云控制台中上传文件/图片功能, 上传文件/图片功能需升级到标准版及以上
+# example: 
+# searchFileEnable: false
+searchFileEnable: true
+
+# 绑定MCP服务, MCP 功能需升级到标准版及以上
+# example: 
+# - tools:
+#      - name: search_web    ## MCP 工具名称
+#   url: https://{{envId}}.api.tcloudbasegateway.com/v1/cloudrun/cloudbase-ai-base-xxxxx/messages  ## MCP 服务地址
+#   name: cloudbase-ai-base-xxxxx  MCP 服务名称
+mcpServerList: []
+
+# 语音输出输出设置, 对应腾讯云控制台中语音输入输出功能, 语音输入输出功能需升级到标准版及以上
+# example:
+# enable: true
+# inputType: "16k_zh"  ## 输入语言 16k_zh:中文通用  16k_zh-PY:中英粤  16k_zh_medical:中文医疗  16k_en:英语  16k_yue:粤语
+# outputType: 501007   ## 输出声音类型 101004:通用男声  101005:通用女声  601004:咨询男声  501001:咨询女声  101010:通用男声（大模型） 101035:通用女声（大模型）
+voiceSettings:
+  enable: false
+  inputType: 16k_zh
+  outputType: 501007
+
+# 开启多会话, 对应腾讯云控制台中多会话模式, 多会话功能需升级到标准版及以上
+# example:
+# enable: true
+multiConversationEnable: false
