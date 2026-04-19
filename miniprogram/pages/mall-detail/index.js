@@ -1,12 +1,41 @@
 const productService = require("../../services/productService.js");
 const cartService = require("../../services/cartService.js");
 
+const CATEGORY_LABELS = {
+  herb: "滋补",
+  beauty: "养颜",
+  sleep: "助眠",
+  digest: "脾胃",
+  tea: "茶饮"
+};
+
+function buildDisplayState(product) {
+  if (!product) {
+    return {
+      product: null,
+      imagePath: "",
+      categoryText: "",
+      detailText: "",
+      heroStyle: ""
+    };
+  }
+
+  return {
+    product,
+    imagePath: product.image || `/assets/mall/${product.imageName || ""}`,
+    categoryText: CATEGORY_LABELS[product.category] || "精选",
+    detailText: product.detailPitch || product.desc || "",
+    heroStyle: `background: linear-gradient(145deg, var(--cream-1) 0%, ${product.color || "var(--cream-2)"} 100%);`
+  };
+}
+
 Page({
   data: {
     product: null,
     imagePath: "",
-    imageClass: "detail-image-default",
-    glowClass: "detail-glow-default",
+    categoryText: "",
+    detailText: "",
+    heroStyle: "",
     isAdding: false
   },
 
@@ -14,10 +43,7 @@ Page({
     const id = query.id || "";
     try {
       const product = await productService.getProduct(id);
-      const imagePath = product ? (product.image || `/assets/mall/${product.imageName || ""}`) : "";
-      const imageClass = `detail-image-${(product && product.id) || "default"}`;
-      const glowClass = `detail-glow-${(product && product.id) || "default"}`;
-      this.setData({ product, imagePath, imageClass, glowClass });
+      this.setData(buildDisplayState(product));
     } catch (err) {
       wx.showToast({ title: "商品读取失败", icon: "none" });
       wx.navigateBack();

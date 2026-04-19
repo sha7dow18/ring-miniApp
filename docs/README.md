@@ -19,6 +19,7 @@
 - [2026-04-19-mall-product-read.md](plans/2026-04-19-mall-product-read.md) — 删掉自动补种，改成真实后台商品读取并显式暴露读取失败
 - [2026-04-19-direct-products-read.md](plans/2026-04-19-direct-products-read.md) — 删除商品目录云函数，改成前端直读 `products` 集合
 - [2026-04-19-mall-ui-polish.md](plans/2026-04-19-mall-ui-polish.md) — 商城首屏重排、sticky 搜索筛选和商品卡片润色
+- [2026-04-19-mall-detail-polish.md](plans/2026-04-19-mall-detail-polish.md) — 商品详情页精致化、动作区强化与局部冗余清理
 
 ## design-system.md — UI 规范
 
