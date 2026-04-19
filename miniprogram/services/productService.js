@@ -1,4 +1,4 @@
-// 商品目录服务 — 后端商品目录读取
+// 商品目录服务 — 前端直读 products 集合
 // 商品数据由后台维护。前端只读，不自动补种、不回退本地 mock。
 
 // ─── 纯函数 ───
@@ -25,30 +25,20 @@ function filterProducts(list, opts) {
 }
 
 // ─── 云 ───
-function callCatalog(data) {
-  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
-    return Promise.reject(new Error("productCatalog 云函数不可用"));
-  }
-  return wx.cloud.callFunction({
-    name: "productCatalog",
-    data: data || {}
-  }).then(function(res) {
-    return (res && res.result) || {};
-  });
-}
+function getDB() { return wx.cloud.database(); }
 
 function listProducts(opts) {
-  return callCatalog()
-    .then(function(result) {
-      return filterProducts(result.items || [], opts || {});
+  return getDB().collection("products").limit(100).get()
+    .then(function(res) {
+      return filterProducts((res && res.data) || [], opts || {});
     })
 }
 
 function getProduct(id) {
   if (!id) return Promise.resolve(null);
-  return callCatalog({ id: id })
-    .then(function(result) {
-      return result.item || null;
+  return getDB().collection("products").where({ id: id }).limit(1).get()
+    .then(function(res) {
+      return (res.data && res.data[0]) || null;
     })
 }
 
