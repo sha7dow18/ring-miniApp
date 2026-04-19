@@ -44,6 +44,10 @@
     scroll-y="true"
     scroll-into-view="{{scrollToId}}"
     scroll-with-animation
+    bindscroll="onMsgsScroll"
+    bindtouchstart="onMsgsTouchStart"
+    bindtouchend="onMsgsTouchEnd"
+    bindtouchcancel="onMsgsTouchEnd"
     enhanced
     show-scrollbar="{{false}}"
   >

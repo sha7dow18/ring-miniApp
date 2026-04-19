@@ -139,6 +139,10 @@ function buildCardsFromParts(parts) {
   return agentCards.cardsFromToolRuns(runs, { maxProductCards: 3 });
 }
 
+function streamScrollPatch(page, targetId) {
+  return page.data.followStream ? { scrollToId: targetId } : {};
+}
+
 function serializeMessages(messages) {
   return (messages || []).map(function(msg) {
     return {
@@ -171,8 +175,11 @@ Page({
     sessionList: [],
     sessionGroups: [],
     attachment: null,
-    canSend: false
+    canSend: false,
+    followStream: true
   },
+
+  _messageTouching: false,
 
   _syncCanSend: function() {
     var has = !!(this.data.inputText.trim() || this.data.attachment);
@@ -204,6 +211,20 @@ Page({
   onInput: function(e) {
     this.setData({ inputText: e.detail.value });
     this._syncCanSend();
+  },
+
+  onMsgsTouchStart: function() {
+    this._messageTouching = true;
+  },
+
+  onMsgsTouchEnd: function() {
+    this._messageTouching = false;
+  },
+
+  onMsgsScroll: function() {
+    if (this.data.isSending && this._messageTouching && this.data.followStream) {
+      this.setData({ followStream: false });
+    }
   },
 
   useQuickQuestion: function(e) {
@@ -243,7 +264,7 @@ Page({
     if (!text && !att) return;
     if (this.data.isSending) return;
 
-    this.setData({ isSending: true, inputText: "", attachment: null, canSend: false });
+    this.setData({ isSending: true, inputText: "", attachment: null, canSend: false, followStream: true });
     var self = this;
 
     try {
@@ -277,7 +298,7 @@ Page({
       var aiMsg = { id: aiMsgId, role: "assistant", parts: [], ts: aiService.nowISO() };
 
       var msgs = self.data.messages.concat(userMsg, aiMsg);
-      self.setData({ messages: msgs, scrollToId: "msg-" + aiMsgId });
+      self.setData(Object.assign({ messages: msgs }, streamScrollPatch(self, "msg-" + aiMsgId)));
 
       var onChunk = function(chunk) {
         var cur = self.data.messages;
@@ -286,7 +307,7 @@ Page({
           var appended = appendTextPart(m.parts, chunk);
           return withBlocks({ id: m.id, role: m.role, parts: appended, ts: m.ts });
         });
-        self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
+        self.setData(Object.assign({ messages: updated }, streamScrollPatch(self, "msg-" + aiMsgId)));
       };
 
       var onThink = function(chunk) {
@@ -294,7 +315,7 @@ Page({
           if (m.id !== aiMsgId) return m;
           return withBlocks({ id: m.id, role: m.role, ts: m.ts, parts: appendThinkingPart(m.parts, chunk) });
         });
-        self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
+        self.setData(Object.assign({ messages: updated }, streamScrollPatch(self, "msg-" + aiMsgId)));
       };
 
       var onToolCall = function(toolCall) {
@@ -302,7 +323,7 @@ Page({
           if (m.id !== aiMsgId) return m;
           return withBlocks({ id: m.id, role: m.role, ts: m.ts, parts: upsertToolPart(m.parts, toolCall) });
         });
-        self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
+        self.setData(Object.assign({ messages: updated }, streamScrollPatch(self, "msg-" + aiMsgId)));
       };
 
       var onToolResult = function(toolResult) {
@@ -310,7 +331,7 @@ Page({
           if (m.id !== aiMsgId) return m;
           return withBlocks({ id: m.id, role: m.role, ts: m.ts, parts: upsertToolPart(m.parts, toolResult) });
         });
-        self.setData({ messages: updated, scrollToId: "msg-" + aiMsgId });
+        self.setData(Object.assign({ messages: updated }, streamScrollPatch(self, "msg-" + aiMsgId)));
       };
 
       var result = await agentService.sendToBot({
@@ -332,7 +353,7 @@ Page({
         var cards = buildCardsFromParts(withoutCards);
         return withBlocks({ id: m.id, role: m.role, ts: m.ts, parts: withoutCards.concat(cards) });
       });
-      self.setData({ messages: finalized, scrollToId: "msg-" + aiMsgId });
+      self.setData(Object.assign({ messages: finalized }, streamScrollPatch(self, "msg-" + aiMsgId)));
 
       var toSave = serializeMessages(self.data.messages);
       sessionService.updateMessages(self.data.sessionId, toSave);
@@ -347,6 +368,7 @@ Page({
       self.setData({ messages: updated });
     } finally {
       self.setData({ isSending: false, isUploading: false });
+      self._messageTouching = false;
     }
   },
 

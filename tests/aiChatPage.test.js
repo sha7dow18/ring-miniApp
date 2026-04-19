@@ -18,7 +18,8 @@ function makePage(data) {
       showHistory: false,
       sessionList: [],
       sessionGroups: [],
-      canSend: true
+      canSend: true,
+      followStream: true
     }, data || {}),
     setData(patch) {
       this.data = Object.assign({}, this.data, patch);
@@ -150,6 +151,26 @@ describe("ai-chat page", () => {
         })
       ])
     );
+  });
+
+  test("manual scroll disables auto-follow during streaming", async () => {
+    let capturedCallbacks;
+    agentServiceMock.sendToBot = jest.fn(function(opts) {
+      capturedCallbacks = opts.callbacks;
+      return Promise.resolve({ content: '', thinking: '', tools: [] });
+    });
+
+    const page = makePage({ inputText: '最近睡不好' });
+    const sending = pageDef.doSend.call(page);
+    await Promise.resolve();
+
+    pageDef.onMsgsTouchStart.call(page);
+    pageDef.onMsgsScroll.call(page);
+    capturedCallbacks.onContent('第一段');
+    await sending;
+
+    expect(page.data.followStream).toBe(false);
+    expect(page.data.scrollToId).toBe('msg-assistant_1');
   });
 
   test("onCardAction navigates to mall detail for product cards", () => {
