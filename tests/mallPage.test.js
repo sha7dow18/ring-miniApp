@@ -1,17 +1,13 @@
 let pageDef;
-
-global.Page = function(definition) {
-  pageDef = definition;
-};
-
-require("../miniprogram/pages/mall/index.js");
+let productServiceMock;
+let cartServiceMock;
 
 function makePage(data) {
   return {
     data: Object.assign({
       products: [],
       filteredProducts: [],
-      catalogReady: true,
+      catalogLoadFailed: false,
       searchKeyword: "",
       activeCategory: "all",
       hasCategorySelected: false,
@@ -24,16 +20,48 @@ function makePage(data) {
   };
 }
 
-describe("mall page applyFilters", () => {
-  test("uses init-failure copy when catalog is unavailable", () => {
-    const page = makePage({ catalogReady: false });
+beforeEach(() => {
+  jest.resetModules();
+  productServiceMock = {
+    filterProducts: jest.fn(function(items) { return items || []; }),
+    listProducts: jest.fn(function() { return Promise.resolve([]); })
+  };
+  cartServiceMock = {
+    rawList: jest.fn(function() { return Promise.resolve([]); }),
+    cartCount: jest.fn(function() { return 0; })
+  };
+  global.Page = function(definition) { pageDef = definition; };
+  jest.doMock("../miniprogram/services/productService.js", () => productServiceMock);
+  jest.doMock("../miniprogram/services/cartService.js", () => cartServiceMock);
+  require("../miniprogram/pages/mall/index.js");
+});
+
+describe("mall page", () => {
+  test("loadProducts surfaces catalog read failure", async () => {
+    productServiceMock.listProducts.mockRejectedValue(new Error("permission denied"));
+    const page = makePage();
+
+    await pageDef.loadProducts.call(page);
+
+    expect(page.data.catalogLoadFailed).toBe(true);
+    expect(page.data.emptyStateText).toBe("商品目录读取失败，请检查云环境或集合权限");
+    expect(page.data.filteredProducts).toEqual([]);
+  });
+
+  test("failure copy is not overwritten by later filtering interactions", async () => {
+    productServiceMock.listProducts.mockRejectedValue(new Error("permission denied"));
+    productServiceMock.filterProducts.mockReturnValue([]);
+    const page = makePage({ searchKeyword: "阿胶" });
+
+    await pageDef.loadProducts.call(page);
     pageDef.applyFilters.call(page);
 
-    expect(page.data.filteredProducts).toEqual([]);
-    expect(page.data.emptyStateText).toBe("商品目录初始化失败，请稍后再试");
+    expect(page.data.catalogLoadFailed).toBe(true);
+    expect(page.data.emptyStateText).toBe("商品目录读取失败，请检查云环境或集合权限");
   });
 
   test("uses search-miss copy when keyword filters everything out", () => {
+    productServiceMock.filterProducts.mockReturnValue([]);
     const page = makePage({
       products: [{ id: "m1", name: "参萃元气饮", category: "herb", tags: [], desc: "草本", imageName: "mall_product_1.png" }],
       searchKeyword: "不存在"

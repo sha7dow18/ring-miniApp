@@ -1,7 +1,5 @@
-// 商品目录服务 — cloud `products` 集合
-// 云库为单一事实源。若空库则通过云函数自动补种，列表/详情始终走云，不回退本地 mock。
-
-var COLLECTION = "products";
+// 商品目录服务 — 后端商品目录读取
+// 商品数据由后台维护。前端只读，不自动补种、不回退本地 mock。
 
 // ─── 纯函数 ───
 function filterProducts(list, opts) {
@@ -27,57 +25,37 @@ function filterProducts(list, opts) {
 }
 
 // ─── 云 ───
-function getDB() { return wx.cloud.database(); }
-
-function queryProducts() {
-  return getDB().collection(COLLECTION).limit(100).get()
-    .then(function(res) { return (res && res.data) || []; });
-}
-
-function queryProductById(id) {
-  return getDB().collection(COLLECTION).where({ id: id }).limit(1).get()
-    .then(function(res) { return (res.data && res.data[0]) || null; });
-}
-
-function ensureProducts() {
+function callCatalog(data) {
   if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
-    return Promise.resolve(0);
+    return Promise.reject(new Error("productCatalog 云函数不可用"));
   }
-  return wx.cloud.callFunction({ name: "ensureProducts" })
-    .then(function(res) {
-      var result = (res && res.result) || {};
-      return Number(result.seeded || 0) || 0;
-    })
-    .catch(function() { return 0; });
+  return wx.cloud.callFunction({
+    name: "productCatalog",
+    data: data || {}
+  }).then(function(res) {
+    return (res && res.result) || {};
+  });
 }
 
 function listProducts(opts) {
-  return queryProducts()
-    .then(function(data) {
-      if (data.length) return data;
-      return ensureProducts().then(function() { return queryProducts(); });
+  return callCatalog()
+    .then(function(result) {
+      return filterProducts(result.items || [], opts || {});
     })
-    .then(function(data) {
-      return filterProducts(data, opts || {});
-    })
-    .catch(function() { return []; });
 }
 
 function getProduct(id) {
   if (!id) return Promise.resolve(null);
-  return queryProductById(id)
-    .then(function(product) {
-      if (product) return product;
-      return ensureProducts().then(function() { return queryProductById(id); });
+  return callCatalog({ id: id })
+    .then(function(result) {
+      return result.item || null;
     })
-    .catch(function() { return null; });
 }
 
 module.exports = {
   // pure
   filterProducts: filterProducts,
   // cloud
-  ensureProducts: ensureProducts,
   listProducts: listProducts,
   getProduct: getProduct
 };

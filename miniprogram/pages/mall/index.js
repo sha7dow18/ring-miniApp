@@ -17,7 +17,7 @@ Page({
     activeCategory: "all",
     products: [],
     filteredProducts: [],
-    catalogReady: true,
+    catalogLoadFailed: false,
     searchKeyword: "",
     emptyStateText: "暂无上架商品",
     bannerImage: "/assets/mall/mall_banner_main.png",
@@ -35,8 +35,17 @@ Page({
   },
 
   async loadProducts() {
-    const products = await productService.listProducts();
-    this.setData({ products, catalogReady: products.length > 0 }, () => this.applyFilters());
+    try {
+      const products = await productService.listProducts();
+      this.setData({ products, catalogLoadFailed: false }, () => this.applyFilters());
+    } catch (err) {
+      this.setData({
+        products: [],
+        filteredProducts: [],
+        catalogLoadFailed: true,
+        emptyStateText: "商品目录读取失败，请检查云环境或集合权限"
+      });
+    }
   },
 
   async refreshCartCount() {
@@ -45,6 +54,14 @@ Page({
   },
 
   applyFilters() {
+    if (this.data.catalogLoadFailed) {
+      this.setData({
+        filteredProducts: [],
+        emptyStateText: "商品目录读取失败，请检查云环境或集合权限"
+      });
+      return;
+    }
+
     const keyword = (this.data.searchKeyword || "").trim();
     const category = this.data.activeCategory;
     const effectiveCategory = (this.data.hasCategorySelected && category !== "all") ? category : null;
@@ -62,9 +79,7 @@ Page({
 
     this.setData({
       filteredProducts: mapped,
-      emptyStateText: !this.data.catalogReady
-        ? "商品目录初始化失败，请稍后再试"
-        : (keyword ? "暂无匹配商品，试试其他关键词" : "暂无上架商品")
+      emptyStateText: keyword ? "暂无匹配商品，试试其他关键词" : "暂无上架商品"
     });
   },
 

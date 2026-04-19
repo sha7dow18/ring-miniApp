@@ -16,6 +16,7 @@
 - [2026-04-18-svg-icons.md](plans/2026-04-18-svg-icons.md) — emoji → SVG 图标 + 空态插画 + AI 听诊器 tab + tabBar 贴底重构 + 日期条点击居中
 - [2026-04-19-home-other-data-polish.md](plans/2026-04-19-home-other-data-polish.md) — 首页其他数据趋势改成原生渲染，并做一轮小幅交互润色
 - [2026-04-19-mall-closure.md](plans/2026-04-19-mall-closure.md) — 商城默认补种云商品、修正空态语义，并清理首页趋势迁移遗留死代码
+- [2026-04-19-mall-product-read.md](plans/2026-04-19-mall-product-read.md) — 删掉自动补种，改成真实后台商品读取并显式暴露读取失败
 
 ## design-system.md — UI 规范
 
@@ -38,7 +39,7 @@
 | `user_profile` | 每用户一条 | 仅创建者 | nickname, avatarUrl(cloud fileID), gender, birthday, heightCm, weightKg, phone, allergyHistory, medicalHistory |
 | `health_records` | 每用户每日一条 | 仅创建者 | date, sleep_score, sleep_duration, deep_sleep_min, rem_min, hr_resting, hr_max, hrv, steps, calories, spo2, stress, skin_temp_delta, respiratory_rate, readiness_score, systolic, diastolic, body_temp |
 | `chat_sessions` | 每会话一条 | 仅创建者 | title, tag (舌诊\|睡眠\|体质\|通用), messages[], createdAt, updatedAt |
-| `products` | 每商品一条 | 所有人可读，仅管理员可写 | id, name, category, price, image, imageName, desc, detailPitch, tags[], color, onSale, stock, createdAt |
+| `products` | 每商品一条 | 后台维护；前端经云函数读取 | id, name, category, price, image, imageName, desc, detailPitch, tags[], color, onSale, stock, createdAt |
 | `cart_items` | 每 (用户, 商品) 一条 | 仅创建者 | productId, qty, addedAt, updatedAt |
 | `orders` | 每订单一条 | 仅创建者 | orderNo, items[], total, address, status (pending\|paid\|shipping\|done\|canceled), createdAt, payTime, updatedAt |
 
@@ -49,7 +50,7 @@
 | `services/sessionService.js` | 聊天会话 CRUD + 关键词打标 |
 | `services/profileService.js` | 用户画像 CRUD + 头像上传 |
 | `services/aiService.js` | wx.cloud.extend.AI 封装 + parts → OpenAI 格式转换 |
-| `services/productService.js` | 商品目录读取与空库补种；客户端通过云函数触发 `products` 补种，商品列表/详情始终走云集合；`filterProducts` 纯函数 |
+| `services/productService.js` | 商品目录读取；商品列表/详情通过云函数读取后台 `products` 集合；`filterProducts` 纯函数 |
 | `services/cartService.js` | 购物车 CRUD；addToCart upsert；`cartTotal` / `cartCount` 纯函数 |
 | `services/orderService.js` | 订单 CRUD + 状态机（pending/paid/shipping/done/canceled）；`validateOrder` / `generateOrderNo` 纯函数 |
 

@@ -20,7 +20,13 @@ Page({
     if (mode === "single") {
       const productId = query.productId;
       const qty = Math.max(1, Number(query.qty) || 1);
-      const p = await productService.getProduct(productId);
+      let p = null;
+      try {
+        p = await productService.getProduct(productId);
+      } catch (err) {
+        wx.showToast({ title: "商品读取失败", icon: "none" });
+        return wx.navigateBack();
+      }
       if (!p) {
         wx.showToast({ title: "商品不存在", icon: "none" });
         return wx.navigateBack();
@@ -38,7 +44,13 @@ Page({
       }];
       this.setData({ items: items, total: cartService.cartTotal(items) });
     } else {
-      const items = await cartService.listCart();
+      let items = [];
+      try {
+        items = await cartService.listCart();
+      } catch (err) {
+        wx.showToast({ title: "购物车读取失败", icon: "none" });
+        return wx.navigateBack();
+      }
       if (!items.length) {
         wx.showToast({ title: "购物车为空", icon: "none" });
         return wx.navigateBack();

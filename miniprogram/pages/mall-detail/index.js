@@ -12,11 +12,16 @@ Page({
 
   async onLoad(query) {
     const id = query.id || "";
-    const product = await productService.getProduct(id);
-    const imagePath = product ? (product.image || `/assets/mall/${product.imageName || ""}`) : "";
-    const imageClass = `detail-image-${(product && product.id) || "default"}`;
-    const glowClass = `detail-glow-${(product && product.id) || "default"}`;
-    this.setData({ product, imagePath, imageClass, glowClass });
+    try {
+      const product = await productService.getProduct(id);
+      const imagePath = product ? (product.image || `/assets/mall/${product.imageName || ""}`) : "";
+      const imageClass = `detail-image-${(product && product.id) || "default"}`;
+      const glowClass = `detail-glow-${(product && product.id) || "default"}`;
+      this.setData({ product, imagePath, imageClass, glowClass });
+    } catch (err) {
+      wx.showToast({ title: "商品读取失败", icon: "none" });
+      wx.navigateBack();
+    }
   },
 
   async onAddToCart() {

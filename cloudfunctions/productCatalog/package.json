@@ -1,5 +1,5 @@
 {
-  "name": "ensure-products",
+  "name": "product-catalog",
   "private": true,
   "dependencies": {
     "wx-server-sdk": "latest"
