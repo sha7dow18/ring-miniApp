@@ -24,6 +24,7 @@
 - [2026-04-20-cloudbase-agent-replatform.md](plans/2026-04-20-cloudbase-agent-replatform.md) — 回归 CloudBase 云端 Aita Agent，补齐 server-side tools 与前端可见 tool trace
 - [2026-04-20-ai-loop-order.md](plans/2026-04-20-ai-loop-order.md) — 修正 AI 聊天中 thinking / tool / text 的展示顺序，避免正文假装工具调用
 - [2026-04-20-ai-stream-scroll.md](plans/2026-04-20-ai-stream-scroll.md) — 流式输出时允许用户手动上滑，不再每个 chunk 都强制吸到底部
+- [2026-04-21-sprint-c1.md](plans/2026-04-21-sprint-c1.md) — 双端骨架：user_profile 扩字段 + family_bindings/family_inbox 集合 + role-switch/family-bind 两页
 
 ## design-system.md — UI 规范
 
@@ -43,7 +44,9 @@
 | 集合 | 粒度 | 权限 | 主要字段 |
 |------|------|------|---------|
 | `users` | 每用户一条 | 仅创建者 | nickname, avatarUrl, createdAt |
-| `user_profile` | 每用户一条 | 仅创建者 | nickname, avatarUrl(cloud fileID), gender, birthday, heightCm, weightKg, phone, allergyHistory, medicalHistory |
+| `user_profile` | 每用户一条 | 仅创建者 | nickname, avatarUrl(cloud fileID), gender, birthday, heightCm, weightKg, phone, allergyHistory, medicalHistory, role('elder'\|'child'\|null), constitution(九体质标签，C2 填), boundFamilyId |
+| `family_bindings` | 每对家庭一条 | CUSTOM（登录可读、登录可更新、创建者可删） | inviteCode, status('pending'\|'bound'), _openid(elder), childOpenId, createdAt, boundAt |
+| `family_inbox` | 每条通知一条 | CUSTOM（仅收件人可读写，任意登录用户可 create） | toOpenId, fromOpenId, type, title, body, payload, read, createdAt, readAt |
 | `health_records` | 每用户每日一条 | 仅创建者 | date, sleep_score, sleep_duration, deep_sleep_min, rem_min, hr_resting, hr_max, hrv, steps, calories, spo2, stress, skin_temp_delta, respiratory_rate, readiness_score, systolic, diastolic, body_temp |
 | `chat_sessions` | 每会话一条 | 仅创建者 | title, tag (舌诊\|睡眠\|体质\|通用), messages[], createdAt, updatedAt |
 | `products` | 每商品一条 | 仅管理端可写，所有用户可读 | id, name, category, price, image, imageName, desc, detailPitch, tags[], color, onSale, stock, createdAt |
@@ -55,7 +58,9 @@
 |------|------|
 | `services/healthService.js` | 云持久 + 每日 mock 生成 + BLE 聚合合并 + AI 上下文组装 |
 | `services/sessionService.js` | 聊天会话 CRUD + 关键词打标 |
-| `services/profileService.js` | 用户画像 CRUD + 头像上传 |
+| `services/profileService.js` | 用户画像 CRUD + 头像上传 + `setRole` / `setBoundFamilyId` |
+| `services/familyService.js` | 家庭绑定：生成邀请码、兑换（子女端）、查询 pending/by-id |
+| `services/familyInboxService.js` | 家庭收件箱：list / countUnread / markRead / pushToInbox（C6 生产端用） |
 | `services/aiService.js` | AI 基础能力封装（当前保留图片上传等能力） |
 | `services/agentService.js` | CloudBase Agent 客户端；消费 `bot.sendMessage` 事件流并解析 `tool-call` / `tool-result` |
 | `services/agentCards.js` | tool 结果 → 结构化 chat card parts（健康摘要 / 商品推荐） |

@@ -118,6 +118,44 @@ describe("profileService", () => {
     expect(added.nickname).toBe("小明");
   });
 
+  test("setRole writes role field via updateProfile", async () => {
+    let updateCall = null;
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: () => Promise.resolve({ data: [{ _id: "p1" }] }),
+          update: (id, patch) => { updateCall = patch; return Promise.resolve({}); }
+        })
+      }
+    };
+    const ps = require("../miniprogram/services/profileService.js");
+    await ps.setRole("elder");
+    expect(updateCall.data.role).toBe("elder");
+  });
+
+  test("setBoundFamilyId writes boundFamilyId via updateProfile", async () => {
+    let updateCall = null;
+    global.wx = {
+      cloud: {
+        database: () => makeDbMock({
+          get: () => Promise.resolve({ data: [{ _id: "p1" }] }),
+          update: (id, patch) => { updateCall = patch; return Promise.resolve({}); }
+        })
+      }
+    };
+    const ps = require("../miniprogram/services/profileService.js");
+    await ps.setBoundFamilyId("binding-42");
+    expect(updateCall.data.boundFamilyId).toBe("binding-42");
+  });
+
+  test("DEFAULT_PROFILE carries new C1 fields", () => {
+    global.wx = { cloud: { database: () => makeDbMock({}) } };
+    const ps = require("../miniprogram/services/profileService.js");
+    expect(ps.DEFAULT_PROFILE.role).toBeNull();
+    expect(ps.DEFAULT_PROFILE.constitution).toBeNull();
+    expect(ps.DEFAULT_PROFILE.boundFamilyId).toBeNull();
+  });
+
   test("uploadAvatar returns fileID from wx.cloud.uploadFile", async () => {
     global.wx = {
       cloud: {

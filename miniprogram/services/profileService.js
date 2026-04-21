@@ -11,7 +11,10 @@ var DEFAULT_PROFILE = {
   weightKg: 0,
   phone: "",
   allergyHistory: "",
-  medicalHistory: ""
+  medicalHistory: "",
+  role: null,            // 'elder' | 'child' | null（未选）
+  constitution: null,    // 九体质标签，C2 写入
+  boundFamilyId: null    // 指向 family_bindings._id，C1 写入
 };
 
 function getDB() { return wx.cloud.database(); }
@@ -65,10 +68,20 @@ function uploadAvatar(tempFilePath) {
     .then(function(res) { return res.fileID; });
 }
 
+function setRole(role) {
+  return updateProfile({ role: role });
+}
+
+function setBoundFamilyId(id) {
+  return updateProfile({ boundFamilyId: id });
+}
+
 module.exports = {
   DEFAULT_PROFILE: DEFAULT_PROFILE,
   getProfile: getProfile,
   ensureProfile: ensureProfile,
   updateProfile: updateProfile,
-  uploadAvatar: uploadAvatar
+  uploadAvatar: uploadAvatar,
+  setRole: setRole,
+  setBoundFamilyId: setBoundFamilyId
 };

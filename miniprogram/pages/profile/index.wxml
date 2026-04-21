@@ -11,6 +11,14 @@
   </view>
 
   <view class="menu-group">
+    <view class="group-title">家庭</view>
+    <view class="menu-card">
+      <view class="menu-item" bindtap="goRoleSwitch"><text>切换角色</text><view class="menu-item-right"><text class="menu-hint">{{roleLabel}}</text><text>›</text></view></view>
+      <view class="menu-item" bindtap="goFamilyBind"><text>家庭绑定</text><view class="menu-item-right"><text class="menu-hint">{{bindStatusText}}</text><text>›</text></view></view>
+    </view>
+  </view>
+
+  <view class="menu-group">
     <view class="group-title">我的服务</view>
     <view class="menu-card">
       <view class="menu-item" bindtap="goMyDevice"><text>我的设备</text><text>›</text></view>

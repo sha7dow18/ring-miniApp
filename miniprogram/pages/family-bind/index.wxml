@@ -1,0 +1,49 @@
+<view class="family-bind-page">
+  <view wx:if="{{bound}}" class="card">
+    <view class="state-title">已绑定家庭</view>
+    <view class="state-meta">家庭 ID · {{boundFamilyId}}</view>
+    <view class="state-hint">子女端与老人端已互通。后续健康简报与补货提醒会在这里联通。</view>
+  </view>
+
+  <block wx:elif="{{role === 'elder'}}">
+    <view class="card">
+      <view class="card-title">生成邀请码</view>
+      <view class="card-desc">把这 6 位码告诉你的子女，让他们在"家庭绑定"里输入兑换。</view>
+
+      <view wx:if="{{inviteCode}}" class="code-box">
+        <text class="code-text">{{inviteCode}}</text>
+        <view class="copy-btn" bindtap="copyCode">复制</view>
+      </view>
+
+      <view class="action-row">
+        <button class="btn btn-primary" bindtap="generateCode" loading="{{generating}}">
+          {{inviteCode ? '重新生成' : '生成邀请码'}}
+        </button>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{role === 'child'}}">
+    <view class="card">
+      <view class="card-title">输入邀请码</view>
+      <view class="card-desc">请父母在老人端生成 6 位邀请码后告诉你。</view>
+
+      <input class="code-input" placeholder="请输入 6 位邀请码" maxlength="6"
+             value="{{inputCode}}" bindinput="onInput" />
+
+      <view class="action-row">
+        <button class="btn btn-primary" bindtap="redeem" loading="{{redeeming}}"
+                disabled="{{inputCode.length !== 6}}">
+          兑换绑定
+        </button>
+      </view>
+
+      <view wx:if="{{errorMsg}}" class="error-msg">{{errorMsg}}</view>
+    </view>
+  </block>
+
+  <view wx:else class="card">
+    <view class="state-title">还没选择角色</view>
+    <view class="state-hint">请先去「我的 · 切换角色」选择你是老人还是子女。</view>
+  </view>
+</view>

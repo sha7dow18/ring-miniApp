@@ -1,6 +1,7 @@
 Component({
   data: {
     selected: 0,
+    role: null, // C6 会根据 role 切换 tabList；本 sprint 仅读取、不改视觉
     tabList: [
       {
         pagePath: "/pages/home/index",
@@ -33,6 +34,13 @@ Component({
         selectedIconPath: "/assets/tabbar/profile_active.png"
       }
     ]
+  },
+
+  attached() {
+    const app = getApp();
+    if (app && app.globalData) {
+      this.setData({ role: app.globalData.role || null });
+    }
   },
 
   methods: {

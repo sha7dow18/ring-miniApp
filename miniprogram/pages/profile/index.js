@@ -1,6 +1,8 @@
 const mockStore = require("../../utils/mockStore.js");
 const profileService = require("../../services/profileService.js");
 
+const ROLE_LABEL = { elder: "老人端", child: "子女端" };
+
 Page({
   data: {
     profile: {
@@ -8,7 +10,9 @@ Page({
       avatarUrl: "",
       phone: ""
     },
-    deviceStatusText: "未连接"
+    deviceStatusText: "未连接",
+    roleLabel: "未选择",
+    bindStatusText: "未绑定"
   },
 
   async onShow() {
@@ -26,7 +30,9 @@ Page({
           nickname: profile.nickname || "微信用户",
           avatarUrl: profile.avatarUrl || "",
           phone: profile.phone || ""
-        }
+        },
+        roleLabel: ROLE_LABEL[profile.role] || "未选择",
+        bindStatusText: profile.boundFamilyId ? "已绑定" : "未绑定"
       });
     }
   },
@@ -51,5 +57,7 @@ Page({
   goMyDevice() { wx.navigateTo({ url: "/pages/my-device/index" }); },
   goOrders() { wx.navigateTo({ url: "/pages/orders/index" }); },
   goSettings() { wx.navigateTo({ url: "/pages/settings/index" }); },
-  goAbout() { wx.navigateTo({ url: "/pages/about/index" }); }
+  goAbout() { wx.navigateTo({ url: "/pages/about/index" }); },
+  goRoleSwitch() { wx.navigateTo({ url: "/pages/role-switch/index" }); },
+  goFamilyBind() { wx.navigateTo({ url: "/pages/family-bind/index" }); }
 });

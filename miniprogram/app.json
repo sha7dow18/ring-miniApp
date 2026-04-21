@@ -17,7 +17,9 @@
     "pages/order-detail/index",
     "pages/settings/index",
     "pages/settings-detail/index",
-    "pages/about/index"
+    "pages/about/index",
+    "pages/role-switch/index",
+    "pages/family-bind/index"
   ],
   "tabBar": {
     "custom": true,

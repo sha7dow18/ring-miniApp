@@ -1,0 +1,22 @@
+<view class="role-switch-page">
+  <view class="hero">
+    <view class="title">你是哪一位？</view>
+    <view class="subtitle">老人端与子女端的体验不同，可以随时在「我的 · 切换角色」更改。</view>
+  </view>
+
+  <view class="cards">
+    <view class="role-card role-elder {{submitting ? 'disabled' : ''}}" bindtap="pickElder">
+      <view class="emoji">🧘</view>
+      <view class="role-name">我是老人</view>
+      <view class="role-desc">佩戴戒指，接受照护与康养推荐</view>
+    </view>
+
+    <view class="role-card role-child {{submitting ? 'disabled' : ''}}" bindtap="pickChild">
+      <view class="emoji">🧑‍💼</view>
+      <view class="role-name">我是子女</view>
+      <view class="role-desc">查看父母健康简报，一键代购与补货</view>
+    </view>
+  </view>
+
+  <view class="foot">选择后，会根据你的角色呈现对应功能。</view>
+</view>

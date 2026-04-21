@@ -43,3 +43,5 @@
   font-size: var(--fs-body);
 }
 .menu-item:last-child { border-bottom: none; }
+.menu-item-right { display: flex; align-items: center; gap: var(--sp-2); }
+.menu-hint { color: var(--text-2); font-size: var(--fs-sub); }

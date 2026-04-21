@@ -1,0 +1,78 @@
+.role-switch-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: var(--sp-5) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  padding: var(--sp-4) 0 var(--sp-6);
+}
+.hero .title {
+  font-size: 56rpx;
+  font-weight: var(--fw-bold);
+  color: var(--text-1);
+  letter-spacing: 1rpx;
+}
+.hero .subtitle {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-body);
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  flex: 1;
+}
+
+.role-card {
+  padding: var(--sp-6) var(--sp-5);
+  border-radius: 28rpx;
+  border: 2rpx solid var(--border);
+  background: var(--bg-card);
+  box-shadow: 0 4rpx 20rpx rgba(30, 20, 10, 0.04);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.role-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 10rpx rgba(30, 20, 10, 0.08);
+}
+.role-card.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.role-elder {
+  background: linear-gradient(135deg, var(--cream-1), var(--cream-2));
+}
+.role-child {
+  background: linear-gradient(135deg, #E8EFEA, #D5E1DA);
+}
+
+.emoji {
+  font-size: 72rpx;
+  line-height: 1;
+}
+.role-name {
+  margin-top: var(--sp-3);
+  font-size: 40rpx;
+  font-weight: var(--fw-semibold);
+  color: var(--text-1);
+}
+.role-desc {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-body);
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+.foot {
+  text-align: center;
+  font-size: var(--fs-sub);
+  color: var(--text-3);
+  padding-top: var(--sp-5);
+}
