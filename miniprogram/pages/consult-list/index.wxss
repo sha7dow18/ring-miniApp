@@ -1,0 +1,25 @@
+.consult-list-page { padding: 24rpx 28rpx 80rpx; background: #F4F0EB; min-height: 100vh; }
+
+.loading { text-align: center; color: #9c9c9c; padding: 120rpx 0; }
+
+.empty { text-align: center; padding: 80rpx 40rpx; }
+.empty .emoji { font-size: 80rpx; margin-bottom: 16rpx; }
+.empty-title { font-size: 34rpx; font-weight: 600; color: #3F5E54; margin-bottom: 8rpx; }
+.empty-desc { font-size: 26rpx; color: #7d7e80; line-height: 1.6; margin-bottom: 32rpx; }
+
+.card { background: #fff; border-radius: 24rpx; padding: 28rpx; margin-bottom: 20rpx; box-shadow: 0 6rpx 24rpx rgba(63, 94, 84, 0.06); }
+
+.consult-item .item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
+.consult-item .slot { font-size: 30rpx; font-weight: 600; color: #3F5E54; }
+.consult-item .status { font-size: 24rpx; padding: 4rpx 16rpx; border-radius: 999rpx; background: rgba(63, 94, 84, 0.08); color: #3F5E54; }
+.consult-item.status-canceled .status { background: rgba(156, 156, 156, 0.15); color: #9c9c9c; }
+.consult-item.status-done .status { background: rgba(184, 134, 11, 0.12); color: #B8860B; }
+
+.consult-item .symptom { font-size: 28rpx; color: #2a2a2a; line-height: 1.5; margin-bottom: 12rpx; }
+.consult-item .meta { font-size: 22rpx; color: #9c9c9c; display: flex; gap: 8rpx; }
+.consult-item .btn-cancel { margin-top: 16rpx; font-size: 24rpx; color: #B8860B; background: transparent; padding: 8rpx 0; text-align: left; }
+.consult-item .btn-cancel::after { border: none; }
+
+.btn { padding: 24rpx 0; border-radius: 16rpx; font-size: 30rpx; font-weight: 500; width: 100%; margin-top: 24rpx; }
+.btn::after { border: none; }
+.btn-primary { background: #3F5E54; color: #fff; }

@@ -98,23 +98,27 @@ Page({
   async reorderOne(e) {
     const { id, pid } = e.currentTarget.dataset;
     const role = this.data.role;
-    wx.showLoading({ title: "加入购物车" });
+    wx.showLoading({ title: "准备下单" });
     try {
       const product = await productService.getProduct(pid);
       if (!product) throw new Error("商品不存在");
-      await cartService.addToCart(product, 1);
 
       if (role === "child") {
-        // 标记 inbox 已读 → 这条 plan 不再显示
+        // 子女：标 inbox 已读，跳到 checkout（forElder）直接代父母下单
         await familyInboxService.markRead(id).catch(() => {});
-      } else {
-        // elder 标记自己的 replenishment_plan 为 confirmed
-        await replenishService.markConfirmed(id).catch(() => {});
+        wx.hideLoading();
+        wx.navigateTo({
+          url: `/pages/checkout/index?mode=single&productId=${product.id}&qty=1&forElder=1`
+        });
+        return;
       }
 
+      // 老人：走正常加购
+      await cartService.addToCart(product, 1);
+      await replenishService.markConfirmed(id).catch(() => {});
       wx.hideLoading();
       wx.showModal({
-        title: role === "child" ? "已为父母加入购物车" : "已加入购物车",
+        title: "已加入购物车",
         content: `${product.name} · ¥${product.price}。是否去结算？`,
         confirmText: "去结算",
         success: (res) => {

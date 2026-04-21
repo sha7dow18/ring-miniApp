@@ -1,0 +1,9 @@
+{
+  "name": "readElderHealth",
+  "version": "1.0.0",
+  "description": "子女端跨用户读父母健康快照（基于 family_bindings 身份校验）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

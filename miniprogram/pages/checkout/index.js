@@ -1,6 +1,7 @@
 const cartService = require("../../services/cartService.js");
 const orderService = require("../../services/orderService.js");
 const productService = require("../../services/productService.js");
+const familyService = require("../../services/familyService.js");
 
 Page({
   data: {
@@ -10,12 +11,41 @@ Page({
     address: null,           // { name, phone, detail }
     isSubmitting: false,
     showAddressForm: false,
-    addressForm: { name: "", phone: "", detail: "" }
+    addressForm: { name: "", phone: "", detail: "" },
+    forElder: false,
+    elderOpenId: "",
+    elderNickname: ""
   },
 
   async onLoad(query) {
     const mode = query.mode || "cart";
-    this.setData({ mode });
+    const forElder = !!(query && query.forElder);
+    this.setData({ mode, forElder });
+
+    if (forElder) {
+      const elderOpenId = await familyService.getBoundElderOpenId().catch(() => null);
+      if (!elderOpenId) {
+        wx.showModal({
+          title: "还没绑定父母",
+          content: "请先在『家庭绑定』里输入父母的邀请码，再代父母选购。",
+          confirmText: "去绑定",
+          success: (r) => {
+            if (r.confirm) wx.redirectTo({ url: "/pages/family-bind/index" });
+            else wx.navigateBack();
+          }
+        });
+        return;
+      }
+      // 抓取老人昵称用于界面提示
+      const childOpenId = getApp().globalData.openid;
+      // 通过 getBindingById 需要 id，这里用 where 方式拿 binding
+      const db = wx.cloud.database();
+      const boundRes = await db.collection("family_bindings")
+        .where({ _openid: elderOpenId, childOpenId: childOpenId, status: "bound" })
+        .limit(1).get().catch(() => ({ data: [] }));
+      const b = (boundRes.data && boundRes.data[0]) || {};
+      this.setData({ elderOpenId, elderNickname: b.elderNickname || "父母" });
+    }
 
     if (mode === "single") {
       const productId = query.productId;
@@ -116,7 +146,9 @@ Page({
           imageName: i.imageName || ""
         })),
         total: this.data.total,
-        address: this.data.address
+        address: this.data.address,
+        forElder: this.data.forElder,
+        elderOpenId: this.data.forElder ? this.data.elderOpenId : ""
       };
 
       wx.showLoading({ title: "正在下单", mask: true });

@@ -2,6 +2,7 @@ const familyInboxService = require("../../services/familyInboxService.js");
 const digestService = require("../../services/digestService.js");
 const profileService = require("../../services/profileService.js");
 const subscribeMessageService = require("../../services/subscribeMessageService.js");
+const familyHealthService = require("../../services/familyHealthService.js");
 
 const INBOX_ICONS = {
   health_anomaly: "⚠️",
@@ -26,6 +27,7 @@ Page({
   data: {
     bound: false,
     elderRelation: "父母",
+    elderNickname: "父母",
     inbox: [],
     unreadCount: 0,
     unreadReplenish: 0,
@@ -33,7 +35,10 @@ Page({
     latestDigest: null,
     digestWeekLabel: "",
     hasAnomaly: false,
-    pushEnabled: false
+    pushEnabled: false,
+    snapshotCards: [],
+    snapshotLoaded: false,
+    snapshotError: ""
   },
 
   async onShow() {
@@ -46,8 +51,27 @@ Page({
 
     await Promise.all([
       this.loadInbox(),
-      this.loadDigest()
+      this.loadDigest(),
+      this.loadElderSnapshot()
     ]);
+  },
+
+  async loadElderSnapshot() {
+    const snap = await familyHealthService.readElderSnapshot();
+    if (snap && snap.success) {
+      this.setData({
+        snapshotCards: familyHealthService.toDisplayCards(snap),
+        snapshotLoaded: true,
+        snapshotError: "",
+        elderNickname: snap.elderNickname || "父母"
+      });
+    } else {
+      this.setData({
+        snapshotCards: [],
+        snapshotLoaded: true,
+        snapshotError: (snap && snap.errMsg) || "暂时读取不到父母数据"
+      });
+    }
   },
 
   async onPullDownRefresh() {
@@ -103,7 +127,7 @@ Page({
   goBind() { wx.navigateTo({ url: "/pages/family-bind/index" }); },
   goDigest() { wx.reLaunch({ url: "/pages/digest/index" }); },
   goReplenish() { wx.reLaunch({ url: "/pages/replenish/index" }); },
-  goMall() { wx.reLaunch({ url: "/pages/mall/index" }); },
+  goMall() { wx.navigateTo({ url: "/pages/mall/index?forElder=1" }); },
 
   async enablePush() {
     const res = await subscribeMessageService.requestAuth([

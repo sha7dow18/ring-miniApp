@@ -1,4 +1,5 @@
 const subscriptionService = require("../../services/subscriptionService.js");
+const consultService = require("../../services/consultService.js");
 
 const SLOTS = [
   { key: "tonight", text: "今晚 19:00-21:00" },
@@ -29,23 +30,46 @@ Page({
 
   async submit() {
     if (!this.data.pickedSlot || !this.data.symptom) return;
-    if (this.data.remainingConsult <= 0) {
-      wx.showModal({
-        title: "额度不足",
-        content: "当前套餐不含问诊，是否立即升级？",
-        success: (res) => {
-          if (res.confirm) wx.navigateTo({ url: "/pages/subscription/index" });
-        }
-      });
-      return;
-    }
-    wx.showLoading({ title: "提交中" });
-    // 模拟服务端写入延迟
-    await new Promise((r) => setTimeout(r, 500));
     const slotObj = SLOTS.find((s) => s.key === this.data.pickedSlot);
-    wx.hideLoading();
-    this.setData({ booked: true, bookedSlot: slotObj ? slotObj.text : "" });
+
+    wx.showLoading({ title: "提交中" });
+    try {
+      await subscriptionService.consumeConsultQuota();
+      await consultService.create({
+        slot: this.data.pickedSlot,
+        slotText: slotObj ? slotObj.text : "",
+        symptom: this.data.symptom,
+        phone: this.data.phone
+      });
+      wx.hideLoading();
+      const sub = await subscriptionService.getMy();
+      this.setData({
+        booked: true,
+        bookedSlot: slotObj ? slotObj.text : "",
+        remainingConsult: sub.remainingConsult || 0
+      });
+    } catch (e) {
+      wx.hideLoading();
+      if (subscriptionService.isQuotaError(e)) {
+        wx.showModal({
+          title: "额度不足",
+          content: "当前套餐不含问诊，是否立即升级到专业版？",
+          confirmText: "去升级",
+          success: (res) => {
+            if (res.confirm) wx.navigateTo({ url: "/pages/subscription/index" });
+          }
+        });
+        return;
+      }
+      wx.showModal({
+        title: "提交失败",
+        content: e.message || "网络异常，请稍后重试",
+        showCancel: false
+      });
+    }
   },
+
+  goList() { wx.navigateTo({ url: "/pages/consult-list/index" }); },
 
   goBack() { wx.navigateBack({ delta: 1 }).catch(() => wx.navigateTo({ url: "/pages/profile/index" })); },
   goSubscribe() { wx.navigateTo({ url: "/pages/subscription/index" }); }

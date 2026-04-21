@@ -1,4 +1,12 @@
 <view class="page">
+  <view wx:if="{{forElder}}" class="for-elder-card">
+    <view class="fe-emoji">👵</view>
+    <view class="fe-body">
+      <view class="fe-title">正在为 {{elderNickname}} 下单</view>
+      <view class="fe-sub">订单将记入老人账户，你只需完成支付与填写地址</view>
+    </view>
+  </view>
+
   <!-- 收货地址 -->
   <view class="card addr-card" bindtap="chooseAddress" hover-class="hover" wx:if="{{!address && !showAddressForm}}">
     <view class="addr-placeholder">

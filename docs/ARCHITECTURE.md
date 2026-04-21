@@ -98,6 +98,15 @@
 | `family_bindings` | 每对绑定一条 | 双方可读 | elderOpenId, childOpenId, relation（'子' \| '女' \| '其他'）, inviteCode, boundAt |
 | `weekly_digests` | 每用户每周一条 | 仅 elder 与其 child 可读 | userOpenId, weekStart, summary（AI 生成文案）, metrics（均值/异常点）, recommendations（商品列表 + 理由）, createdAt |
 | `subscriptions` | 每用户一条 | 仅创建者 | userOpenId, plan（'free' \| 'basic_19.8' \| 'pro_39.8'）, remainingAi, remainingConsult, expiresAt |
+| `consultations` | 每用户 N 条（C8 新增） | 仅创建者 | slot, slotText, symptom, phone, status（'pending' \| 'confirmed' \| 'done' \| 'canceled'）, createdAt |
+| `orders`（C8 扩字段） | 每订单一条 | CUSTOM：`_openid` 或 `elderOpenId` 可读；仅 `_openid` 可写 | 原字段 + **`forElder:bool`, `elderOpenId:string`** |
+
+### 3.3 C8 新增云函数
+
+| 云函数 | 作用 | 安全 |
+|--------|------|------|
+| `readElderHealth` | 子女端跨用户读父母最近 7 日 `health_records`；返回 `today + summary + elderNickname` | 校验调用方 openid 必须是 `family_bindings.childOpenId`（status=bound） |
+| `notify`（C7 已有） | 发微信订阅消息，封装 `cloud.openapi.subscribeMessage.send`，命中 `REPLACE_ME_*` 模板时 short-circuit | — |
 
 ---
 

@@ -51,6 +51,58 @@ describe("anomalyDetector.evaluateDay", () => {
     expect(svc.evaluateDay(null)).toEqual([]);
     expect(svc.evaluateDay({})).toEqual([]);
   });
+
+  test("flags high skin temp delta as fever", () => {
+    global.wx = { cloud: { database: () => ({}) } };
+    const svc = require("../miniprogram/services/anomalyDetector.js");
+    const a = svc.evaluateDay({ skin_temp_delta: 1.4 });
+    expect(a[0].type).toBe("temp_high");
+    expect(a[0].severity).toBe("high");
+  });
+
+  test("flags low hrv as autonomic fatigue", () => {
+    global.wx = { cloud: { database: () => ({}) } };
+    const svc = require("../miniprogram/services/anomalyDetector.js");
+    const a = svc.evaluateDay({ hrv: 15 });
+    expect(a[0].type).toBe("hrv_low");
+  });
+
+  test("flags abnormal respiratory rate", () => {
+    global.wx = { cloud: { database: () => ({}) } };
+    const svc = require("../miniprogram/services/anomalyDetector.js");
+    expect(svc.evaluateDay({ respiratory_rate: 25 })[0].type).toBe("rr_high");
+    expect(svc.evaluateDay({ respiratory_rate: 8 })[0].type).toBe("rr_low");
+  });
+});
+
+describe("anomalyDetector.evaluateTrend", () => {
+  test("flags 3-day avg steps below 500", () => {
+    global.wx = { cloud: { database: () => ({}) } };
+    const svc = require("../miniprogram/services/anomalyDetector.js");
+    const a = svc.evaluateTrend([
+      { date: "2026-04-20", steps: 300 },
+      { date: "2026-04-21", steps: 400 },
+      { date: "2026-04-22", steps: 450 }
+    ]);
+    expect(a[0].type).toBe("steps_low");
+    expect(a[0].date).toBe("2026-04-22");
+  });
+
+  test("returns empty when steps sufficient", () => {
+    global.wx = { cloud: { database: () => ({}) } };
+    const svc = require("../miniprogram/services/anomalyDetector.js");
+    expect(svc.evaluateTrend([
+      { date: "2026-04-20", steps: 3000 },
+      { date: "2026-04-21", steps: 4000 },
+      { date: "2026-04-22", steps: 5000 }
+    ])).toEqual([]);
+  });
+
+  test("returns empty when less than 3 records", () => {
+    global.wx = { cloud: { database: () => ({}) } };
+    const svc = require("../miniprogram/services/anomalyDetector.js");
+    expect(svc.evaluateTrend([{ date: "2026-04-22", steps: 100 }])).toEqual([]);
+  });
 });
 
 describe("anomalyDetector.scan", () => {

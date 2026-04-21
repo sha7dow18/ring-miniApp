@@ -33,7 +33,39 @@ function evaluateDay(record) {
   if (stress != null && stress > 75) {
     out.push({ type: "stress_high", severity: "mid", text: "压力指数过高：" + stress });
   }
+  var tempDelta = record.skin_temp_delta;
+  if (tempDelta != null && tempDelta > 1.0) {
+    out.push({ type: "temp_high", severity: "high", text: "体表温度升高：+" + tempDelta.toFixed(1) + "℃，疑似发热" });
+  }
+  var hrv = record.hrv;
+  if (hrv != null && hrv < 20) {
+    out.push({ type: "hrv_low", severity: "mid", text: "HRV 偏低：" + hrv + " ms，自主神经疲劳" });
+  }
+  var rr = record.respiratory_rate;
+  if (rr != null && (rr > 22 || rr < 10)) {
+    out.push({ type: rr > 22 ? "rr_high" : "rr_low", severity: "high", text: "呼吸频率异常：" + rr + " 次/分" });
+  }
   return out;
+}
+
+/**
+ * 多日指标趋势检测（单日看不出的异常）。当前只看步数 3 日均。
+ */
+function evaluateTrend(records) {
+  if (!records || records.length < 3) return [];
+  var recent = records.slice(-3);
+  var stepsVals = recent.map(function(r) { return r && r.steps; }).filter(function(v) { return v != null; });
+  if (stepsVals.length < 3) return [];
+  var avg = stepsVals.reduce(function(a, b) { return a + b; }, 0) / stepsVals.length;
+  if (avg < 500) {
+    return [{
+      type: "steps_low",
+      severity: "mid",
+      text: "近 3 日日均步数仅 " + Math.round(avg) + "，活动量骤降",
+      date: recent[recent.length - 1].date
+    }];
+  }
+  return [];
 }
 
 /**
@@ -46,6 +78,7 @@ function scan(records) {
       results.push(Object.assign({ date: r.date }, a));
     });
   });
+  evaluateTrend(records || []).forEach(function(a) { results.push(a); });
   return results;
 }
 
@@ -91,6 +124,7 @@ async function detectAndPush(records, toOpenId) {
 module.exports = {
   // pure
   evaluateDay: evaluateDay,
+  evaluateTrend: evaluateTrend,
   scan: scan,
   // cloud
   detectAndPush: detectAndPush

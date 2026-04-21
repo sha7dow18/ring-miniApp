@@ -31,7 +31,8 @@
   <view wx:else class="card success-card">
     <view class="emoji">✅</view>
     <view class="success-title">预约成功</view>
-    <view class="success-body">医师会在 {{bookedSlot}} 时段联系 {{phone}}。请保持电话畅通。</view>
+    <view class="success-body">医师会在 {{bookedSlot}} 时段联系 {{phone || '你'}}。请保持电话畅通。</view>
+    <button class="btn btn-primary" bindtap="goList">查看我的预约</button>
     <button class="btn btn-ghost" bindtap="goBack">返回</button>
   </view>
 </view>

@@ -84,16 +84,20 @@
 
 ## 8. 与当前实现的 Gap（TODO 参考）
 
-> 只列缺口，不设计方案；每一项将来由独立 sprint 计划落地。
+> 实现状态按 2026-04-22 Sprint C8 交付盘点。
 
-- [ ] **体质辨识**：当前 `ai-chat` 已有舌诊视觉链路，但缺九体质分类模型输出与持久化字段（`user_profile.constitution`?）
-- [ ] **子女端**：现有小程序是单端（使用者视角），缺少"子女视角"入口、权限模型、绑定关系、健康简报页
-- [ ] **AIGC 内容营销**：没有内容流（feed）页，也没有 AI 文案/脚本生成工作流
-- [ ] **自动补货**：`orders` 集合有订单数据，但没有消耗周期模型、补货预测、推送链路
-- [ ] **健康异常预警推送**：`health_records` 有数据，但没有异常检测规则与 push 通道
-- [ ] **订阅计费**：当前无会员/订阅状态字段，无 10 次额度计数机制
-- [ ] **在线问诊**：PRD 承诺的"1 次线上问诊"接入方式未定
+- [x] **体质辨识**：九体质（`constitutionService`）+ 持久化 `user_profile.constitution` + 商品×体质推荐（Sprint C2）。
+- [x] **子女端**：family-home + 家庭绑定 + role-switch + 跨端 inbox + 父母今日快照（C1 + C8-T2）。
+- [x] **AIGC 内容营销**：`content_feed` 预置 25 条 + AI 生成 + home 按体质过滤（Sprint C3）。
+- [x] **自动补货**：`consumeCycleDays` + `scheduleFromOrder` + `replenishDispatcher` 推子女 inbox（Sprint C4）。
+- [x] **健康异常预警推送**：9 项阈值 + 趋势规则 + `family_inbox` + 订阅消息旁路（Sprint C5 + C8-T5）。
+- [x] **订阅计费**：free/basic/pro 三档 + `consumeAiQuota` / `consumeConsultQuota` 真实扣减（C7 + C8-T3）。
+- [x] **在线问诊**：`consultations` 集合 + 预约页 + 我的问诊列表 + 扣 `remainingConsult`（C8-T4）。
+- [x] **子女代父母购买闭环**：mall/checkout/orders 带 `forElder + elderOpenId`，老人端订单页显示"子女代购"徽标（C8-T1）。
+- [ ] **订阅消息真实触达**：三个模板 ID 仍是 `REPLACE_ME_*` 占位符，模板注册依赖主体认证（业务决定暂不做）。
+- [ ] **cloudrun Aita bot 切豆包**：底层仍是 hunyuan-turbos-latest + hunyuan-exp 网关。切换需在 CloudBase 控制台新建豆包 AI Gateway 路由后更新 `bot-config.yaml`（C8-T6 只清了前端 SSE label，真正换底座留作 TODO）。
 
 ## 9. 版本记录
 
 - 2026-04-21 初稿，基于《三创赛 ppt.pdf》17 页内容提炼。
+- 2026-04-22 Sprint C8 交付，三大闭环全部 ✅，仅剩订阅消息模板注册 + cloudrun bot 切豆包两项主动 hold。

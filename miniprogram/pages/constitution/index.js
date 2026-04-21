@@ -1,4 +1,5 @@
 const constitutionService = require("../../services/constitutionService.js");
+const subscriptionService = require("../../services/subscriptionService.js");
 
 function formatTime(d) {
   if (!d) return "";
@@ -49,6 +50,18 @@ Page({
       wx.showToast({ title: "评估完成", icon: "success" });
     } catch (e) {
       this.setData({ assessing: false, streamText: "" });
+      if (subscriptionService.isQuotaError(e)) {
+        wx.showModal({
+          title: "AI 额度已用完",
+          content: "体质辨识消耗 1 次 AI 服务次数，本月额度已耗尽。",
+          confirmText: "去升级",
+          cancelText: "取消",
+          success: (r) => {
+            if (r.confirm) wx.navigateTo({ url: "/pages/subscription/index" });
+          }
+        });
+        return;
+      }
       wx.showModal({
         title: "评估失败",
         content: "AI 返回格式异常：" + e.message + "。请稍后重试。",

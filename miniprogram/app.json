@@ -26,7 +26,8 @@
     "pages/digest/index",
     "pages/digest-detail/index",
     "pages/subscription/index",
-    "pages/consult-booking/index"
+    "pages/consult-booking/index",
+    "pages/consult-list/index"
   ],
   "tabBar": {
     "custom": true,

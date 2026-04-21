@@ -34,6 +34,7 @@
 - [2026-04-20-ai-stream-scroll.md](plans/2026-04-20-ai-stream-scroll.md) — 流式输出时允许用户手动上滑，不再每个 chunk 都强制吸到底部
 - [2026-04-21-sprint-c1.md](plans/2026-04-21-sprint-c1.md) — 双端骨架：user_profile 扩字段 + family_bindings/family_inbox 集合 + role-switch/family-bind 两页
 - [2026-04-22-sprints-c2-c7.md](plans/2026-04-22-sprints-c2-c7.md) — 一次性交付 PRD 三大核心功能：体质辨识 + AIGC 内容流 + 自动补货 + 子女端 + 周简报 + 订阅
+- [2026-04-22-sprint-c8-demo-closure.md](plans/2026-04-22-sprint-c8-demo-closure.md) — demo 闭环收口：代父母购买链路 + 父母快照云函数 + 订阅 quota 接线 + 问诊落库 + anomaly 9 项齐全
 
 ## 自信的交付清单
 
@@ -64,7 +65,8 @@
 | `chat_sessions` | 每会话一条 | 仅创建者 | title, tag (舌诊\|睡眠\|体质\|通用), messages[], createdAt, updatedAt |
 | `products` | 每商品一条 | 仅管理端可写，所有用户可读 | id, name, category, price, image, imageName, desc, detailPitch, tags[], color, onSale, stock, createdAt, **constitutionTags[]**, **consumeCycleDays** |
 | `cart_items` | 每 (用户, 商品) 一条 | 仅创建者 | productId, qty, addedAt, updatedAt |
-| `orders` | 每订单一条 | 仅创建者 | orderNo, items[], total, address, status (pending\|paid\|shipping\|done\|canceled), createdAt, payTime, updatedAt |
+| `orders` | 每订单一条 | CUSTOM（_openid 或 elderOpenId 可读；仅 _openid 可写） | orderNo, items[], total, address, status (pending\|paid\|shipping\|done\|canceled), createdAt, payTime, updatedAt, **forElder(bool), elderOpenId** |
+| `consultations` | 每用户 N 条 | 仅创建者 | slot, slotText, symptom, phone, status(pending\|confirmed\|done\|canceled), createdAt |
 | `constitution_assessments` | 每用户 N 条 | 仅创建者 | labels[]（九体质 top3 带 score）, summary, report, source, evidence, createdAt |
 | `content_feed` | 平台级 | 所有用户可读，创建者可写 | type(greeting\|tip\|reminder\|seeding\|video_script), targetConstitution[], title, body, coverEmoji, productIds[], season, author, createdAt |
 | `replenishment_plans` | 每补货计划一条 | 仅创建者 | productId, productName, lastOrderId, qty, cycleDays, dueDate, status(pending\|confirmed_by_child\|reordered\|rejected), createdAt |
@@ -85,13 +87,15 @@
 | `services/productService.js` | 商品目录读取；商品列表/详情前端直读 `products` 集合；`filterProducts` 纯函数 |
 | `services/cartService.js` | 购物车 CRUD；addToCart upsert；`cartTotal` / `cartCount` 纯函数 |
 | `services/orderService.js` | 订单 CRUD + 状态机（pending/paid/shipping/done/canceled）；`validateOrder` / `generateOrderNo` 纯函数；支付成功时钩子触发 `replenishService.scheduleFromOrder` |
-| `services/constitutionService.js` | 九体质辨识：真实 AI (DeepSeek/混元) + 云持久 + 回写 user_profile.constitution |
+| `services/constitutionService.js` | 九体质辨识：真实 AI (豆包) + 云持久 + 回写 user_profile.constitution；调用前扣 AI quota |
+| `services/consultService.js` | 问诊预约 CRUD + 状态机；`validateBooking` / `statusLabel` 纯函数 |
+| `services/familyHealthService.js` | 子女端包装 `readElderHealth` 云函数 + `toDisplayCards` 纯函数 |
+| `services/subscriptionService.js` | 订阅套餐：free/basic/pro + mock 升级 + `consumeAiQuota` / `consumeConsultQuota` 接 AI/问诊调用前扣减 |
 | `services/contentService.js` | AIGC 内容流：按体质过滤 / 真实 AI 生成新内容入库 |
 | `services/productService.js` (扩) | `rankByConstitution` 纯函数 + `listByConstitution` 云方法 |
 | `services/replenishService.js` | 补货计划：订单 hook 自动排期 + partitionDue 纯函数 + 云 CRUD |
 | `services/digestService.js` | 周简报：近 7 日汇总 + 真实 AI 生成 + sharedWith 跨用户可读 |
 | `services/anomalyDetector.js` | 9 项阈值检测 + 异常 → family_inbox 推送 |
-| `services/subscriptionService.js` | 订阅套餐：free/basic/pro + mock 升级 + AI 配额扣减 |
 
 ### 运行态 / 配置
 

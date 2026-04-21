@@ -1,4 +1,12 @@
 <view class="mall-page">
+  <view wx:if="{{forElder}}" class="for-elder-banner">
+    <view class="fe-emoji">👵</view>
+    <view class="fe-texts">
+      <view class="fe-title">在为父母选购</view>
+      <view class="fe-sub">下单会自动寄到老人端，支付由你完成</view>
+    </view>
+  </view>
+
   <view class="hero-card">
     <view class="hero-kicker">Aita 养生商城</view>
     <view class="hero-title">为当下状态挑选更合适的健康补剂</view>

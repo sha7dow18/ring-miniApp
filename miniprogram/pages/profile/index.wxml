@@ -23,7 +23,8 @@
     <view class="menu-card">
       <view class="menu-item" bindtap="goConstitution"><text>我的体质</text><view class="menu-item-right"><text class="menu-hint">{{constitutionName || '未评估'}}</text><text>›</text></view></view>
       <view class="menu-item" bindtap="goSubscription"><text>AI 订阅</text><view class="menu-item-right"><text class="menu-hint">{{planName || '免费'}}</text><text>›</text></view></view>
-      <view class="menu-item" bindtap="goConsult"><text>在线问诊</text><text>›</text></view>
+      <view class="menu-item" bindtap="goConsult"><text>预约问诊</text><text>›</text></view>
+      <view class="menu-item" bindtap="goConsultList"><text>我的问诊</text><text>›</text></view>
     </view>
   </view>
 

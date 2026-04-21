@@ -8,13 +8,25 @@
 
   <block wx:else>
     <view class="hero-card">
-      <view class="hero-label">{{elderRelation || '父母'}} · 本周健康</view>
+      <view class="hero-label">{{elderNickname}} · 本周健康</view>
       <view class="hero-headline" wx:if="{{latestDigest}}">{{latestDigest.headline}}</view>
       <view class="hero-headline placeholder" wx:else>{{hasAnomaly ? '有新的健康提醒' : '一切正常'}}</view>
       <view class="hero-meta">
         <text>最近 {{digestWeekLabel || '本周'}}</text>
         <text wx:if="{{unreadCount > 0}}" class="badge">· {{unreadCount}} 条新消息</text>
       </view>
+    </view>
+
+    <view class="today-card" wx:if="{{snapshotLoaded}}">
+      <view class="today-title">{{elderNickname}}今日</view>
+      <view class="today-grid" wx:if="{{snapshotCards.length}}">
+        <view class="td-cell" wx:for="{{snapshotCards}}" wx:key="key">
+          <view class="td-val">{{item.value}}<text class="td-unit" wx:if="{{item.unit && item.value !== '--'}}"> {{item.unit}}</text></view>
+          <view class="td-label">{{item.label}}</view>
+          <view class="td-trend" wx:if="{{item.trend}}">{{item.trend}}</view>
+        </view>
+      </view>
+      <view class="today-empty" wx:else>{{snapshotError || '父母今天还没有数据上报'}}</view>
     </view>
 
     <view class="metric-row" wx:if="{{latestDigest}}">

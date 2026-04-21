@@ -21,17 +21,27 @@ Page({
 
   async load() {
     this.setData({ isLoading: true });
-    const orders = await orderService.listOrders();
-    const mapped = orders.map((o) => this.decorate(o));
+    // 合并：自己下的订单 + 被代购的订单（elderOpenId == 我）
+    const [mine, proxy] = await Promise.all([
+      orderService.listOrders(),
+      orderService.listForElder()
+    ]);
+    const mineSet = new Set(mine.map((o) => o._id));
+    const proxyOnly = proxy.filter((o) => !mineSet.has(o._id));
+    const all = mine.concat(proxyOnly)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const mapped = all.map((o) => this.decorate(o));
     this.setData({ orders: mapped, isLoading: false }, () => this.applyFilter());
   },
 
   decorate(o) {
+    const isProxy = !!(o.forElder && o.elderOpenId);
     return Object.assign({}, o, {
       statusText: orderService.statusLabel(o.status),
       itemCount: (o.items || []).reduce((acc, i) => acc + (Number(i.qty) || 0), 0),
       firstItemName: (o.items && o.items[0] && o.items[0].name) || "",
-      createdText: this.formatDate(o.createdAt)
+      createdText: this.formatDate(o.createdAt),
+      isProxy: isProxy
     });
   },
 

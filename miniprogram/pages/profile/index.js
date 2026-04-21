@@ -89,5 +89,6 @@ Page({
   goConstitution() { wx.navigateTo({ url: "/pages/constitution/index" }); },
   goSubscription() { wx.navigateTo({ url: "/pages/subscription/index" }); },
   goConsult() { wx.navigateTo({ url: "/pages/consult-booking/index" }); },
+  goConsultList() { wx.navigateTo({ url: "/pages/consult-list/index" }); },
   goReplenish() { wx.navigateTo({ url: "/pages/replenish/index" }); }
 });

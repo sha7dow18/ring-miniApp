@@ -74,6 +74,55 @@ async function useOneAiQuota() {
   return remaining;
 }
 
+async function useOneConsultQuota() {
+  var sub = await getMy();
+  if (!sub || !sub._id) return 0;
+  if ((sub.remainingConsult || 0) <= 0) return 0;
+  var remaining = sub.remainingConsult - 1;
+  await getDB().collection(COLLECTION).doc(sub._id).update({
+    data: { remainingConsult: remaining, updatedAt: new Date() }
+  });
+  return remaining;
+}
+
+/**
+ * AI 调用前扣减。额度不足时抛带 code 的 error，调用方捕获后可导航到订阅页。
+ */
+async function consumeAiQuota() {
+  var sub = await getMy();
+  if (!sub) throw makeQuotaError("ai");
+  if ((sub.remainingAi || 0) <= 0) throw makeQuotaError("ai");
+  if (!sub._id) return { remaining: sub.remainingAi - 1 };
+  var remaining = sub.remainingAi - 1;
+  await getDB().collection(COLLECTION).doc(sub._id).update({
+    data: { remainingAi: remaining, updatedAt: new Date() }
+  });
+  return { remaining: remaining };
+}
+
+async function consumeConsultQuota() {
+  var sub = await getMy();
+  if (!sub) throw makeQuotaError("consult");
+  if ((sub.remainingConsult || 0) <= 0) throw makeQuotaError("consult");
+  if (!sub._id) return { remaining: sub.remainingConsult - 1 };
+  var remaining = sub.remainingConsult - 1;
+  await getDB().collection(COLLECTION).doc(sub._id).update({
+    data: { remainingConsult: remaining, updatedAt: new Date() }
+  });
+  return { remaining: remaining };
+}
+
+function makeQuotaError(kind) {
+  var err = new Error(kind === "consult" ? "本月问诊次数已用完" : "本月 AI 服务次数已用完");
+  err.code = "QUOTA_EXCEEDED";
+  err.kind = kind;
+  return err;
+}
+
+function isQuotaError(err) {
+  return !!(err && err.code === "QUOTA_EXCEEDED");
+}
+
 function listPlans() {
   return Object.keys(PLANS).map(function(k) { return PLANS[k]; });
 }
@@ -84,5 +133,9 @@ module.exports = {
   getMy: getMy,
   mockUpgrade: mockUpgrade,
   useOneAiQuota: useOneAiQuota,
+  useOneConsultQuota: useOneConsultQuota,
+  consumeAiQuota: consumeAiQuota,
+  consumeConsultQuota: consumeConsultQuota,
+  isQuotaError: isQuotaError,
   listPlans: listPlans
 };

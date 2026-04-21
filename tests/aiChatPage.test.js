@@ -109,6 +109,10 @@ beforeEach(() => {
   cartServiceMock = {
     addToCart: jest.fn(function() { return Promise.resolve({ _id: "cart_1", qty: 1 }); })
   };
+  const subscriptionServiceMock = {
+    consumeAiQuota: jest.fn(function() { return Promise.resolve({ remaining: 9 }); }),
+    isQuotaError: jest.fn(function(e) { return !!(e && e.code === "QUOTA_EXCEEDED"); })
+  };
   global.wx = {
     navigateTo: jest.fn(),
     switchTab: jest.fn(),
@@ -123,6 +127,7 @@ beforeEach(() => {
   jest.doMock("../miniprogram/services/sessionService.js", () => sessionServiceMock);
   jest.doMock("../miniprogram/services/aiService.js", () => aiServiceMock);
   jest.doMock("../miniprogram/services/cartService.js", () => cartServiceMock);
+  jest.doMock("../miniprogram/services/subscriptionService.js", () => subscriptionServiceMock);
   require("../miniprogram/pages/ai-chat/index.js");
 });
 
@@ -162,7 +167,8 @@ describe("ai-chat page", () => {
 
     const page = makePage({ inputText: '最近睡不好' });
     const sending = pageDef.doSend.call(page);
-    await Promise.resolve();
+    // flush microtasks until sendToBot is actually called (quota check + sessionCreate are awaited first)
+    for (let i = 0; i < 10 && !capturedCallbacks; i++) await Promise.resolve();
 
     pageDef.onMsgsTouchStart.call(page);
     pageDef.onMsgsTouchMove.call(page);

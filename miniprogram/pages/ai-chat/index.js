@@ -3,6 +3,7 @@ var agentService = require("../../services/agentService.js");
 var cartService = require("../../services/cartService.js");
 var agentCards = require("../../services/agentCards.js");
 var sessionService = require("../../services/sessionService.js");
+var subscriptionService = require("../../services/subscriptionService.js");
 var markdown = require("../../utils/markdown.js");
 var timeago = require("../../utils/timeago.js");
 
@@ -274,6 +275,25 @@ Page({
     var self = this;
 
     try {
+      try {
+        await subscriptionService.consumeAiQuota();
+      } catch (quotaErr) {
+        if (subscriptionService.isQuotaError(quotaErr)) {
+          self.setData({ isSending: false, inputText: text, attachment: att });
+          wx.showModal({
+            title: "AI 额度已用完",
+            content: "本月 AI 服务次数已耗尽，是否升级套餐？",
+            confirmText: "去升级",
+            cancelText: "取消",
+            success: function(r) {
+              if (r.confirm) wx.navigateTo({ url: "/pages/subscription/index" });
+            }
+          });
+          return;
+        }
+        throw quotaErr;
+      }
+
       if (!self.data.sessionId) {
         var created = await sessionService.createSession(text || "", !!att);
         self.setData({ sessionId: created._id, sessionTag: created.tag });

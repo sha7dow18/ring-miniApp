@@ -81,7 +81,9 @@ function createOrder(draft) {
     status: STATUS.PENDING,
     createdAt: now,
     updatedAt: now,
-    payTime: null
+    payTime: null,
+    forElder: !!draft.forElder,
+    elderOpenId: draft.elderOpenId || ""
   };
   return getDB().collection(COLLECTION).add({ data: data })
     .then(function(res) { return Object.assign({ _id: res._id }, data); });
@@ -93,6 +95,19 @@ function listOrders(statusFilter) {
     q = getDB().collection(COLLECTION).where({ _openid: "{openid}", status: statusFilter });
   }
   return q.orderBy("createdAt", "desc").limit(50).get()
+    .then(function(res) { return res.data || []; })
+    .catch(function() { return []; });
+}
+
+/**
+ * 老人端：子女代自己下的订单（order.elderOpenId == 老人 openid）。
+ * 云规则已开放 doc.elderOpenId == auth.openid 时可读。
+ */
+function listForElder(statusFilter) {
+  var where = { elderOpenId: "{openid}" };
+  if (statusFilter && statusFilter !== "all") where.status = statusFilter;
+  return getDB().collection(COLLECTION).where(where)
+    .orderBy("createdAt", "desc").limit(50).get()
     .then(function(res) { return res.data || []; })
     .catch(function() { return []; });
 }
@@ -150,6 +165,7 @@ module.exports = {
   // cloud
   createOrder: createOrder,
   listOrders: listOrders,
+  listForElder: listForElder,
   getOrder: getOrder,
   payOrder: payOrder,
   cancelOrder: cancelOrder

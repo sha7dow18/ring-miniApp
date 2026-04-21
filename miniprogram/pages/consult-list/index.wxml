@@ -1,0 +1,28 @@
+<view class="consult-list-page">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <block wx:elif="{{list.length === 0}}">
+    <view class="empty card">
+      <view class="emoji">🩺</view>
+      <view class="empty-title">还没有问诊预约</view>
+      <view class="empty-desc">专业版用户每月可预约 1 次三甲中医师一对一问诊。</view>
+      <button class="btn btn-primary" bindtap="goBook">预约问诊</button>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view wx:for="{{list}}" wx:key="_id" class="card consult-item status-{{item.status}}">
+      <view class="item-head">
+        <view class="slot">{{item.slotText}}</view>
+        <view class="status">{{item._statusLabel}}</view>
+      </view>
+      <view class="symptom">{{item.symptom}}</view>
+      <view class="meta">
+        <text wx:if="{{item.phone}}">📞 {{item.phone}}</text>
+        <text>·</text>
+        <text>{{item._createdText}} 提交</text>
+      </view>
+      <button wx:if="{{item.status === 'pending'}}" class="btn-cancel" data-id="{{item._id}}" bindtap="cancel">取消预约</button>
+    </view>
+  </block>
+</view>

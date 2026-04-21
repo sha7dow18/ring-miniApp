@@ -49,7 +49,7 @@ export class ChatToolService {
       const data = {
         type: 'search',
         created: Date.now(),
-        model: 'hunyuan',
+        model: 'cloudbase-ai',
         role: 'assistant',
         content: '',
         search_info: {
@@ -109,7 +109,7 @@ export class ChatToolService {
       const data = {
         type: "'search_file',",
         created: Date.now(),
-        model: 'hunyuan',
+        model: 'cloudbase-ai',
         role: 'assistant',
         content: result.content ?? '',
         finish_reason: 'continue'

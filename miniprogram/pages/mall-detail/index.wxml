@@ -1,4 +1,5 @@
 <view class="detail-page" wx:if="{{product}}">
+  <view wx:if="{{forElder}}" class="for-elder-hint">为父母选购 · 下单寄给老人</view>
   <view class="hero-card" style="{{heroStyle}}">
     <view class="hero-top">
       <view class="hero-kicker">本草轻养</view>

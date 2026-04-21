@@ -12,6 +12,8 @@
         <text class="status status-{{item.status}}">{{item.statusText}}</text>
       </view>
 
+      <view wx:if="{{item.isProxy}}" class="proxy-tag">👨‍👩‍👧 子女代购</view>
+
       <view class="product-name">{{item.firstItemName}} <text class="multi" wx:if="{{item.items.length > 1}}">等 {{item.items.length}} 件商品</text></view>
 
       <view class="card-footer">

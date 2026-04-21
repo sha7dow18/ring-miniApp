@@ -2,6 +2,10 @@
 name: Aita
 
 # 模型标识
+# TODO(c8-t6): 迁豆包。需先在 CloudBase 控制台创建豆包 AI Gateway 路由
+#   （baseURL 改为 .../v1/ai/doubao-xxx），并把 model 改为豆包的模型 ID
+#   （如 doubao-lite-128k-240428 / doubao-pro-32k-240828）。
+#   改完后重新 `tcb cloudrun deploy` 即可生效。
 model: hunyuan-turbos-latest
 
 # 请求大模型根路径

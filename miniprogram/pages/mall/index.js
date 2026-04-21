@@ -39,7 +39,12 @@ Page({
     hasCategorySelected: false,
     cartCount: 0,
     constitutionName: "",
-    constitutionPicks: []
+    constitutionPicks: [],
+    forElder: false
+  },
+
+  onLoad(query) {
+    this.setData({ forElder: !!(query && query.forElder) });
   },
 
   async onShow() {
@@ -134,7 +139,8 @@ Page({
   goToDetail(e) {
     const productId = e.currentTarget.dataset.id;
     if (!productId) return;
-    wx.navigateTo({ url: `/pages/mall-detail/index?id=${productId}` });
+    const forElderSuffix = this.data.forElder ? "&forElder=1" : "";
+    wx.navigateTo({ url: `/pages/mall-detail/index?id=${productId}${forElderSuffix}` });
   },
 
   goCart() {

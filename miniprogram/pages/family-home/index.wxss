@@ -153,3 +153,55 @@
 .qa-text { margin-top: var(--sp-2); font-size: var(--fs-body); color: var(--text-1); font-weight: var(--fw-medium); }
 
 .tab-bar-space { height: 160rpx; }
+
+.today-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx;
+  margin: 0 0 20rpx;
+  box-shadow: 0 6rpx 24rpx rgba(63, 94, 84, 0.06);
+}
+.today-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #3F5E54;
+  margin-bottom: 16rpx;
+}
+.today-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+}
+.td-cell {
+  background: rgba(63, 94, 84, 0.04);
+  border-radius: 16rpx;
+  padding: 16rpx 20rpx;
+}
+.td-val {
+  font-size: 38rpx;
+  font-weight: 600;
+  color: #3F5E54;
+  line-height: 1.2;
+}
+.td-unit {
+  font-size: 22rpx;
+  font-weight: 400;
+  color: #7d7e80;
+  margin-left: 4rpx;
+}
+.td-label {
+  font-size: 24rpx;
+  color: #7d7e80;
+  margin-top: 4rpx;
+}
+.td-trend {
+  font-size: 22rpx;
+  color: #9c9c9c;
+  margin-top: 8rpx;
+}
+.today-empty {
+  font-size: 26rpx;
+  color: #9c9c9c;
+  padding: 24rpx 0;
+  text-align: center;
+}

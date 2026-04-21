@@ -36,11 +36,13 @@ Page({
     categoryText: "",
     detailText: "",
     heroStyle: "",
-    isAdding: false
+    isAdding: false,
+    forElder: false
   },
 
   async onLoad(query) {
     const id = query.id || "";
+    this.setData({ forElder: !!(query && query.forElder) });
     try {
       const product = await productService.getProduct(id);
       this.setData(buildDisplayState(product));
@@ -64,8 +66,9 @@ Page({
 
   onBuyNow() {
     if (!this.data.product) return;
+    const forElderSuffix = this.data.forElder ? "&forElder=1" : "";
     wx.navigateTo({
-      url: `/pages/checkout/index?mode=single&productId=${this.data.product.id}&qty=1`
+      url: `/pages/checkout/index?mode=single&productId=${this.data.product.id}&qty=1${forElderSuffix}`
     });
   },
 
