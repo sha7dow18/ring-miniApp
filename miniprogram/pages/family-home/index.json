@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "父母动态",
+  "navigationBarBackgroundColor": "#F4F0EB",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "tab-bar": "/custom-tab-bar/index"
+  }
+}

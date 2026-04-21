@@ -114,7 +114,13 @@ function payOrder(id) {
     return getDB().collection(COLLECTION).doc(id).update({
       data: { status: STATUS.PAID, payTime: now, updatedAt: now }
     }).then(function() {
-      return Object.assign({}, o, { status: STATUS.PAID, payTime: now, updatedAt: now });
+      var paid = Object.assign({}, o, { _id: id, status: STATUS.PAID, payTime: now, updatedAt: now });
+      // 挂钩补货计划；失败不阻塞支付主流程
+      try {
+        var replenishService = require("./replenishService.js");
+        replenishService.scheduleFromOrder(paid).catch(function() {});
+      } catch (e) { /* ignore */ }
+      return paid;
     });
   });
 }

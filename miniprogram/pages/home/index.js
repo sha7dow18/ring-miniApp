@@ -1,6 +1,10 @@
 const mockStore = require("../../utils/mockStore.js");
 const mockBleStream = require("../../utils/mockBleStream.js");
 const healthService = require("../../services/healthService.js");
+const constitutionService = require("../../services/constitutionService.js");
+const profileService = require("../../services/profileService.js");
+const contentService = require("../../services/contentService.js");
+const anomalyDetector = require("../../services/anomalyDetector.js");
 const dateStrip = require("../../utils/dateStripUtils.js");
 const homeMetricRows = require("../../utils/homeMetricRows.js");
 
@@ -74,7 +78,12 @@ Page({
     bpTrendTime: [],
     otherRows: [],
     weeklyBars: [],
-    dateScrollLeft: 0
+    dateScrollLeft: 0,
+    constitutionName: "",
+    constitutionHint: "AI 基于健康数据辨识你的九体质",
+    constitutionKey: "",
+    contentFeed: [],
+    refreshingContent: false
   },
 
   onLoad() {
@@ -103,7 +112,83 @@ Page({
     this.unsubscribe = mockStore.subscribe((state) => this.syncDevice(state));
     this.unsubscribeBle = mockBleStream.subscribe((snap) => this.applyLiveSnapshot(snap));
     this.loadCloud();
+    this.loadConstitution();
+    this.runAnomalyScanOnce();
   },
+
+  async runAnomalyScanOnce() {
+    // 每次本次登录只跑一次；老人端对绑定的子女推送异常
+    if (this._anomalyScanned) return;
+    this._anomalyScanned = true;
+    try {
+      const db = wx.cloud.database();
+      const bound = await db.collection("family_bindings")
+        .where({ _openid: "{openid}", status: "bound" }).limit(1).get();
+      const childOid = bound.data && bound.data[0] && bound.data[0].childOpenId;
+      if (!childOid) return;
+      const records = await healthService.getRecent(3);
+      await anomalyDetector.detectAndPush(records, childOid);
+    } catch (e) { /* silent */ }
+  },
+
+  async loadConstitution() {
+    const profile = await profileService.getProfile();
+    const key = profile && profile.constitution;
+    if (!key) {
+      this.setData({
+        constitutionName: "",
+        constitutionKey: "",
+        constitutionHint: "AI 基于健康数据辨识你的九体质"
+      });
+      await this.loadContentFeed(null);
+      return;
+    }
+    const found = constitutionService.CONSTITUTIONS.find((c) => c.key === key);
+    if (found) {
+      this.setData({
+        constitutionName: found.name,
+        constitutionKey: key,
+        constitutionHint: found.desc.length > 20 ? found.desc.slice(0, 20) + "…" : found.desc
+      });
+    }
+    await this.loadContentFeed(key);
+  },
+
+  async loadContentFeed(constitutionKey) {
+    const items = await contentService.listForConstitution(constitutionKey, 12);
+    this.setData({ contentFeed: items });
+  },
+
+  async refreshOneContent() {
+    if (this.data.refreshingContent) return;
+    this.setData({ refreshingContent: true });
+    const types = ["tip", "reminder", "seeding", "greeting"];
+    const type = types[Math.floor(Math.random() * types.length)];
+    try {
+      const doc = await contentService.generateAndInsert(
+        type,
+        this.data.constitutionKey,
+        this.data.constitutionName
+      );
+      this.setData({
+        contentFeed: [doc].concat(this.data.contentFeed),
+        refreshingContent: false
+      });
+      wx.showToast({ title: "环环刚生成一条", icon: "none" });
+    } catch (e) {
+      this.setData({ refreshingContent: false });
+      wx.showToast({ title: "AI 生成失败，请稍后重试", icon: "none" });
+    }
+  },
+
+  onContentTap(e) {
+    const item = e.detail.item;
+    if (item && item.productIds && item.productIds.length) {
+      wx.navigateTo({ url: `/pages/mall-detail/index?id=${item.productIds[0]}` });
+    }
+  },
+
+  goConstitution() { wx.navigateTo({ url: "/pages/constitution/index" }); },
 
   onHide() {
     if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null;

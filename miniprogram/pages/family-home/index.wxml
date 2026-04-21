@@ -1,0 +1,68 @@
+<view class="fam-page">
+  <view wx:if="{{!bound}}" class="empty-card">
+    <view class="empty-emoji">👨‍👩‍👧‍👦</view>
+    <view class="empty-title">还未绑定父母账户</view>
+    <view class="empty-desc">绑定后即可查看父母的健康简报、收到异常预警、帮他补货。</view>
+    <view class="empty-cta" bindtap="goBind">去绑定</view>
+  </view>
+
+  <block wx:else>
+    <view class="hero-card">
+      <view class="hero-label">{{elderRelation || '父母'}} · 本周健康</view>
+      <view class="hero-headline" wx:if="{{latestDigest}}">{{latestDigest.headline}}</view>
+      <view class="hero-headline placeholder" wx:else>{{hasAnomaly ? '有新的健康提醒' : '一切正常'}}</view>
+      <view class="hero-meta">
+        <text>最近 {{digestWeekLabel || '本周'}}</text>
+        <text wx:if="{{unreadCount > 0}}" class="badge">· {{unreadCount}} 条新消息</text>
+      </view>
+    </view>
+
+    <view class="metric-row" wx:if="{{latestDigest}}">
+      <view class="m-cell">
+        <view class="m-num">{{latestDigest.summary.avgSleepScore}}</view>
+        <view class="m-label">睡眠</view>
+      </view>
+      <view class="m-cell">
+        <view class="m-num">{{latestDigest.summary.avgHrResting}}</view>
+        <view class="m-label">静息心率</view>
+      </view>
+      <view class="m-cell">
+        <view class="m-num">{{latestDigest.summary.totalSteps}}</view>
+        <view class="m-label">周步数</view>
+      </view>
+      <view class="m-cell">
+        <view class="m-num alarm">{{latestDigest.summary.anomalies.length}}</view>
+        <view class="m-label">异常</view>
+      </view>
+    </view>
+
+    <view class="section-title">收件箱 · 实时动态</view>
+    <view class="inbox-list" wx:if="{{inbox.length}}">
+      <view class="inbox-card card {{item.read ? 'read' : ''}}" wx:for="{{inbox}}" wx:key="_id" data-id="{{item._id}}" bindtap="openInbox">
+        <view class="ix-icon">{{item.icon}}</view>
+        <view class="ix-body">
+          <view class="ix-title">{{item.title}}</view>
+          <view class="ix-desc" wx:if="{{item.body}}">{{item.body}}</view>
+          <view class="ix-time">{{item.timeText}}</view>
+        </view>
+        <view wx:if="{{!item.read}}" class="ix-dot"></view>
+      </view>
+    </view>
+    <view wx:else class="inbox-empty">暂无动态</view>
+
+    <view class="quick-actions">
+      <view class="qa-btn" bindtap="goDigest">
+        <view class="qa-emoji">📋</view>
+        <view class="qa-text">本周简报</view>
+      </view>
+      <view class="qa-btn" bindtap="goReplenish">
+        <view class="qa-emoji">🛒</view>
+        <view class="qa-text">去代购</view>
+      </view>
+    </view>
+  </block>
+
+  <view class="tab-bar-space"></view>
+</view>
+
+<tab-bar selected="0" />

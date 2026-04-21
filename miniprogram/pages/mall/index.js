@@ -1,5 +1,7 @@
 const productService = require("../../services/productService.js");
 const cartService = require("../../services/cartService.js");
+const profileService = require("../../services/profileService.js");
+const constitutionService = require("../../services/constitutionService.js");
 
 // 分类是页面元数据，和 products 集合里的 category 字段对齐
 const CATEGORIES = [
@@ -35,7 +37,9 @@ Page({
     searchKeyword: "",
     emptyStateText: "暂无上架商品",
     hasCategorySelected: false,
-    cartCount: 0
+    cartCount: 0,
+    constitutionName: "",
+    constitutionPicks: []
   },
 
   async onShow() {
@@ -45,6 +49,22 @@ Page({
     this.setData({ hasCategorySelected: false, activeCategory: "all" });
     await this.loadProducts();
     await this.refreshCartCount();
+    await this.loadConstitutionPicks();
+  },
+
+  async loadConstitutionPicks() {
+    const profile = await profileService.getProfile();
+    const key = profile && profile.constitution;
+    if (!key || !this.data.products.length) {
+      this.setData({ constitutionName: "", constitutionPicks: [] });
+      return;
+    }
+    const found = constitutionService.CONSTITUTIONS.find((c) => c.key === key);
+    const picks = productService.rankByConstitution(this.data.products, key, 6);
+    this.setData({
+      constitutionName: found ? found.name : "",
+      constitutionPicks: decorateProducts(picks)
+    });
   },
 
   async loadProducts() {

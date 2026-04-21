@@ -33,6 +33,24 @@
     </scroll-view>
   </view>
 
+  <view class="constitution-row" wx:if="{{constitutionName && constitutionPicks.length}}">
+    <view class="cr-head">
+      <view class="cr-title">为你精选 · {{constitutionName}}</view>
+      <view class="cr-sub">基于你的体质 AI 给出的 Top 推荐</view>
+    </view>
+    <scroll-view scroll-x="true" show-scrollbar="false" enhanced="true">
+      <view class="cr-list">
+        <view class="cr-card" wx:for="{{constitutionPicks}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+          <view class="cr-img" style="background: {{item.color}}">
+            <image wx:if="{{item.imageName}}" src="{{item.imagePath}}" mode="aspectFit" />
+          </view>
+          <view class="cr-name">{{item.name}}</view>
+          <view class="cr-price">¥{{item.price}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
   <view class="banner-wrap">
     <image class="banner" src="/assets/mall/mall_banner_main.png" mode="aspectFill" />
     <view class="banner-overlay">

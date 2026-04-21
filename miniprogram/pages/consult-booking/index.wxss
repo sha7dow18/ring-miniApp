@@ -1,0 +1,73 @@
+.cb-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: var(--sp-3);
+}
+
+.hero {
+  padding: var(--sp-5);
+  background: linear-gradient(135deg, var(--cream-1), var(--cream-2));
+  border-radius: 24rpx;
+  text-align: center;
+  margin-bottom: var(--sp-3);
+}
+.emoji { font-size: 96rpx; line-height: 1; }
+.title { margin-top: var(--sp-3); font-size: var(--fs-h1); color: var(--text-1); font-weight: var(--fw-bold); }
+.desc { margin-top: var(--sp-2); font-size: var(--fs-body); color: var(--text-2); line-height: 1.6; }
+
+.card {
+  background: var(--bg-card);
+  border-radius: 20rpx;
+  padding: var(--sp-5);
+  box-shadow: 0 2rpx 8rpx rgba(30, 20, 10, 0.04);
+}
+.success-card { text-align: center; }
+
+.field { margin-bottom: var(--sp-4); }
+.label { font-size: var(--fs-body); color: var(--text-1); font-weight: var(--fw-medium); margin-bottom: var(--sp-2); }
+.textarea {
+  width: 100%;
+  min-height: 200rpx;
+  padding: var(--sp-3);
+  background: var(--bg-page);
+  border-radius: 16rpx;
+  font-size: var(--fs-body);
+  box-sizing: border-box;
+}
+.phone-input {
+  padding: var(--sp-3);
+  background: var(--bg-page);
+  border-radius: 16rpx;
+  font-size: var(--fs-body);
+}
+
+.slot-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.slot {
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-page);
+  border: 2rpx solid var(--border);
+  border-radius: 100rpx;
+  font-size: var(--fs-sub);
+  color: var(--text-2);
+}
+.slot.active { background: var(--brand); color: var(--text-inv); border-color: var(--brand); }
+
+.btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 44rpx;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  margin-top: var(--sp-3);
+}
+.btn-primary { background: var(--brand); color: var(--text-inv); }
+.btn-primary[disabled] { background: var(--bg-muted); color: var(--text-3); }
+.btn-ghost { background: var(--bg-card); color: var(--brand); border: 2rpx solid var(--brand); margin-top: var(--sp-5); }
+
+.tip { margin-top: var(--sp-3); font-size: var(--fs-caption); color: var(--text-3); text-align: center; }
+.tip.alarm { color: var(--accent); }
+.tip .link { color: var(--brand); text-decoration: underline; }
+
+.success-title { font-size: var(--fs-h1); color: var(--brand); font-weight: var(--fw-bold); margin-top: var(--sp-3); }
+.success-body { margin-top: var(--sp-3); font-size: var(--fs-body); color: var(--text-1); line-height: 1.7; }

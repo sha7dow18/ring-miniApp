@@ -26,6 +26,17 @@
     </view>
   </scroll-view>
 
+  <view class="constitution-banner" bindtap="goConstitution" hover-class="banner-hover">
+    <view class="cb-left">
+      <view class="cb-label">你的体质</view>
+      <view class="cb-name">{{constitutionName || '未评估'}}</view>
+      <view class="cb-hint">{{constitutionHint}}</view>
+    </view>
+    <view class="cb-right">
+      <view class="cb-cta">{{constitutionName ? '查看报告' : '立即辨识'}} ›</view>
+    </view>
+  </view>
+
   <view class="empty-card" wx:if="{{!isConnected}}">
     <view class="empty-title">设备还未连接</view>
     <view class="empty-desc">连接后即可查看完整健康摘要与 AI 分析。</view>
@@ -119,6 +130,15 @@
         <text class="chev">›</text>
       </view>
     </view>
+
+    <view class="section-head huan-head">
+      <view class="other-title">环环推荐 · AIGC</view>
+      <view class="refresh-chip" bindtap="refreshOneContent" hover-class="hover">
+        <text wx:if="{{refreshingContent}}">生成中…</text>
+        <text wx:else>换一条 AI 新内容</text>
+      </view>
+    </view>
+    <content-card wx:for="{{contentFeed}}" wx:key="_id" item="{{item}}" bindtap="onContentTap" />
 
     <view style="height: 120rpx;"></view>
   </scroll-view>

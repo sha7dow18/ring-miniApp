@@ -1,0 +1,26 @@
+<view class="sub-page">
+  <view class="current card">
+    <view class="cur-label">当前套餐</view>
+    <view class="cur-name">{{current.planName || '免费体验'}}</view>
+    <view class="cur-meta">AI 服务剩余 {{current.remainingAi || 0}} 次 · 线上问诊 {{current.remainingConsult || 0}} 次</view>
+    <view class="cur-expire" wx:if="{{current.expiresAt}}">有效期至 {{current.expireText}}</view>
+  </view>
+
+  <view class="plan-list">
+    <view class="plan-card" wx:for="{{plans}}" wx:key="key" data-key="{{item.key}}" bindtap="upgrade">
+      <view class="plan-badge" wx:if="{{item.key === current.plan}}">已订阅</view>
+      <view class="plan-name">{{item.name}}</view>
+      <view class="plan-price">
+        <text class="num" wx:if="{{item.price > 0}}">¥{{item.price}}</text>
+        <text class="num" wx:else>免费</text>
+        <text class="unit" wx:if="{{item.price > 0}}">/月</text>
+      </view>
+      <view class="plan-feature">AI 中医服务 <text class="f-num">{{item.aiQuota}}</text> 次/月</view>
+      <view class="plan-feature" wx:if="{{item.consultQuota > 0}}">线上问诊 <text class="f-num">{{item.consultQuota}}</text> 次/月</view>
+      <view class="plan-feature" wx:else>不含线上问诊</view>
+      <view class="plan-cta" wx:if="{{item.key !== current.plan}}">立即订阅</view>
+    </view>
+  </view>
+
+  <view class="note">* 当前为演示模式，订阅按钮不走真实支付；付费订阅方案请咨询商务。</view>
+</view>

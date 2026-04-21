@@ -52,6 +52,9 @@ App({
       self.globalData.role = profile.role || null;
       if (!profile.role) {
         wx.reLaunch({ url: "/pages/role-switch/index" });
+      } else if (profile.role === "child") {
+        // 子女端启动直接进父母动态页
+        wx.reLaunch({ url: "/pages/family-home/index" });
       }
     }).catch(function() {});
   }

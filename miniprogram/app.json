@@ -19,7 +19,14 @@
     "pages/settings-detail/index",
     "pages/about/index",
     "pages/role-switch/index",
-    "pages/family-bind/index"
+    "pages/family-bind/index",
+    "pages/constitution/index",
+    "pages/replenish/index",
+    "pages/family-home/index",
+    "pages/digest/index",
+    "pages/digest-detail/index",
+    "pages/subscription/index",
+    "pages/consult-booking/index"
   ],
   "tabBar": {
     "custom": true,

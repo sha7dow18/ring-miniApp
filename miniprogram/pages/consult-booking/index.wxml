@@ -1,0 +1,37 @@
+<view class="cb-page">
+  <view class="hero">
+    <view class="emoji">🩺</view>
+    <view class="title">预约在线问诊</view>
+    <view class="desc">三甲中医师一对一，基于你的体质画像提供个性化方案。</view>
+  </view>
+
+  <view wx:if="{{!booked}}" class="card form-card">
+    <view class="field">
+      <view class="label">症状描述</view>
+      <textarea class="textarea" placeholder="例如：最近总是睡不好、容易疲劳..." bindinput="onSymptomInput" value="{{symptom}}" maxlength="300" />
+    </view>
+
+    <view class="field">
+      <view class="label">希望时段</view>
+      <view class="slot-row">
+        <view wx:for="{{slots}}" wx:key="key" class="slot {{pickedSlot === item.key ? 'active' : ''}}" data-key="{{item.key}}" bindtap="pickSlot">{{item.text}}</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <view class="label">联系电话</view>
+      <input class="phone-input" placeholder="接通后医师会联系你" value="{{phone}}" bindinput="onPhoneInput" />
+    </view>
+
+    <button class="btn btn-primary" bindtap="submit" disabled="{{!pickedSlot || !symptom}}">提交预约</button>
+    <view class="tip" wx:if="{{remainingConsult > 0}}">你的套餐剩余 {{remainingConsult}} 次问诊额度</view>
+    <view class="tip alarm" wx:else>当前套餐不含问诊。<text class="link" bindtap="goSubscribe">升级套餐</text></view>
+  </view>
+
+  <view wx:else class="card success-card">
+    <view class="emoji">✅</view>
+    <view class="success-title">预约成功</view>
+    <view class="success-body">医师会在 {{bookedSlot}} 时段联系 {{phone}}。请保持电话畅通。</view>
+    <button class="btn btn-ghost" bindtap="goBack">返回</button>
+  </view>
+</view>

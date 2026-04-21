@@ -82,6 +82,44 @@
 }
 .empty-card { padding: var(--sp-5); text-align: center; margin-bottom: var(--sp-3); }
 .empty-title { font-size: var(--fs-h2); color: var(--text-1); font-weight: var(--fw-bold); }
+
+.huan-head {
+  margin-top: var(--sp-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+.refresh-chip {
+  padding: var(--sp-1) var(--sp-3);
+  background: var(--brand);
+  color: var(--text-inv);
+  border-radius: 100rpx;
+  font-size: var(--fs-caption);
+}
+
+.constitution-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-4);
+  margin: 0 var(--sp-3) var(--sp-3);
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #3F6B5E, #2A4A3E);
+  color: var(--text-inv);
+  box-shadow: 0 4rpx 16rpx rgba(30, 20, 10, 0.06);
+}
+.banner-hover { opacity: 0.9; }
+.cb-label { font-size: var(--fs-caption); opacity: 0.7; letter-spacing: 2rpx; }
+.cb-name { margin-top: var(--sp-1); font-size: var(--fs-h1); font-weight: var(--fw-bold); }
+.cb-hint { margin-top: var(--sp-1); font-size: var(--fs-sub); opacity: 0.8; }
+.cb-cta {
+  font-size: var(--fs-sub);
+  padding: var(--sp-2) var(--sp-3);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 100rpx;
+}
 .empty-desc { margin: var(--sp-2) 0 var(--sp-3); color: var(--text-2); font-size: var(--fs-sub); }
 .capsule-btn {
   display: inline-block;

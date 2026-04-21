@@ -19,10 +19,20 @@
   </view>
 
   <view class="menu-group">
+    <view class="group-title">健康与 AI</view>
+    <view class="menu-card">
+      <view class="menu-item" bindtap="goConstitution"><text>我的体质</text><view class="menu-item-right"><text class="menu-hint">{{constitutionName || '未评估'}}</text><text>›</text></view></view>
+      <view class="menu-item" bindtap="goSubscription"><text>AI 订阅</text><view class="menu-item-right"><text class="menu-hint">{{planName || '免费'}}</text><text>›</text></view></view>
+      <view class="menu-item" bindtap="goConsult"><text>在线问诊</text><text>›</text></view>
+    </view>
+  </view>
+
+  <view class="menu-group">
     <view class="group-title">我的服务</view>
     <view class="menu-card">
       <view class="menu-item" bindtap="goMyDevice"><text>我的设备</text><text>›</text></view>
       <view class="menu-item" bindtap="goOrders"><text>我的订单</text><text>›</text></view>
+      <view class="menu-item" bindtap="goReplenish"><text>补货计划</text><text>›</text></view>
     </view>
   </view>
 

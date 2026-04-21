@@ -1,0 +1,38 @@
+<view class="dd-page" wx:if="{{digest}}">
+  <view class="hero">
+    <view class="week">{{digest.weekStart}}</view>
+    <view class="headline">{{digest.headline}}</view>
+    <view class="tone tone-{{digest.tone}}">{{digest.tone}}</view>
+  </view>
+
+  <view class="summary card">
+    <view class="row"><text>日均睡眠</text><text class="val">{{digest.summary.avgSleepHours}} 小时（评分 {{digest.summary.avgSleepScore}}）</text></view>
+    <view class="row"><text>静息心率</text><text class="val">{{digest.summary.avgHrResting}} bpm</text></view>
+    <view class="row"><text>HRV</text><text class="val">{{digest.summary.avgHrv}} ms</text></view>
+    <view class="row"><text>周步数</text><text class="val">{{digest.summary.totalSteps}}</text></view>
+    <view class="row"><text>平均压力</text><text class="val">{{digest.summary.avgStress}}</text></view>
+    <view class="row"><text>异常事件</text><text class="val {{digest.summary.anomalies.length > 0 ? 'alarm' : ''}}">{{digest.summary.anomalies.length}} 次</text></view>
+  </view>
+
+  <view class="section card" wx:if="{{digest.highlights.length}}">
+    <view class="section-title">✨ 亮点</view>
+    <view class="item" wx:for="{{digest.highlights}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <view class="section card" wx:if="{{digest.concerns.length}}">
+    <view class="section-title alarm">⚠️ 关注点</view>
+    <view class="item" wx:for="{{digest.concerns}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <view class="section card" wx:if="{{digest.recommendations.length}}">
+    <view class="section-title">💡 建议</view>
+    <view class="item" wx:for="{{digest.recommendations}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <view class="meta">生成于 {{digest._createdText}}</view>
+</view>
+
+<view wx:else class="empty">
+  <view class="empty-emoji">📄</view>
+  <view class="empty-text">简报不存在或无权限查看</view>
+</view>

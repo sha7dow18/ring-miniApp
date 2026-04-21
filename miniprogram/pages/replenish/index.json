@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "补货",
+  "navigationBarBackgroundColor": "#F4F0EB",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "tab-bar": "/custom-tab-bar/index"
+  }
+}

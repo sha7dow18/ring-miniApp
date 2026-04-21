@@ -13,9 +13,9 @@ function makeDbMock(impl) {
 }
 
 const SAMPLE = [
-  { id: "m1", name: "参萃元气饮", category: "herb", price: "599", desc: "草本配方", tags: ["草本", "日常"] },
-  { id: "m2", name: "枣润安养饮", category: "sleep", price: "699", desc: "红枣桂圆", tags: ["安养", "睡眠"] },
-  { id: "m3", name: "黄精轻元饮", category: "herb", price: "499", desc: "黄精草本", tags: ["草本"] }
+  { id: "m1", name: "参萃元气饮", category: "herb", price: "599", desc: "草本配方", tags: ["草本", "日常"], constitutionTags: ["qixu", "yangxu"] },
+  { id: "m2", name: "枣润安养饮", category: "sleep", price: "699", desc: "红枣桂圆", tags: ["安养", "睡眠"], constitutionTags: ["xueyu", "qixu"] },
+  { id: "m3", name: "黄精轻元饮", category: "herb", price: "499", desc: "黄精草本", tags: ["草本"], constitutionTags: ["yinxu"] }
 ];
 
 beforeEach(() => jest.resetModules());
@@ -40,6 +40,34 @@ describe("productService.filterProducts (pure)", () => {
   });
   test("keyword + category combined", () => {
     expect(ps.filterProducts(SAMPLE, { category: "herb", keyword: "黄" })).toHaveLength(1);
+  });
+  test("constitution filter keeps only matching products", () => {
+    expect(ps.filterProducts(SAMPLE, { constitution: "qixu" })).toHaveLength(2);
+    expect(ps.filterProducts(SAMPLE, { constitution: "yinxu" })).toHaveLength(1);
+    expect(ps.filterProducts(SAMPLE, { constitution: "tebing" })).toHaveLength(0);
+  });
+});
+
+describe("productService.rankByConstitution (pure)", () => {
+  const ps = require("../miniprogram/services/productService.js");
+  test("returns full list slice when no constitution provided", () => {
+    expect(ps.rankByConstitution(SAMPLE, null, 2)).toHaveLength(2);
+  });
+  test("orders products by position of constitution in tags", () => {
+    // m1: qixu at index 0; m2: qixu at index 1
+    const ranked = ps.rankByConstitution(SAMPLE, "qixu", 5);
+    expect(ranked.map((p) => p.id)).toEqual(["m1", "m2"]);
+  });
+  test("filters out products with no match", () => {
+    const ranked = ps.rankByConstitution(SAMPLE, "tebing", 5);
+    expect(ranked).toEqual([]);
+  });
+  test("respects limit", () => {
+    const ranked = ps.rankByConstitution(SAMPLE, "qixu", 1);
+    expect(ranked).toHaveLength(1);
+  });
+  test("handles empty list", () => {
+    expect(ps.rankByConstitution([], "qixu", 3)).toEqual([]);
   });
 });
 

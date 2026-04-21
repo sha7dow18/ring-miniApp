@@ -7,9 +7,16 @@ function filterProducts(list, opts) {
   var o = opts || {};
   var keyword = (o.keyword || "").trim().toLowerCase();
   var category = o.category;
+  var constitution = o.constitution;
 
   if (category) {
     items = items.filter(function(p) { return p.category === category; });
+  }
+  if (constitution) {
+    items = items.filter(function(p) {
+      var tags = p.constitutionTags || [];
+      return tags.indexOf(constitution) !== -1;
+    });
   }
   if (keyword) {
     items = items.filter(function(p) {
@@ -22,6 +29,24 @@ function filterProducts(list, opts) {
     });
   }
   return items;
+}
+
+/**
+ * 按体质给商品打分并排序。constitutionTags 中包含用户主体质时分数最高。
+ * 纯函数，便于测试。
+ * @returns 按推荐分数降序的前 N 条（默认 6）
+ */
+function rankByConstitution(list, constitutionKey, limit) {
+  var n = limit || 6;
+  if (!constitutionKey) return (list || []).slice(0, n);
+  var scored = (list || []).map(function(p) {
+    var tags = p.constitutionTags || [];
+    var hit = tags.indexOf(constitutionKey);
+    var score = hit >= 0 ? 100 - hit * 5 : 0;
+    return { product: p, score: score };
+  });
+  scored.sort(function(a, b) { return b.score - a.score; });
+  return scored.filter(function(s) { return s.score > 0; }).slice(0, n).map(function(s) { return s.product; });
 }
 
 // ─── 云 ───
@@ -42,10 +67,18 @@ function getProduct(id) {
     })
 }
 
+function listByConstitution(constitutionKey, limit) {
+  return listProducts().then(function(all) {
+    return rankByConstitution(all, constitutionKey, limit);
+  });
+}
+
 module.exports = {
   // pure
   filterProducts: filterProducts,
+  rankByConstitution: rankByConstitution,
   // cloud
   listProducts: listProducts,
-  getProduct: getProduct
+  getProduct: getProduct,
+  listByConstitution: listByConstitution
 };

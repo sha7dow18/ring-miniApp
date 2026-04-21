@@ -1,5 +1,7 @@
 const mockStore = require("../../utils/mockStore.js");
 const profileService = require("../../services/profileService.js");
+const constitutionService = require("../../services/constitutionService.js");
+const subscriptionService = require("../../services/subscriptionService.js");
 
 const ROLE_LABEL = { elder: "老人端", child: "子女端" };
 
@@ -12,7 +14,9 @@ Page({
     },
     deviceStatusText: "未连接",
     roleLabel: "未选择",
-    bindStatusText: "未绑定"
+    bindStatusText: "未绑定",
+    constitutionName: "",
+    planName: ""
   },
 
   async onShow() {
@@ -23,8 +27,14 @@ Page({
     this.syncDevice(mockStore.getState());
     this.unsubscribe = mockStore.subscribe((s) => this.syncDevice(s));
 
-    const profile = await profileService.getProfile();
+    const [profile, sub] = await Promise.all([
+      profileService.getProfile(),
+      subscriptionService.getMy().catch(() => null)
+    ]);
     if (profile) {
+      const cons = profile.constitution
+        ? constitutionService.CONSTITUTIONS.find((c) => c.key === profile.constitution)
+        : null;
       this.setData({
         profile: {
           nickname: profile.nickname || "微信用户",
@@ -32,7 +42,9 @@ Page({
           phone: profile.phone || ""
         },
         roleLabel: ROLE_LABEL[profile.role] || "未选择",
-        bindStatusText: profile.boundFamilyId ? "已绑定" : "未绑定"
+        bindStatusText: profile.boundFamilyId ? "已绑定" : "未绑定",
+        constitutionName: cons ? cons.name : "",
+        planName: sub ? sub.planName : "免费"
       });
     }
   },
@@ -59,5 +71,9 @@ Page({
   goSettings() { wx.navigateTo({ url: "/pages/settings/index" }); },
   goAbout() { wx.navigateTo({ url: "/pages/about/index" }); },
   goRoleSwitch() { wx.navigateTo({ url: "/pages/role-switch/index" }); },
-  goFamilyBind() { wx.navigateTo({ url: "/pages/family-bind/index" }); }
+  goFamilyBind() { wx.navigateTo({ url: "/pages/family-bind/index" }); },
+  goConstitution() { wx.navigateTo({ url: "/pages/constitution/index" }); },
+  goSubscription() { wx.navigateTo({ url: "/pages/subscription/index" }); },
+  goConsult() { wx.navigateTo({ url: "/pages/consult-booking/index" }); },
+  goReplenish() { wx.navigateTo({ url: "/pages/replenish/index" }); }
 });

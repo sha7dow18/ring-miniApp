@@ -1,0 +1,97 @@
+<view class="constitution-page">
+  <!-- Empty state -->
+  <block wx:if="{{!latest && !assessing}}">
+    <view class="card hero">
+      <view class="emoji">🌿</view>
+      <view class="hero-title">还没有做过体质辨识</view>
+      <view class="hero-desc">基于你近 7 天的心率、睡眠、HRV 等数据，AI 会判断你属于九体质中的哪一种，并给出调理建议。</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">快速问卷（可跳过）</view>
+      <view class="card-desc">回答以下 4 题可以让评估更准确。全部跳过则纯靠健康数据评估。</view>
+
+      <view class="q-group">
+        <view class="q-label">你平时怕冷吗？</view>
+        <view class="q-options">
+          <view class="q-opt {{form.chills === '不怕' ? 'active' : ''}}" data-k="chills" data-v="不怕" bindtap="pick">不怕</view>
+          <view class="q-opt {{form.chills === '一般' ? 'active' : ''}}" data-k="chills" data-v="一般" bindtap="pick">一般</view>
+          <view class="q-opt {{form.chills === '很怕' ? 'active' : ''}}" data-k="chills" data-v="很怕" bindtap="pick">很怕</view>
+        </view>
+      </view>
+
+      <view class="q-group">
+        <view class="q-label">手脚心会发热出汗吗？</view>
+        <view class="q-options">
+          <view class="q-opt {{form.heatFeel === '没有' ? 'active' : ''}}" data-k="heatFeel" data-v="没有" bindtap="pick">没有</view>
+          <view class="q-opt {{form.heatFeel === '偶尔' ? 'active' : ''}}" data-k="heatFeel" data-v="偶尔" bindtap="pick">偶尔</view>
+          <view class="q-opt {{form.heatFeel === '经常' ? 'active' : ''}}" data-k="heatFeel" data-v="经常" bindtap="pick">经常</view>
+        </view>
+      </view>
+
+      <view class="q-group">
+        <view class="q-label">情绪状态？</view>
+        <view class="q-options">
+          <view class="q-opt {{form.mood === '平稳' ? 'active' : ''}}" data-k="mood" data-v="平稳" bindtap="pick">平稳</view>
+          <view class="q-opt {{form.mood === '易焦虑' ? 'active' : ''}}" data-k="mood" data-v="易焦虑" bindtap="pick">易焦虑</view>
+          <view class="q-opt {{form.mood === '易低落' ? 'active' : ''}}" data-k="mood" data-v="易低落" bindtap="pick">易低落</view>
+        </view>
+      </view>
+
+      <view class="q-group">
+        <view class="q-label">消化情况？</view>
+        <view class="q-options">
+          <view class="q-opt {{form.digestion === '良好' ? 'active' : ''}}" data-k="digestion" data-v="良好" bindtap="pick">良好</view>
+          <view class="q-opt {{form.digestion === '易腹胀' ? 'active' : ''}}" data-k="digestion" data-v="易腹胀" bindtap="pick">易腹胀</view>
+          <view class="q-opt {{form.digestion === '易腹泻' ? 'active' : ''}}" data-k="digestion" data-v="易腹泻" bindtap="pick">易腹泻</view>
+        </view>
+      </view>
+
+      <view class="action-row">
+        <button class="btn btn-primary" bindtap="startAssess">开始体质辨识</button>
+      </view>
+    </view>
+  </block>
+
+  <!-- Assessing state -->
+  <block wx:if="{{assessing}}">
+    <view class="card hero assessing">
+      <view class="emoji">🔬</view>
+      <view class="hero-title">AI 正在综合分析...</view>
+      <view class="hero-desc">{{streamText || '融合近 7 日健康数据与你的回答中，请稍候'}}</view>
+    </view>
+  </block>
+
+  <!-- Result state -->
+  <block wx:if="{{latest && !assessing}}">
+    <view class="card hero result-hero">
+      <view class="result-tag">你的主体质</view>
+      <view class="result-name">{{latest.labels[0].name}}</view>
+      <view class="result-score">倾向 {{latest.labels[0].score}}/100</view>
+      <view class="result-summary">{{latest.summary}}</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">三项倾向</view>
+      <view class="label-list">
+        <view wx:for="{{latest.labels}}" wx:key="key" class="label-row">
+          <view class="label-name">{{item.name}}</view>
+          <view class="label-bar">
+            <view class="label-fill" style="width: {{item.score}}%"></view>
+          </view>
+          <view class="label-score">{{item.score}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">AI 调理建议</view>
+      <view class="report">{{latest.report}}</view>
+      <view class="report-meta">评估于 {{latest._createdText}}</view>
+    </view>
+
+    <view class="action-row">
+      <button class="btn btn-ghost" bindtap="retake">重新评估</button>
+    </view>
+  </block>
+</view>

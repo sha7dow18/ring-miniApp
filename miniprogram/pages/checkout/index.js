@@ -104,7 +104,6 @@ Page({
     }
 
     this.setData({ isSubmitting: true });
-    wx.showLoading({ title: "支付中", mask: true });
 
     try {
       const draft = {
@@ -119,16 +118,25 @@ Page({
         total: this.data.total,
         address: this.data.address
       };
+
+      wx.showLoading({ title: "正在下单", mask: true });
       const order = await orderService.createOrder(draft);
+
+      // 模拟真实微信支付过程的视觉：先切换到"拉起收银台"
+      wx.showLoading({ title: "调起微信支付", mask: true });
+      await new Promise((r) => setTimeout(r, 600));
+      wx.showLoading({ title: "支付中", mask: true });
+      await new Promise((r) => setTimeout(r, 500));
+
       const paid = await orderService.payOrder(order._id);
       if (this.data.mode === "cart") {
         await cartService.clearCart();
       }
       wx.hideLoading();
-      wx.showToast({ title: "支付成功", icon: "success" });
+      wx.showToast({ title: "支付成功", icon: "success", duration: 1200 });
       setTimeout(() => {
         wx.redirectTo({ url: `/pages/order-detail/index?id=${paid._id}` });
-      }, 800);
+      }, 1200);
     } catch (e) {
       wx.hideLoading();
       wx.showToast({ title: (e && e.message) || "下单失败", icon: "none" });

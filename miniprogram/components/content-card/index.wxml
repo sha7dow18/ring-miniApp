@@ -1,0 +1,14 @@
+<view class="cc-card type-{{item.type}}" bindtap="onTap">
+  <view class="cc-head">
+    <view class="cc-emoji">{{item.coverEmoji || '✨'}}</view>
+    <view class="cc-meta">
+      <view class="cc-type">{{typeText}}</view>
+      <view class="cc-author">{{item.author || '环环'}}</view>
+    </view>
+  </view>
+  <view class="cc-title">{{item.title}}</view>
+  <view class="cc-body">{{item.body}}</view>
+  <view class="cc-foot" wx:if="{{item.productIds && item.productIds.length}}">
+    <view class="cc-chip">相关好物 {{item.productIds.length}} 款 ›</view>
+  </view>
+</view>

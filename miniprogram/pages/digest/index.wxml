@@ -1,0 +1,35 @@
+<view class="digest-page">
+  <view class="head">
+    <view class="title">{{role === 'child' ? '父母的健康简报' : '我的健康简报'}}</view>
+    <view class="sub">AI 基于近 7 日健康数据生成，关心与提醒兼顾</view>
+  </view>
+
+  <view wx:if="{{role === 'elder'}}" class="action-row">
+    <button class="btn btn-primary" bindtap="generate" loading="{{generating}}">
+      {{generating ? 'AI 正在生成' : '生成本周简报'}}
+    </button>
+  </view>
+
+  <view wx:if="{{list.length}}" class="list">
+    <view class="digest-card card" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="openDetail">
+      <view class="dg-week">{{item.weekStart}}</view>
+      <view class="dg-headline">{{item.headline}}</view>
+      <view class="dg-meta">
+        睡眠 {{item.summary.avgSleepScore}} · 心率 {{item.summary.avgHrResting}} · 步数 {{item.summary.totalSteps}}
+      </view>
+      <view class="dg-tags" wx:if="{{item.summary.anomalies.length}}">
+        <text class="dg-tag alarm">{{item.summary.anomalies.length}} 条异常</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty">
+    <view class="empty-emoji">📋</view>
+    <view class="empty-title">暂无简报</view>
+    <view class="empty-desc">{{role === 'child' ? '等父母这周的简报生成后会出现在这里' : '点上方按钮生成一份'}}</view>
+  </view>
+
+  <view class="tab-bar-space"></view>
+</view>
+
+<tab-bar wx:if="{{role === 'child'}}" selected="3" />
