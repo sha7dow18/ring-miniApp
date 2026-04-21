@@ -54,6 +54,22 @@
 .m-num.alarm { color: var(--accent); }
 .m-label { margin-top: var(--sp-1); font-size: var(--fs-caption); color: var(--text-2); }
 
+.push-cta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  margin: var(--sp-4) 0 var(--sp-2);
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #3F6B5E, #6B8F7E);
+  color: var(--text-inv);
+}
+.push-emoji { font-size: 48rpx; line-height: 1; }
+.push-body { flex: 1; }
+.push-title { font-size: var(--fs-body); font-weight: var(--fw-semibold); }
+.push-desc { margin-top: 4rpx; font-size: var(--fs-caption); opacity: 0.85; }
+.push-arrow { font-size: 36rpx; opacity: 0.8; }
+
 .section-title {
   font-size: var(--fs-body);
   font-weight: var(--fw-semibold);

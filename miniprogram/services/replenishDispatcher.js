@@ -3,6 +3,7 @@
 
 var replenishService = require("./replenishService.js");
 var familyInboxService = require("./familyInboxService.js");
+var subscribeMessageService = require("./subscribeMessageService.js");
 
 // ─── 纯函数 ───
 
@@ -71,9 +72,18 @@ async function dispatchToChild(toOpenId) {
   var dispatchable = pickDispatchable(pending, alreadyIds);
   var pushed = 0;
   for (var i = 0; i < dispatchable.length; i++) {
-    var item = formatInboxItem(dispatchable[i]);
+    var plan = dispatchable[i];
+    var item = formatInboxItem(plan);
     item.toOpenId = toOpenId;
     await familyInboxService.pushToInbox(item).catch(function() {});
+
+    // 订阅消息旁路
+    subscribeMessageService.send("replenishDue", toOpenId, {
+      thing1: { value: String(plan.productName || "保健品").slice(0, 20) },
+      thing2: { value: item.payload.overdue ? "已到补货期" : "即将用完" },
+      time3: { value: item.payload.dueDate ? new Date(item.payload.dueDate).toISOString().slice(0, 10) : "—" }
+    }, "pages/replenish/index").catch(function() {});
+
     pushed++;
   }
   return pushed;

@@ -4,6 +4,7 @@
 var aiService = require("./aiService.js");
 var healthService = require("./healthService.js");
 var familyService = require("./familyService.js");
+var subscribeMessageService = require("./subscribeMessageService.js");
 
 var COLLECTION = "weekly_digests";
 
@@ -134,7 +135,18 @@ async function generateForMe(opts) {
     createdAt: new Date()
   };
   var added = await getDB().collection(COLLECTION).add({ data: doc });
-  return Object.assign({ _id: added._id }, doc);
+  var savedDoc = Object.assign({ _id: added._id }, doc);
+
+  // 订阅消息旁路：通知子女"本周简报已生成"
+  if (sharedWith) {
+    subscribeMessageService.send("weeklyDigest", sharedWith, {
+      thing1: { value: String(parsed.headline || "本周健康").slice(0, 20) },
+      thing2: { value: "点开可看 AI 关心与建议" },
+      time3: { value: weekStart }
+    }, "pages/digest-detail/index?id=" + added._id).catch(function() {});
+  }
+
+  return savedDoc;
 }
 
 function listMy(limit) {

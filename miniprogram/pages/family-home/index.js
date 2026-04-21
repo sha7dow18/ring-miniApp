@@ -1,6 +1,7 @@
 const familyInboxService = require("../../services/familyInboxService.js");
 const digestService = require("../../services/digestService.js");
 const profileService = require("../../services/profileService.js");
+const subscribeMessageService = require("../../services/subscribeMessageService.js");
 
 const INBOX_ICONS = {
   health_anomaly: "⚠️",
@@ -31,13 +32,16 @@ Page({
     unreadAnomaly: 0,
     latestDigest: null,
     digestWeekLabel: "",
-    hasAnomaly: false
+    hasAnomaly: false,
+    pushEnabled: false
   },
 
   async onShow() {
     const profile = await profileService.getProfile();
     const bound = !!(profile && profile.boundFamilyId);
-    this.setData({ bound });
+    const app = getApp();
+    const accepted = (app.globalData && app.globalData.subscribeAccepted) || [];
+    this.setData({ bound, pushEnabled: accepted.length > 0 });
     if (!bound) return;
 
     await Promise.all([
@@ -99,5 +103,31 @@ Page({
   goBind() { wx.navigateTo({ url: "/pages/family-bind/index" }); },
   goDigest() { wx.reLaunch({ url: "/pages/digest/index" }); },
   goReplenish() { wx.reLaunch({ url: "/pages/replenish/index" }); },
-  goMall() { wx.reLaunch({ url: "/pages/mall/index" }); }
+  goMall() { wx.reLaunch({ url: "/pages/mall/index" }); },
+
+  async enablePush() {
+    const res = await subscribeMessageService.requestAuth([
+      "healthAnomaly",
+      "replenishDue",
+      "weeklyDigest"
+    ]);
+    const app = getApp();
+    app.globalData.subscribeAccepted = res.accepted;
+    if (res.placeholders && res.placeholders.length) {
+      wx.showModal({
+        title: "微信推送未就绪",
+        content: "管理员尚未在公众平台配置订阅消息模板。当前仅应用内可收消息。",
+        showCancel: false
+      });
+    } else if (res.accepted.length) {
+      wx.showToast({ title: "已开启推送", icon: "success" });
+    } else {
+      wx.showModal({
+        title: "未授权",
+        content: "你拒绝了所有订阅请求。可稍后在此页重试。",
+        showCancel: false
+      });
+    }
+    this.setData({ pushEnabled: res.accepted.length > 0 });
+  }
 });

@@ -2,6 +2,7 @@ const digestService = require("../../services/digestService.js");
 const profileService = require("../../services/profileService.js");
 const constitutionService = require("../../services/constitutionService.js");
 const familyInboxService = require("../../services/familyInboxService.js");
+const subscribeMessageService = require("../../services/subscribeMessageService.js");
 
 Page({
   data: {
@@ -26,6 +27,10 @@ Page({
 
   async generate() {
     if (this.data.generating) return;
+
+    // 用户 tap 事件里请求订阅授权（微信强制），失败不阻塞
+    await subscribeMessageService.requestAuth(["weeklyDigest"]).catch(() => {});
+
     this.setData({ generating: true });
     try {
       const profile = await profileService.getProfile();

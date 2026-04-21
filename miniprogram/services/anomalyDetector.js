@@ -2,6 +2,7 @@
 // 老人端 home onShow 时调用（每次启动触发一次，简单 client-side 替代 server cron）
 
 var familyInboxService = require("./familyInboxService.js");
+var subscribeMessageService = require("./subscribeMessageService.js");
 
 // ─── 纯函数：决策 ───
 
@@ -74,6 +75,14 @@ async function detectAndPush(records, toOpenId) {
       body: "日期：" + a.date + "，请留意。",
       payload: { anomalyType: a.type, date: a.date, severity: a.severity }
     }).catch(function() {});
+
+    // 订阅消息旁路，失败不阻塞 inbox
+    subscribeMessageService.send("healthAnomaly", toOpenId, {
+      thing1: { value: a.text.slice(0, 20) },
+      thing2: { value: "建议尽快查看父母状态" },
+      time3: { value: a.date }
+    }, "pages/family-home/index").catch(function() {});
+
     pushed++;
   }
   return pushed;

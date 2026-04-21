@@ -36,6 +36,15 @@
       </view>
     </view>
 
+    <view wx:if="{{!pushEnabled}}" class="push-cta" bindtap="enablePush" hover-class="hover">
+      <view class="push-emoji">🔔</view>
+      <view class="push-body">
+        <view class="push-title">开启微信推送</view>
+        <view class="push-desc">父母健康异常 / 补货提醒 / 周简报 直达微信通知栏</view>
+      </view>
+      <view class="push-arrow">›</view>
+    </view>
+
     <view class="section-title">收件箱 · 实时动态</view>
     <view class="inbox-list" wx:if="{{inbox.length}}">
       <view class="inbox-card card {{item.read ? 'read' : ''}}" wx:for="{{inbox}}" wx:key="_id" data-id="{{item._id}}" bindtap="openInbox">

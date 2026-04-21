@@ -63,5 +63,14 @@ module.exports = {
     wechat: "aita-support-2026",
     email: "support@aita-ring.example",
     hours: "工作日 09:00 - 18:00"
+  },
+
+  // 微信订阅消息模板 ID
+  // ⚠️ 需要在 https://mp.weixin.qq.com 后台申请模板后替换下列 REPLACE_ME 前缀值
+  //    详细申请流程见 docs/订阅消息集成.md
+  subscribeTemplates: {
+    healthAnomaly: "REPLACE_ME_health_anomaly_tmpl",
+    replenishDue:  "REPLACE_ME_replenish_due_tmpl",
+    weeklyDigest:  "REPLACE_ME_weekly_digest_tmpl"
   }
 };
