@@ -66,10 +66,42 @@ function getMyPendingBinding() {
     .then(function(res) { return (res.data && res.data[0]) || null; });
 }
 
+/**
+ * 老人端：取自己绑定的子女 openid。所有跨端推送的唯一入口，避免别处硬编码查 family_bindings。
+ * @returns {Promise<string | null>}
+ */
+function getBoundChildOpenId() {
+  return getDB().collection(COLLECTION)
+    .where({ _openid: "{openid}", status: "bound" })
+    .limit(1).get()
+    .then(function(res) {
+      var b = res.data && res.data[0];
+      return (b && b.childOpenId) || null;
+    })
+    .catch(function() { return null; });
+}
+
+/**
+ * 子女端：取自己绑定的老人 openid。
+ * @returns {Promise<string | null>}
+ */
+function getBoundElderOpenId() {
+  return getDB().collection(COLLECTION)
+    .where({ childOpenId: "{openid}", status: "bound" })
+    .limit(1).get()
+    .then(function(res) {
+      var b = res.data && res.data[0];
+      return (b && b._openid) || null;
+    })
+    .catch(function() { return null; });
+}
+
 module.exports = {
   generateInviteCode: generateInviteCode,
   createPendingBinding: createPendingBinding,
   redeemInviteCode: redeemInviteCode,
   getBindingById: getBindingById,
-  getMyPendingBinding: getMyPendingBinding
+  getMyPendingBinding: getMyPendingBinding,
+  getBoundChildOpenId: getBoundChildOpenId,
+  getBoundElderOpenId: getBoundElderOpenId
 };

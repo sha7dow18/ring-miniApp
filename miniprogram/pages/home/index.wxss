@@ -120,6 +120,22 @@
   background: rgba(255, 255, 255, 0.15);
   border-radius: 100rpx;
 }
+
+.family-cta-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  margin: 0 var(--sp-3) var(--sp-3);
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #FFF5E1, #FFEFC8);
+  border: 2rpx dashed rgba(139, 58, 26, 0.3);
+}
+.fcb-emoji { font-size: 48rpx; line-height: 1; }
+.fcb-body { flex: 1; }
+.fcb-title { font-size: var(--fs-body); color: var(--text-1); font-weight: var(--fw-semibold); }
+.fcb-desc { margin-top: 4rpx; font-size: var(--fs-caption); color: var(--text-2); line-height: 1.5; }
+.fcb-arrow { font-size: 36rpx; color: var(--accent); }
 .empty-desc { margin: var(--sp-2) 0 var(--sp-3); color: var(--text-2); font-size: var(--fs-sub); }
 .capsule-btn {
   display: inline-block;

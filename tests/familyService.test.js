@@ -155,6 +155,71 @@ describe("familyService", () => {
     });
   });
 
+  describe("getBoundChildOpenId", () => {
+    test("returns child openid when bound", async () => {
+      let capturedWhere = null;
+      global.wx = {
+        cloud: {
+          database: () => makeDbMock({
+            get: (q) => {
+              capturedWhere = q._where;
+              return Promise.resolve({ data: [{ _id: "b1", _openid: "elder", childOpenId: "child-42", status: "bound" }] });
+            }
+          })
+        }
+      };
+      const fs = require("../miniprogram/services/familyService.js");
+      const oid = await fs.getBoundChildOpenId();
+      expect(oid).toBe("child-42");
+      expect(capturedWhere._openid).toBe("{openid}");
+      expect(capturedWhere.status).toBe("bound");
+    });
+
+    test("returns null when not bound or on error", async () => {
+      global.wx = {
+        cloud: {
+          database: () => makeDbMock({
+            get: () => Promise.resolve({ data: [] })
+          })
+        }
+      };
+      const fs = require("../miniprogram/services/familyService.js");
+      expect(await fs.getBoundChildOpenId()).toBeNull();
+    });
+  });
+
+  describe("getBoundElderOpenId", () => {
+    test("returns elder _openid by childOpenId match", async () => {
+      let capturedWhere = null;
+      global.wx = {
+        cloud: {
+          database: () => makeDbMock({
+            get: (q) => {
+              capturedWhere = q._where;
+              return Promise.resolve({ data: [{ _id: "b1", _openid: "elder-77", childOpenId: "child", status: "bound" }] });
+            }
+          })
+        }
+      };
+      const fs = require("../miniprogram/services/familyService.js");
+      const oid = await fs.getBoundElderOpenId();
+      expect(oid).toBe("elder-77");
+      expect(capturedWhere.childOpenId).toBe("{openid}");
+    });
+
+    test("returns null when no binding", async () => {
+      global.wx = {
+        cloud: {
+          database: () => makeDbMock({
+            get: () => Promise.resolve({ data: [] })
+          })
+        }
+      };
+      const fs = require("../miniprogram/services/familyService.js");
+      expect(await fs.getBoundElderOpenId()).toBeNull();
+    });
+  });
+
   describe("getMyPendingBinding", () => {
     test("returns first pending doc", async () => {
       global.wx = {

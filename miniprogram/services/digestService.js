@@ -119,15 +119,8 @@ async function generateForMe(opts) {
   var raw = await aiService.sendMessage(history, null, null);
   var parsed = parseDigest(raw);
 
-  // 找绑定子女，设置 sharedWith
-  var binding = await familyService.getMyPendingBinding().catch(function() { return null; });
-  var sharedWith = null;
-  if (!binding) {
-    var bound = await getDB().collection("family_bindings")
-      .where({ _openid: "{openid}", status: "bound" }).limit(1).get()
-      .catch(function() { return { data: [] }; });
-    if (bound.data && bound.data[0]) sharedWith = bound.data[0].childOpenId || null;
-  }
+  // 绑定子女 openid → sharedWith，子女端 listSharedWithMe 才能读到
+  var sharedWith = await familyService.getBoundChildOpenId();
 
   var doc = {
     weekStart: weekStart,

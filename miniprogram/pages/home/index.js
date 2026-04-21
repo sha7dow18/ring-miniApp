@@ -5,6 +5,8 @@ const constitutionService = require("../../services/constitutionService.js");
 const profileService = require("../../services/profileService.js");
 const contentService = require("../../services/contentService.js");
 const anomalyDetector = require("../../services/anomalyDetector.js");
+const replenishDispatcher = require("../../services/replenishDispatcher.js");
+const familyService = require("../../services/familyService.js");
 const dateStrip = require("../../utils/dateStripUtils.js");
 const homeMetricRows = require("../../utils/homeMetricRows.js");
 
@@ -83,7 +85,8 @@ Page({
     constitutionHint: "AI 基于健康数据辨识你的九体质",
     constitutionKey: "",
     contentFeed: [],
-    refreshingContent: false
+    refreshingContent: false,
+    hasBoundChild: false
   },
 
   onLoad() {
@@ -113,21 +116,25 @@ Page({
     this.unsubscribeBle = mockBleStream.subscribe((snap) => this.applyLiveSnapshot(snap));
     this.loadCloud();
     this.loadConstitution();
-    this.runAnomalyScanOnce();
+    this.loadFamilyStatus();
+    this.runCrossEndDispatchOnce();
   },
 
-  async runAnomalyScanOnce() {
-    // 每次本次登录只跑一次；老人端对绑定的子女推送异常
-    if (this._anomalyScanned) return;
-    this._anomalyScanned = true;
+  async loadFamilyStatus() {
+    const childOid = await familyService.getBoundChildOpenId();
+    this.setData({ hasBoundChild: !!childOid });
+  },
+
+  async runCrossEndDispatchOnce() {
+    // 每次本次登录只跑一次：老人端扫 → 推异常 + 推补货给绑定子女
+    if (this._dispatched) return;
+    this._dispatched = true;
     try {
-      const db = wx.cloud.database();
-      const bound = await db.collection("family_bindings")
-        .where({ _openid: "{openid}", status: "bound" }).limit(1).get();
-      const childOid = bound.data && bound.data[0] && bound.data[0].childOpenId;
+      const childOid = await familyService.getBoundChildOpenId();
       if (!childOid) return;
       const records = await healthService.getRecent(3);
       await anomalyDetector.detectAndPush(records, childOid);
+      await replenishDispatcher.dispatchToChild(childOid);
     } catch (e) { /* silent */ }
   },
 
@@ -189,6 +196,7 @@ Page({
   },
 
   goConstitution() { wx.navigateTo({ url: "/pages/constitution/index" }); },
+  goFamilyBind() { wx.navigateTo({ url: "/pages/family-bind/index" }); },
 
   onHide() {
     if (this.unsubscribe) this.unsubscribe(); this.unsubscribe = null;

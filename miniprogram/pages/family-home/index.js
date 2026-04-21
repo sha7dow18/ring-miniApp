@@ -27,6 +27,8 @@ Page({
     elderRelation: "父母",
     inbox: [],
     unreadCount: 0,
+    unreadReplenish: 0,
+    unreadAnomaly: 0,
     latestDigest: null,
     digestWeekLabel: "",
     hasAnomaly: false
@@ -51,9 +53,11 @@ Page({
 
   async loadInbox() {
     const [items, unread] = await Promise.all([
-      familyInboxService.listInbox(20),
+      familyInboxService.listInbox(30),
       familyInboxService.countUnread()
     ]);
+    const unreadReplenish = items.filter((it) => it.type === "replenish_due" && !it.read).length;
+    const unreadAnomaly = items.filter((it) => it.type === "health_anomaly" && !it.read).length;
     this.setData({
       inbox: items.map((it) => ({
         ...it,
@@ -61,7 +65,9 @@ Page({
         timeText: timeAgo(it.createdAt)
       })),
       unreadCount: unread,
-      hasAnomaly: items.some((it) => it.type === "health_anomaly" && !it.read)
+      unreadReplenish,
+      unreadAnomaly,
+      hasAnomaly: unreadAnomaly > 0
     });
   },
 
@@ -92,5 +98,6 @@ Page({
 
   goBind() { wx.navigateTo({ url: "/pages/family-bind/index" }); },
   goDigest() { wx.reLaunch({ url: "/pages/digest/index" }); },
-  goReplenish() { wx.reLaunch({ url: "/pages/replenish/index" }); }
+  goReplenish() { wx.reLaunch({ url: "/pages/replenish/index" }); },
+  goMall() { wx.reLaunch({ url: "/pages/mall/index" }); }
 });

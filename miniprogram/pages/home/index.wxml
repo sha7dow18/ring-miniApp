@@ -37,6 +37,15 @@
     </view>
   </view>
 
+  <view wx:if="{{!hasBoundChild}}" class="family-cta-banner" bindtap="goFamilyBind" hover-class="banner-hover">
+    <view class="fcb-emoji">🤝</view>
+    <view class="fcb-body">
+      <view class="fcb-title">绑定子女账户</view>
+      <view class="fcb-desc">健康简报 / 异常预警 / 补货提醒会自动送到家人手里</view>
+    </view>
+    <view class="fcb-arrow">›</view>
+  </view>
+
   <view class="empty-card" wx:if="{{!isConnected}}">
     <view class="empty-title">设备还未连接</view>
     <view class="empty-desc">连接后即可查看完整健康摘要与 AI 分析。</view>

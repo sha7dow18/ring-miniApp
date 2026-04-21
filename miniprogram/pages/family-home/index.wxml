@@ -50,14 +50,25 @@
     </view>
     <view wx:else class="inbox-empty">暂无动态</view>
 
+    <view class="shop-cta" bindtap="goReplenish" hover-class="hover">
+      <view class="shop-cta-left">
+        <view class="shop-cta-title">为父母选购</view>
+        <view class="shop-cta-desc">
+          {{unreadReplenish > 0 ? unreadReplenish + ' 条父母待补货商品 · 一键代购' : '进入商城按父母体质选购'}}
+        </view>
+      </view>
+      <view class="shop-cta-arrow" wx:if="{{unreadReplenish > 0}}">{{unreadReplenish}} ›</view>
+      <view class="shop-cta-arrow" wx:else>›</view>
+    </view>
+
     <view class="quick-actions">
       <view class="qa-btn" bindtap="goDigest">
         <view class="qa-emoji">📋</view>
         <view class="qa-text">本周简报</view>
       </view>
-      <view class="qa-btn" bindtap="goReplenish">
-        <view class="qa-emoji">🛒</view>
-        <view class="qa-text">去代购</view>
+      <view class="qa-btn" bindtap="goMall">
+        <view class="qa-emoji">🏪</view>
+        <view class="qa-text">逛商城</view>
       </view>
     </view>
   </block>
