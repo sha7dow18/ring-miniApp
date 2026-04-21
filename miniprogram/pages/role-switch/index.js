@@ -12,6 +12,9 @@ Page({
     await profileService.setRole(role);
     const app = getApp();
     app.globalData.role = role;
-    wx.reLaunch({ url: "/pages/home/index" });
+    const targetUrl = role === "child"
+      ? "/pages/family-home/index"
+      : "/pages/home/index";
+    wx.reLaunch({ url: targetUrl });
   }
 });
