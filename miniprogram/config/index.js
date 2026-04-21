@@ -11,10 +11,10 @@ module.exports = {
 
   ai: {
     botId: 'ibot-aita-uku7y1',
-    textProvider: "hunyuan-exp",
-    textModel: "hunyuan-2.0-instruct-20251111",
-    visionProvider: "hunyuan-exp",
-    visionModel: "hunyuan-vision",
+    textProvider: "doubao-custom",
+    textModel: "doubao-lite-128k-240428",
+    visionProvider: "doubao-custom",
+    visionModel: "doubao-1-5-vision-pro-32k-250115",
     historyRecentDays: 7,
     maxToolSteps: 4,
     maxRecommendItems: 3,

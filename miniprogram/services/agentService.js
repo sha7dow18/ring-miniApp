@@ -101,7 +101,13 @@ async function sendToBot (opts) {
     }
 
     if (parsed.type === 'error') {
-      var err = new Error((parsed.error && parsed.error.message) || 'Agent 运行失败')
+      var errObj = parsed.error || {}
+      var msg = errObj.message
+      if (typeof msg !== 'string' || !msg) {
+        try { msg = JSON.stringify(errObj) } catch (_) { msg = 'Agent 运行失败' }
+      }
+      var err = new Error(msg || 'Agent 运行失败')
+      err.rawError = errObj
       if (opts.callbacks && opts.callbacks.onError) opts.callbacks.onError(err)
       throw err
     }

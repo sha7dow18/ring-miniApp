@@ -2,6 +2,7 @@ const mockStore = require("../../utils/mockStore.js");
 const profileService = require("../../services/profileService.js");
 const constitutionService = require("../../services/constitutionService.js");
 const subscriptionService = require("../../services/subscriptionService.js");
+const familyService = require("../../services/familyService.js");
 
 const ROLE_LABEL = { elder: "老人端", child: "子女端" };
 
@@ -35,6 +36,19 @@ Page({
       const cons = profile.constitution
         ? constitutionService.CONSTITUTIONS.find((c) => c.key === profile.constitution)
         : null;
+      let bindStatusText = profile.boundFamilyId ? "已绑定" : "未绑定";
+      if (profile.boundFamilyId) {
+        const binding = await familyService.getBindingById(profile.boundFamilyId);
+        if (binding) {
+          const amElder = binding._openid === profile._openid;
+          const counterpartyName = amElder
+            ? binding.childNickname
+            : binding.elderNickname;
+          if (counterpartyName) {
+            bindStatusText = (amElder ? "子女 · " : "父母 · ") + counterpartyName;
+          }
+        }
+      }
       this.setData({
         profile: {
           nickname: profile.nickname || "微信用户",
@@ -42,7 +56,7 @@ Page({
           phone: profile.phone || ""
         },
         roleLabel: ROLE_LABEL[profile.role] || "未选择",
-        bindStatusText: profile.boundFamilyId ? "已绑定" : "未绑定",
+        bindStatusText,
         constitutionName: cons ? cons.name : "",
         planName: sub ? sub.planName : "免费"
       });

@@ -1,4 +1,10 @@
 function makeDbMock(impl) {
+  var defaults = {
+    get: function() { return Promise.resolve({ data: [] }); },
+    add: function() { return Promise.resolve({ _id: "auto" }); },
+    update: function() { return Promise.resolve({}); }
+  };
+  var merged = Object.assign({}, defaults, impl || {});
   return {
     collection: jest.fn(function() {
       var q = { _where: null, _limit: null, _docId: null, _orderBy: null };
@@ -6,10 +12,10 @@ function makeDbMock(impl) {
         where: function(w) { q._where = w; return chain; },
         limit: function(n) { q._limit = n; return chain; },
         orderBy: function(k, d) { q._orderBy = [k, d]; return chain; },
-        get: function() { return impl.get(q); },
-        add: function(x) { return impl.add(x); },
+        get: function() { return merged.get(q); },
+        add: function(x) { return merged.add(x); },
         doc: function(id) { q._docId = id; return chain; },
-        update: function(x) { return impl.update(q._docId, x); }
+        update: function(x) { return merged.update(q._docId, x); }
       };
       return chain;
     })
@@ -47,6 +53,38 @@ describe("familyService", () => {
       expect(added.status).toBe("pending");
       expect(added.inviteCode).toBe(result.inviteCode);
       expect(added.createdAt).toBeInstanceOf(Date);
+    });
+
+    test("writes elder profile snapshot into binding", async () => {
+      let added = null;
+      global.wx = {
+        cloud: {
+          database: () => makeDbMock({
+            get: () => Promise.resolve({ data: [{ nickname: "张爷爷", avatarUrl: "cloud://a.jpg" }] }),
+            add: (x) => { added = x.data; return Promise.resolve({ _id: "bid1" }); }
+          })
+        }
+      };
+      const fs = require("../miniprogram/services/familyService.js");
+      await fs.createPendingBinding();
+      expect(added.elderNickname).toBe("张爷爷");
+      expect(added.elderAvatarUrl).toBe("cloud://a.jpg");
+    });
+
+    test("falls back to empty snapshot when profile missing", async () => {
+      let added = null;
+      global.wx = {
+        cloud: {
+          database: () => makeDbMock({
+            get: () => Promise.resolve({ data: [] }),
+            add: (x) => { added = x.data; return Promise.resolve({ _id: "bid1" }); }
+          })
+        }
+      };
+      const fs = require("../miniprogram/services/familyService.js");
+      await fs.createPendingBinding();
+      expect(added.elderNickname).toBe("");
+      expect(added.elderAvatarUrl).toBe("");
     });
   });
 
@@ -92,6 +130,34 @@ describe("familyService", () => {
       const fs = require("../miniprogram/services/familyService.js");
       await expect(fs.redeemInviteCode("AAAAAA", "child"))
         .rejects.toThrow("ALREADY_BOUND");
+    });
+
+    test("success path writes child profile snapshot", async () => {
+      let updateCall = null;
+      let getCalls = 0;
+      global.wx = {
+        cloud: {
+          database: () => makeDbMock({
+            get: () => {
+              getCalls++;
+              // 1st call: binding query; 2nd call: profileService.getProfile
+              if (getCalls === 1) {
+                return Promise.resolve({
+                  data: [{ _id: "b1", _openid: "elder-oid", inviteCode: "AAAAAA", status: "pending" }]
+                });
+              }
+              return Promise.resolve({ data: [{ nickname: "小张", avatarUrl: "cloud://child.jpg" }] });
+            },
+            update: (id, x) => { updateCall = { id, data: x.data }; return Promise.resolve({ stats: { updated: 1 } }); }
+          })
+        }
+      };
+      const fs = require("../miniprogram/services/familyService.js");
+      const result = await fs.redeemInviteCode("AAAAAA", "child-oid");
+      expect(result).toEqual({ bindingId: "b1", elderOpenId: "elder-oid" });
+      expect(updateCall.data.childNickname).toBe("小张");
+      expect(updateCall.data.childAvatarUrl).toBe("cloud://child.jpg");
+      expect(updateCall.data.status).toBe("bound");
     });
 
     test("success path: updates binding, returns ids", async () => {

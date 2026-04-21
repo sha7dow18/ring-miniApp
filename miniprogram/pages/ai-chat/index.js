@@ -365,11 +365,19 @@ Page({
       sessionService.updateMessages(self.data.sessionId, toSave);
 
     } catch (err) {
+      console.error("[ai-chat] send failed:", err);
+      var errMsg = "";
+      if (err && typeof err.message === "string" && err.message) {
+        errMsg = err.message;
+      } else if (err) {
+        try { errMsg = JSON.stringify(err.rawError || err); } catch (_) { errMsg = String(err); }
+      }
+      if (!errMsg || errMsg === "[object Object]" || errMsg === "{}") errMsg = "未知错误";
       var cur = self.data.messages;
       var updated = cur.map(function(m) {
         if (m.role !== "assistant") return m;
         if (m.parts && m.parts.some(function(part) { return part.type === "text" && part.content; })) return m;
-        return { id: m.id, role: m.role, ts: m.ts, parts: [{ type: "text", content: "AI 暂时无法回复：" + ((err && err.message) || "未知错误") }] };
+        return { id: m.id, role: m.role, ts: m.ts, parts: [{ type: "text", content: "AI 暂时无法回复：" + errMsg }] };
       });
       self.setData({ messages: updated });
     } finally {

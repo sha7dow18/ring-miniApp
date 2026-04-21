@@ -7,6 +7,19 @@ const ERROR_MESSAGES = {
   ALREADY_BOUND: "此邀请码已被使用"
 };
 
+const ROLE_TITLE = { elder: "老人", child: "子女" };
+
+function fmtDateTime(d) {
+  if (!d) return "";
+  const dt = d instanceof Date ? d : new Date(d);
+  if (isNaN(dt)) return "";
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")} ${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")}`;
+}
+
+function firstChar(s) {
+  return (s && typeof s === "string" && s.length) ? s.charAt(0) : "?";
+}
+
 Page({
   data: {
     role: null,
@@ -18,7 +31,17 @@ Page({
     // child-side
     inputCode: "",
     redeeming: false,
-    errorMsg: ""
+    errorMsg: "",
+    // family-hero
+    myNickname: "",
+    myAvatarUrl: "",
+    myInitial: "?",
+    myRoleLabel: "",
+    counterpartyNickname: "",
+    counterpartyAvatarUrl: "",
+    counterpartyInitial: "?",
+    counterpartyRoleLabel: "",
+    boundAtText: ""
   },
 
   myOpenId: null,
@@ -31,23 +54,57 @@ Page({
     const bound = !!(profile && profile.boundFamilyId);
 
     this.setData({
-      role: role,
-      bound: bound,
+      role,
+      bound,
       boundFamilyId: bound ? profile.boundFamilyId : ""
     });
 
-    if (role === "elder" && !bound) {
+    if (bound) {
+      await this.loadFamilyHero(profile);
+    } else if (role === "elder") {
       const pending = await familyService.getMyPendingBinding();
       if (pending) this.setData({ inviteCode: pending.inviteCode });
     }
   },
 
+  // 读 family_bindings 填充双方信息
+  async loadFamilyHero(profile) {
+    const binding = await familyService.getBindingById(profile.boundFamilyId);
+    if (!binding) return;
+
+    const role = this.data.role;
+    const amElder = binding._openid === this.myOpenId;
+    // 如果角色不明，用绑定关系反推
+    const effectiveRole = role || (amElder ? "elder" : "child");
+
+    const myNickname = profile.nickname || "";
+    const myAvatarUrl = profile.avatarUrl || "";
+
+    const counterpartyNickname = amElder
+      ? binding.childNickname || ""
+      : binding.elderNickname || "";
+    const counterpartyAvatarUrl = amElder
+      ? binding.childAvatarUrl || ""
+      : binding.elderAvatarUrl || "";
+
+    this.setData({
+      myNickname,
+      myAvatarUrl,
+      myInitial: firstChar(myNickname),
+      myRoleLabel: ROLE_TITLE[effectiveRole] || "",
+      counterpartyNickname,
+      counterpartyAvatarUrl,
+      counterpartyInitial: firstChar(counterpartyNickname),
+      counterpartyRoleLabel: amElder ? ROLE_TITLE.child : ROLE_TITLE.elder,
+      boundAtText: fmtDateTime(binding.boundAt)
+    });
+  },
+
   async generateCode() {
     this.setData({ generating: true });
     const { inviteCode, bindingId } = await familyService.createPendingBinding();
-    // 老人同时把 bindingId 写入自己 profile，方便子女兑换后老人端也能查自己的 binding
     await profileService.setBoundFamilyId(bindingId);
-    this.setData({ inviteCode: inviteCode, generating: false });
+    this.setData({ inviteCode, generating: false });
   },
 
   copyCode() {
@@ -78,6 +135,9 @@ Page({
         inputCode: ""
       });
       wx.showToast({ title: "绑定成功", icon: "success" });
+      // 刷新 hero
+      const p2 = await profileService.getProfile();
+      if (p2) await this.loadFamilyHero(p2);
     } catch (e) {
       this.setData({
         redeeming: false,

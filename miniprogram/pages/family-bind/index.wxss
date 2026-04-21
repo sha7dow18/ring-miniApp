@@ -103,3 +103,73 @@
   color: var(--text-2);
   line-height: 1.6;
 }
+
+.card-hint {
+  font-size: var(--fs-caption);
+  color: var(--text-3);
+  line-height: 1.6;
+}
+
+.family-hero {
+  background: linear-gradient(135deg, #3F6B5E, #2A4A3E);
+  color: var(--text-inv);
+  padding: var(--sp-5) var(--sp-4);
+  margin-bottom: var(--sp-3);
+}
+.fh-label { font-size: var(--fs-caption); opacity: 0.7; letter-spacing: 2rpx; }
+.fh-pair {
+  margin-top: var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fh-member { flex: 1; text-align: center; }
+.fh-avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  margin: 0 auto;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+}
+.fh-avatar image { width: 100%; height: 100%; }
+.fh-avatar.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+  font-weight: var(--fw-bold);
+  color: var(--text-inv);
+  background: rgba(255, 255, 255, 0.18);
+}
+.fh-name {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-semibold);
+  max-width: 240rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: auto;
+}
+.fh-role {
+  margin-top: 4rpx;
+  font-size: var(--fs-caption);
+  opacity: 0.7;
+  padding: 4rpx 12rpx;
+  border-radius: 100rpx;
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+}
+.fh-link {
+  font-size: 56rpx;
+  padding: 0 var(--sp-2);
+  opacity: 0.85;
+}
+.fh-meta {
+  margin-top: var(--sp-4);
+  text-align: center;
+  font-size: var(--fs-caption);
+  opacity: 0.7;
+}

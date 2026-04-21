@@ -1,5 +1,14 @@
 // 家庭绑定服务 — cloud `family_bindings` 集合
 // 老人端生成邀请码 → 子女端输入兑换 → 双方 user_profile.boundFamilyId 指向同一 binding
+//
+// 数据结构（family_bindings doc）:
+//   _id, _openid(elder), childOpenId, inviteCode, status('pending'|'bound'),
+//   createdAt, boundAt,
+//   elderNickname, elderAvatarUrl      - 老人创建时写入（快照）
+//   childNickname, childAvatarUrl      - 子女兑换时写入（快照）
+// 快照机制：user_profile 是 PRIVATE，对方读不到；在 binding 里存昵称/头像快照，双方都能看到对端信息
+
+var profileService = require("./profileService.js");
 
 var COLLECTION = "family_bindings";
 
@@ -17,13 +26,18 @@ function generateInviteCode() {
 
 function getDB() { return wx.cloud.database(); }
 
-function createPendingBinding() {
+async function createPendingBinding() {
   var code = generateInviteCode();
-  return getDB().collection(COLLECTION).add({
-    data: { inviteCode: code, status: "pending", createdAt: new Date() }
-  }).then(function(res) {
-    return { inviteCode: code, bindingId: res._id };
-  });
+  var profile = await profileService.getProfile().catch(function() { return null; });
+  var data = {
+    inviteCode: code,
+    status: "pending",
+    createdAt: new Date(),
+    elderNickname: (profile && profile.nickname) || "",
+    elderAvatarUrl: (profile && profile.avatarUrl) || ""
+  };
+  var res = await getDB().collection(COLLECTION).add({ data: data });
+  return { inviteCode: code, bindingId: res._id };
 }
 
 /**
@@ -33,22 +47,27 @@ function createPendingBinding() {
  * @returns {Promise<{bindingId: string, elderOpenId: string}>}
  * @throws Error("INVALID_CODE" | "SELF_REDEEM" | "ALREADY_BOUND")
  */
-function redeemInviteCode(code, myOpenId) {
+async function redeemInviteCode(code, myOpenId) {
   var db = getDB();
-  return db.collection(COLLECTION)
+  var res = await db.collection(COLLECTION)
     .where({ inviteCode: code })
-    .limit(1).get()
-    .then(function(res) {
-      var doc = res.data && res.data[0];
-      if (!doc) throw new Error("INVALID_CODE");
-      if (doc.status !== "pending") throw new Error("ALREADY_BOUND");
-      if (doc._openid === myOpenId) throw new Error("SELF_REDEEM");
-      return db.collection(COLLECTION).doc(doc._id).update({
-        data: { childOpenId: myOpenId, status: "bound", boundAt: new Date() }
-      }).then(function() {
-        return { bindingId: doc._id, elderOpenId: doc._openid };
-      });
-    });
+    .limit(1).get();
+  var doc = res.data && res.data[0];
+  if (!doc) throw new Error("INVALID_CODE");
+  if (doc.status !== "pending") throw new Error("ALREADY_BOUND");
+  if (doc._openid === myOpenId) throw new Error("SELF_REDEEM");
+
+  var myProfile = await profileService.getProfile().catch(function() { return null; });
+  await db.collection(COLLECTION).doc(doc._id).update({
+    data: {
+      childOpenId: myOpenId,
+      status: "bound",
+      boundAt: new Date(),
+      childNickname: (myProfile && myProfile.nickname) || "",
+      childAvatarUrl: (myProfile && myProfile.avatarUrl) || ""
+    }
+  });
+  return { bindingId: doc._id, elderOpenId: doc._openid };
 }
 
 function getBindingById(id) {
