@@ -218,12 +218,28 @@ class LLMCommunicator {
                     this.botContext.bot.sseSender.send(`data: ${JSON.stringify(result)}\n\n`);
                 }
                 else if (streamPart.type === 'error') {
+                    const err = streamPart.error;
+                    const cause = err === null || err === void 0 ? void 0 : err.cause;
+                    const detailed = {
+                        name: err === null || err === void 0 ? void 0 : err.name,
+                        message: err === null || err === void 0 ? void 0 : err.message,
+                        statusCode: err === null || err === void 0 ? void 0 : err.statusCode,
+                        responseBody: err === null || err === void 0 ? void 0 : err.responseBody,
+                        url: err === null || err === void 0 ? void 0 : err.url,
+                        cause: cause && typeof cause === 'object' ? {
+                            name: cause.name,
+                            message: cause.message,
+                            statusCode: cause.statusCode,
+                            responseBody: cause.responseBody
+                        } : err === null || err === void 0 ? void 0 : err.cause
+                    };
+                    console.error('[LLM stream error]', JSON.stringify(detailed, null, 2));
                     result = {
                         ...result,
                         finish_reason: 'error',
                         error: {
                             name: 'LLMError',
-                            message: streamPart.error
+                            message: JSON.stringify(detailed)
                         }
                     };
                     error = streamPart.error;

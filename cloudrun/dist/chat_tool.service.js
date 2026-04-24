@@ -18,7 +18,7 @@ class ChatToolService {
             const data = {
                 type: 'search',
                 created: Date.now(),
-                model: 'hunyuan',
+                model: 'cloudbase-ai',
                 role: 'assistant',
                 content: '',
                 search_info: {
@@ -65,7 +65,7 @@ class ChatToolService {
             const data = {
                 type: "'search_file',",
                 created: Date.now(),
-                model: 'hunyuan',
+                model: 'cloudbase-ai',
                 role: 'assistant',
                 content: (_b = result.content) !== null && _b !== void 0 ? _b : '',
                 finish_reason: 'continue'

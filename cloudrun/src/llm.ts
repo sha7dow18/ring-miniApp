@@ -301,12 +301,28 @@ export class LLMCommunicator {
             )
           } else if (streamPart.type === 'error') {
             // 对话异常
+            const err = streamPart.error as Record<string, unknown> & Error
+            const cause = err?.cause as (Record<string, unknown> & Error) | undefined
+            const detailed = {
+              name: err?.name,
+              message: err?.message,
+              statusCode: err?.statusCode as number | undefined,
+              responseBody: err?.responseBody as string | undefined,
+              url: err?.url as string | undefined,
+              cause: cause && typeof cause === 'object' ? {
+                name: cause.name,
+                message: cause.message,
+                statusCode: cause.statusCode as number | undefined,
+                responseBody: cause.responseBody as string | undefined
+              } : err?.cause
+            }
+            console.error('[LLM stream error]', JSON.stringify(detailed, null, 2))
             result = {
               ...result,
               finish_reason: 'error',
               error: {
                 name: 'LLMError',
-                message: streamPart.error as string
+                message: JSON.stringify(detailed)
               }
             }
             error = streamPart.error

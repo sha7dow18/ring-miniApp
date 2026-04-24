@@ -4,7 +4,6 @@
 var aiService = require("./aiService.js");
 var healthService = require("./healthService.js");
 var profileService = require("./profileService.js");
-var subscriptionService = require("./subscriptionService.js");
 
 var COLLECTION = "constitution_assessments";
 
@@ -121,7 +120,6 @@ function getDB() { return wx.cloud.database(); }
  */
 async function assess(opts) {
   opts = opts || {};
-  await subscriptionService.consumeAiQuota();
 
   var records = await healthService.getRecent(7);
   var healthSummary = healthService.buildAiContext(records);

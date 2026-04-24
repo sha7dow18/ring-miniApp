@@ -11,10 +11,11 @@ module.exports = {
 
   ai: {
     botId: 'ibot-aita-uku7y1',
+    // 统一走火山方舟多模态模型（文字 + 视觉都用同一个）
     textProvider: "doubao-custom",
-    textModel: "doubao-lite-128k-240428",
+    textModel: "doubao-seed-1-8-251228",
     visionProvider: "doubao-custom",
-    visionModel: "doubao-1-5-vision-pro-32k-250115",
+    visionModel: "doubao-seed-1-8-251228",
     historyRecentDays: 7,
     maxToolSteps: 4,
     maxRecommendItems: 3,

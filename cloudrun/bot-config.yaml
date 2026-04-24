@@ -1,8 +1,8 @@
 # 名称
 name: Aita
 
-# 模型标识 — 豆包（doubao-custom 已在 CloudBase 控制台注册为自定义模型）
-model: doubao-lite-128k-240428
+# 模型标识 — 火山方舟多模态模型（文字 + 视觉统一）
+model: doubao-seed-1-8-251228
 
 # 请求大模型根路径 — CloudBase AI Gateway 的 doubao-custom 路由
 baseURL: https://ring-9gl8ntyu292bc1e7.api.tcloudbasegateway.com/v1/ai/doubao-custom
